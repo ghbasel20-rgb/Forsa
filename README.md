@@ -4,7 +4,7 @@ A React Native mobile application with secure user authentication powered by App
 
 ## Description
 
-Forsa is a cross-platform mobile app built with React Native and Expo, features other than a sign-up and sign-in are in the works but our lead dev has exams so it might take some time
+Forsa is a cross-platform mobile app built with React Native and Expo, features other than a sign-up and sign-in are in the works but our lead dev has exams so it might take some time.
 
 ## Features
 
@@ -67,7 +67,10 @@ Forsa/
 ## Developer Credits
 
 **Lead Developer:** Basel Ghrayeb
-**dev of the month** Basel Ghrayeb
+
+**dev of the month:** Basel Ghrayeb
+
+**supporting Developers:** Basel Ghrayeb
 
 ## Contributing
 
