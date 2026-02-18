@@ -1,50 +1,98 @@
-# Welcome to your Expo app 👋
+# Forsa
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A React Native mobile application with secure user authentication powered by Appwrite.
 
-## Get started
+## Description
 
-1. Install dependencies
+Forsa is a cross-platform mobile app built with React Native and Expo, featuring user authentication through Appwrite's backend services. The app provides a clean, modern interface for users to sign up and sign in securely.
 
-   ```bash
-   npm install
-   ```
+## Features
 
-2. Start the app
+- User Registration (Sign Up)
+- User Authentication (Sign In)
+- Email & Password validation
+- Secure session management with Appwrite
+- Clean, responsive UI design
+- Cross-platform support (iOS & Android)
 
-   ```bash
-   npx expo start
-   ```
+## Installation & Setup
 
-In the output, you'll find options to open the app in a
+### Prerequisites
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- Node.js (v14 or higher)
+- npm or yarn
+- Expo CLI
+- Appwrite account and project
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+### Steps to Run
 
-## Get a fresh project
-
-When you're ready, run:
-
+1. Clone the repository:
 ```bash
-npm run reset-project
+git clone https://github.com/ghbasel20-rgb/Forsa.git
+cd Forsa
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+2. Install dependencies:
+```bash
+npm install
+```
 
-## Learn more
+3. Configure Appwrite:
+   - Open `app/config/appwrite-config.js`
+   - Replace `YOUR_PROJECT_ID` with your Appwrite Project ID
+   - Ensure your platform (iOS/Android) is added in Appwrite console
 
-To learn more about developing your project with Expo, look at the following resources:
+4. Run the app:
+```bash
+npx expo start
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+5. Choose your platform:
+   - Press `i` for iOS simulator
+   - Press `a` for Android emulator
+   - Scan QR code with Expo Go app for physical device
 
-## Join the community
+## Project Structure
 
-Join our community of developers creating universal apps.
+```
+Forsa/
+├── app/
+│   ├── config/
+│   │   └── appwrite-config.js
+│   ├── services/
+│   │   └── auth-service.js
+│   ├── Sign-in.jsx
+│   ├── Sign-up.jsx
+│   └── index.jsx
+├── assets/
+├── package.json
+└── README.md
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Technologies Used
+
+- React Native
+- Expo
+- Appwrite (Backend as a Service)
+- JavaScript
+
+## Future Roadmap
+
+- [ ] Password reset functionality
+- [ ] OAuth integration (Google, Apple Sign In)
+- [ ] User profile management
+- [ ] Email verification
+- [ ] Remember me functionality
+- [ ] Biometric authentication (Face ID, Fingerprint)
+- [ ] Dark mode support
+- [ ] Multi-language support
+
+## Developer Credits
+
+**Lead Developer:** Basel Ghrayeb
+**dev of the month** Basel Ghrayeb
+
+## Contributing
+
+This project is open for collaboration. More developers will be joining soon to expand functionality and features.
+
