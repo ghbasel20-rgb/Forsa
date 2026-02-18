@@ -4,7 +4,7 @@ A React Native mobile application with secure user authentication powered by App
 
 ## Description
 
-Forsa is a cross-platform mobile app built with React Native and Expo, featuring user authentication through Appwrite's backend services. The app provides a clean, modern interface for users to sign up and sign in securely.
+Forsa is a cross-platform mobile app built with React Native and Expo, features other than a sign-up and sign-in are in the works but our lead dev has exams so it might take some time
 
 ## Features
 
@@ -26,31 +26,9 @@ Forsa is a cross-platform mobile app built with React Native and Expo, featuring
 
 ### Steps to Run
 
-1. Clone the repository:
-```bash
-git clone https://github.com/ghbasel20-rgb/Forsa.git
-cd Forsa
-```
-
-2. Install dependencies:
-```bash
-npm install
-```
-
-3. Configure Appwrite:
-   - Open `app/config/appwrite-config.js`
-   - Replace `YOUR_PROJECT_ID` with your Appwrite Project ID
-   - Ensure your platform (iOS/Android) is added in Appwrite console
-
-4. Run the app:
-```bash
-npx expo start
-```
-
-5. Choose your platform:
-   - Press `i` for iOS simulator
-   - Press `a` for Android emulator
-   - Scan QR code with Expo Go app for physical device
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Run the app: `npx expo start`
 
 ## Current Project Structure
 
