@@ -52,7 +52,7 @@ npx expo start
    - Press `a` for Android emulator
    - Scan QR code with Expo Go app for physical device
 
-## Project Structure
+## Current Project Structure
 
 ```
 Forsa/
@@ -83,7 +83,6 @@ Forsa/
 - [ ] User profile management
 - [ ] Email verification
 - [ ] Remember me functionality
-- [ ] Biometric authentication (Face ID, Fingerprint)
 - [ ] Dark mode support
 - [ ] Multi-language support
 
