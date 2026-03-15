@@ -104,6 +104,3 @@ Forsa/
 
 This project is open for collaboration. More developers will be joining soon to expand functionality and features.
 
-## License
-
-This project is currently unlicensed.
