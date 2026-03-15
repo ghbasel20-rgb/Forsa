@@ -1,17 +1,25 @@
 # Forsa
 
-A React Native mobile application with secure user authentication powered by Appwrite.
+A React Native mobile application connecting users with opportunities, powered by Appwrite.
 
 ## Description
 
-Forsa is a cross-platform mobile app built with React Native and Expo, features other than a sign-up and sign-in are in the works but our lead dev has exams so it might take some time.
+Forsa is a cross-platform mobile app built with React Native and Expo. Users can create profiles, specify their skills and interests, and discover opportunities matched to their preferences. The app features a complete authentication system and personalized opportunity matching.
 
 ## Features
 
-- User Registration (Sign Up)
-- User Authentication (Sign In)
+- User Registration & Authentication
 - Email & Password validation
 - Secure session management with Appwrite
+- Multi-step profile building
+  - Location & Education selection
+  - Skills selection (with custom skill input)
+  - Interests selection (with custom interest input)
+- User Profile management
+- Opportunity browsing
+  - Top Matches (personalized)
+  - Other Matches
+  - All Opportunities with search
 - Clean, responsive UI design
 - Cross-platform support (iOS & Android)
 
@@ -30,7 +38,7 @@ Forsa is a cross-platform mobile app built with React Native and Expo, features 
 2. Install dependencies: `npm install`
 3. Run the app: `npx expo start`
 
-## Current Project Structure
+## Project Structure
 
 ```
 Forsa/
@@ -38,11 +46,25 @@ Forsa/
 │   ├── config/
 │   │   └── appwrite-config.js
 │   ├── services/
-│   │   └── auth-service.js
+│   │   ├── auth-service.js
+│   │   └── profile-service.js
+│   ├── AllOpportunities.jsx
+│   ├── BuildProfile.jsx
+│   ├── BuildProfileInterests.jsx
+│   ├── BuildProfileSkills.jsx
+│   ├── index.jsx
+│   ├── OpportunityDetail.jsx
+│   ├── OtherMatches.jsx
+│   ├── Profile.jsx
 │   ├── Sign-in.jsx
 │   ├── Sign-up.jsx
-│   └── index.jsx
+│   └── TopMatches.jsx
 ├── assets/
+│   └── images/
+│       ├── home-icon.png
+│       ├── icon.png
+│       ├── Logo.png
+│       └── Search.png
 ├── package.json
 └── README.md
 ```
@@ -51,28 +73,37 @@ Forsa/
 
 - React Native
 - Expo
+- Expo Router (for navigation)
 - Appwrite (Backend as a Service)
+- AsyncStorage (for temporary data storage)
 - JavaScript
 
 ## Future Roadmap
 
+- [ ] Opportunity matching algorithm
+- [ ] Save opportunities feature
+- [ ] Real opportunity data integration
 - [ ] Password reset functionality
 - [ ] OAuth integration (Google, Apple Sign In)
-- [ ] User profile management
 - [ ] Email verification
-- [ ] Remember me functionality
+- [ ] Push notifications for new matches
+- [ ] User profile editing
 - [ ] Dark mode support
 - [ ] Multi-language support
+- [ ] Advanced search filters
 
 ## Developer Credits
 
 **Lead Developer:** Basel Ghrayeb
 
-**dev of the month:** Basel Ghrayeb
+**Dev of the Month:** Basel Ghrayeb
 
-**supporting Developers:** Basel Ghrayeb
+**Supporting Developers:** Basel Ghrayeb
 
 ## Contributing
 
 This project is open for collaboration. More developers will be joining soon to expand functionality and features.
 
+## License
+
+This project is currently unlicensed.
