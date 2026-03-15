@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
@@ -12,11 +11,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useProfile } from './ProfileContext';
 import { getCurrentUser } from './services/auth-service';
 import { createUserProfile } from './services/profile-service';
 
-export default function BuildProfileInterests() {
+export default function Buildprofileinterests() {
   const router = useRouter();
+  const { profileData, clearProfile } = useProfile();
   const [selectedInterests, setSelectedInterests] = useState([]);
   const [showCustomInterestInput, setShowCustomInterestInput] = useState(false);
   const [customInterest, setCustomInterest] = useState('');
@@ -81,9 +82,6 @@ export default function BuildProfileInterests() {
     }
 
     try {
-      const storedProfileData = await AsyncStorage.getItem('profileData');
-      const profileData = storedProfileData ? JSON.parse(storedProfileData) : {};
-      
       const currentUserResult = await getCurrentUser();
       if (!currentUserResult.success) {
         Alert.alert('Error', 'Could not get user information');
@@ -105,7 +103,7 @@ export default function BuildProfileInterests() {
       const result = await createUserProfile(userId, completeProfile);
 
       if (result.success) {
-        await AsyncStorage.removeItem('profileData');
+        clearProfile();
         Alert.alert('Success', 'Profile created successfully!');
         router.push('/Profile');
       } else {

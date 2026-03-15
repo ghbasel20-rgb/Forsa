@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
@@ -12,9 +11,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useProfile } from './ProfileContext';
 
 export default function BuildProfile() {
   const router = useRouter();
+  const { updateProfile } = useProfile();
   const [location, setLocation] = useState('');
   const [educationStatus, setEducationStatus] = useState('');
   const [showLocationModal, setShowLocationModal] = useState(false);
@@ -96,18 +97,13 @@ export default function BuildProfile() {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!location || !educationStatus) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
 
-    const profileData = {
-      location,
-      educationStatus,
-    };
-
-    await AsyncStorage.setItem('profileData', JSON.stringify(profileData));
+    updateProfile({ location, educationStatus });
     router.push('/Buildprofileskills');
   };
 

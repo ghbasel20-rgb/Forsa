@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
@@ -14,10 +13,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useProfile } from './ProfileContext';
 import { signUp } from './services/auth-service';
 
 export default function SignUp() {
   const router = useRouter();
+  const { updateProfile } = useProfile();
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -64,10 +65,10 @@ export default function SignUp() {
     setLoading(false);
 
     if (result.success) {
-      await AsyncStorage.setItem('profileData', JSON.stringify({
+      updateProfile({
         fullName,
         dateOfBirth: dateOfBirth.toISOString(),
-      }));
+      });
       Alert.alert('Success', 'Account created successfully!');
       router.push('/Buildprofile');
     } else {

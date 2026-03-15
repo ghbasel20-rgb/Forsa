@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
@@ -12,9 +11,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useProfile } from './ProfileContext';
 
 export default function BuildProfileSkills() {
   const router = useRouter();
+  const { updateProfile } = useProfile();
   const [selectedSkills, setSelectedSkills] = useState([]);
   const [showCustomSkillInput, setShowCustomSkillInput] = useState(false);
   const [customSkill, setCustomSkill] = useState('');
@@ -71,17 +72,13 @@ export default function BuildProfileSkills() {
     }
   };
 
-  const handleNext = async () => {
+  const handleNext = () => {
     if (selectedSkills.length === 0) {
       Alert.alert('Error', 'Please select at least one skill');
       return;
     }
 
-    const storedData = await AsyncStorage.getItem('profileData');
-    const profileData = storedData ? JSON.parse(storedData) : {};
-    profileData.skills = selectedSkills;
-    await AsyncStorage.setItem('profileData', JSON.stringify(profileData));
-
+    updateProfile({ skills: selectedSkills });
     router.push('/Buildprofileinterests');
   };
 
