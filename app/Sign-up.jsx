@@ -80,7 +80,7 @@ export default function SignUp() {
       <View style={styles.container}>
         <View style={styles.header}>
           <Image
-            source={require('../assets/images/logo-small.png')}
+            source={require('../assets/images/Logo.png')}
             style={styles.logoSmall}
             resizeMode="contain"
           />
