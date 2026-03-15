@@ -1,24 +1,56 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
-    ActivityIndicator,
-    Alert,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  Image,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { signUp } from './services/auth-service';
 
-const SignUp = ({ navigation }) => {
-  const [name, setName] = useState('');
+export default function SignUp() {
+  const router = useRouter();
+  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [dateOfBirth, setDateOfBirth] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const onDateChange = (event, selectedDate) => {
+    if (Platform.OS === 'android') {
+      setShowDatePicker(false);
+    }
+    if (selectedDate) {
+      setDateOfBirth(selectedDate);
+    }
+  };
+
+  const formatDate = (date) => {
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  };
+
   const handleSignUp = async () => {
-    if (!name || !email || !password) {
+    if (!fullName || !email || !password || !confirmPassword) {
       Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match');
       return;
     }
 
@@ -28,112 +60,184 @@ const SignUp = ({ navigation }) => {
     }
 
     setLoading(true);
-    const result = await signUp(email, password, name);
+    const result = await signUp(email, password, fullName);
     setLoading(false);
 
     if (result.success) {
+      await AsyncStorage.setItem('profileData', JSON.stringify({
+        fullName,
+        dateOfBirth: dateOfBirth.toISOString(),
+      }));
       Alert.alert('Success', 'Account created successfully!');
+      router.push('/Buildprofile');
     } else {
       Alert.alert('Error', result.error);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Sign Up</Text>
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Image
+            source={require('../assets/images/logo-small.png')}
+            style={styles.logoSmall}
+            resizeMode="contain"
+          />
+          <Text style={styles.brandName}>FORSA</Text>
+        </View>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Name"
-        value={name}
-        onChangeText={setName}
-        autoCapitalize="words"
-      />
+        <Text style={styles.title}>CREATE{'\n'}ACCOUNT</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
+        <View style={styles.formContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Full Name"
+            placeholderTextColor="#46a3a4"
+            value={fullName}
+            onChangeText={setFullName}
+            autoCapitalize="words"
+          />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Password (min 8 characters)"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            placeholderTextColor="#46a3a4"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={handleSignUp}
-        disabled={loading}
-      >
-        {loading ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <Text style={styles.buttonText}>Sign Up</Text>
-        )}
-      </TouchableOpacity>
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            placeholderTextColor="#46a3a4"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
 
-      <TouchableOpacity
-        onPress={() => navigation.navigate('SignIn')}
-        style={styles.linkButton}
-      >
-        <Text style={styles.linkText}>
-          Already have an account? Sign In
-        </Text>
-      </TouchableOpacity>
-    </View>
+          <TextInput
+            style={styles.input}
+            placeholder="Confirm Password"
+            placeholderTextColor="#46a3a4"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            secureTextEntry
+          />
+
+          <TouchableOpacity
+            style={styles.input}
+            onPress={() => setShowDatePicker(true)}
+          >
+            <Text style={styles.dateText}>{formatDate(dateOfBirth)}</Text>
+          </TouchableOpacity>
+
+          {showDatePicker && (
+            <DateTimePicker
+              value={dateOfBirth}
+              mode="date"
+              display="default"
+              onChange={onDateChange}
+              maximumDate={new Date()}
+            />
+          )}
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleSignUp}
+            disabled={loading}
+          >
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.buttonText}>Create Account</Text>
+            )}
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => router.push('/Sign-in')}>
+            <Text style={styles.linkText}>
+              Already have an account? <Text style={styles.linkBold}>Log in</Text>
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </ScrollView>
   );
-};
+}
 
 const styles = StyleSheet.create({
+  scrollContainer: {
+    flexGrow: 1,
+  },
   container: {
     flex: 1,
-    justifyContent: 'center',
+    backgroundColor: '#e1e4e4',
     padding: 20,
-    backgroundColor: '#fff',
+    paddingTop: 60,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    marginBottom: 40,
+    gap: 8,
+  },
+  logoSmall: {
+    width: 30,
+    height: 30,
+  },
+  brandName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#0a445c',
+    letterSpacing: 1,
   },
   title: {
-    fontSize: 32,
+    fontSize: 36,
     fontWeight: 'bold',
+    color: '#0a445c',
     marginBottom: 40,
-    textAlign: 'center',
-    color: '#333',
+    lineHeight: 42,
+  },
+  formContainer: {
+    gap: 16,
   },
   input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 15,
+    backgroundColor: '#ffffff',
+    borderWidth: 2,
+    borderColor: '#46a3a4',
+    borderRadius: 25,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
     fontSize: 16,
-    backgroundColor: '#f9f9f9',
+    color: '#0a445c',
+  },
+  dateText: {
+    fontSize: 16,
+    color: '#0a445c',
   },
   button: {
-    backgroundColor: '#f02e65',
-    padding: 15,
-    borderRadius: 8,
+    backgroundColor: '#c6a2ba',
+    paddingVertical: 16,
+    borderRadius: 25,
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: 8,
   },
   buttonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  linkButton: {
-    marginTop: 20,
-    alignItems: 'center',
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
   },
   linkText: {
-    color: '#f02e65',
-    fontSize: 16,
+    textAlign: 'center',
+    color: '#0a445c',
+    fontSize: 14,
+    marginTop: 8,
+  },
+  linkBold: {
+    fontWeight: 'bold',
+    color: '#0a445c',
   },
 });
-
-export default SignUp;
