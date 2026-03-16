@@ -74,7 +74,7 @@ export default function TopMatches() {
 
         <TouchableOpacity
           style={styles.allOpportunitiesButton}
-          onPress={() => router.push('/AllOpportunities')}
+          onPress={() => router.push('/Allopportunities')}
         >
           <Text style={styles.allOpportunitiesText}>Explore all opportunities</Text>
         </TouchableOpacity>
