@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Image,
     ScrollView,
@@ -8,15 +8,22 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
+import { getAllOpportunities } from './services/opportunities-service';
 
 export default function TopMatches() {
   const router = useRouter();
+  const [opportunities, setOpportunities] = useState([]);
 
-  const topMatches = [
-    { id: 1, number: '#1', title: 'Opportunity' },
-    { id: 2, number: '#2', title: 'Opportunity' },
-    { id: 3, number: '#3', title: 'Opportunity' },
-  ];
+  useEffect(() => {
+    loadOpportunities();
+  }, []);
+
+  const loadOpportunities = async () => {
+    const result = await getAllOpportunities();
+    if (result.success) {
+      setOpportunities(result.data.slice(0, 3));
+    }
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -42,15 +49,15 @@ export default function TopMatches() {
         <Text style={styles.title}>YOUR TOP{'\n'}MATCHES</Text>
 
         <View style={styles.matchesContainer}>
-          {topMatches.map((match) => (
-            <View key={match.id} style={styles.matchCard}>
+          {opportunities.map((match, index) => (
+            <View key={match.$id} style={styles.matchCard}>
               <View style={styles.numberBadge}>
-                <Text style={styles.numberText}>{match.number}</Text>
+                <Text style={styles.numberText}>#{index + 1}</Text>
               </View>
               <Text style={styles.matchTitle}>{match.title}</Text>
               <TouchableOpacity
                 style={styles.readMoreButton}
-                onPress={() => router.push('/OpportunityDetail')}
+                onPress={() => router.push(`/Opportunitydetail?id=${match.$id}`)}
               >
                 <Text style={styles.readMoreText}>Read more</Text>
               </TouchableOpacity>
@@ -67,7 +74,7 @@ export default function TopMatches() {
 
         <TouchableOpacity
           style={styles.allOpportunitiesButton}
-          onPress={() => router.push('/Allopportunities')}
+          onPress={() => router.push('/AllOpportunities')}
         >
           <Text style={styles.allOpportunitiesText}>Explore all opportunities</Text>
         </TouchableOpacity>

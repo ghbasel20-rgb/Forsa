@@ -1,5 +1,5 @@
 import { Stack } from 'expo-router';
-import { ProfileProvider } from 'ProfileContext.js';
+import { ProfileProvider } from './ProfileContext';
 
 export default function Layout() {
   return (
@@ -7,4 +7,4 @@ export default function Layout() {
       <Stack screenOptions={{ headerShown: false }} />
     </ProfileProvider>
   );
-}SSSS
+}

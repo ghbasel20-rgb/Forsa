@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Image,
     ScrollView,
@@ -8,21 +8,34 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
+import { getAllOpportunities } from './services/opportunities-service';
 
-export default function TopMatches() {
+export default function OtherMatches() {
   const router = useRouter();
+  const [opportunities, setOpportunities] = useState([]);
 
-  const topMatches = [
-    { id: 1, number: '#1', title: 'Opportunity' },
-    { id: 2, number: '#2', title: 'Opportunity' },
-    { id: 3, number: '#3', title: 'Opportunity' },
-  ];
+  useEffect(() => {
+    loadOpportunities();
+  }, []);
+
+  const loadOpportunities = async () => {
+    const result = await getAllOpportunities();
+    if (result.success) {
+      setOpportunities(result.data.slice(3, 6));
+    }
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <View style={styles.logoContainer}>
+          <View style={styles.leftSection}>
+            <TouchableOpacity 
+              style={styles.backButton}
+              onPress={() => router.back()}
+            >
+              <Text style={styles.backText}>{'< Back'}</Text>
+            </TouchableOpacity>
             <Image
               source={require('../assets/images/Logo.png')}
               style={styles.logoSmall}
@@ -39,18 +52,18 @@ export default function TopMatches() {
           </TouchableOpacity>
         </View>
 
-        <Text style={styles.title}>YOUR TOP{'\n'}MATCHES</Text>
+        <Text style={styles.title}>OTHER{'\n'}MATCHES:</Text>
 
         <View style={styles.matchesContainer}>
-          {topMatches.map((match) => (
-            <View key={match.id} style={styles.matchCard}>
+          {opportunities.map((match, index) => (
+            <View key={match.$id} style={styles.matchCard}>
               <View style={styles.numberBadge}>
-                <Text style={styles.numberText}>{match.number}</Text>
+                <Text style={styles.numberText}>#{index + 4}</Text>
               </View>
               <Text style={styles.matchTitle}>{match.title}</Text>
               <TouchableOpacity
                 style={styles.readMoreButton}
-                onPress={() => router.push('/OpportunityDetail')}
+                onPress={() => router.push(`/Opportunitydetail?id=${match.$id}`)}
               >
                 <Text style={styles.readMoreText}>Read more</Text>
               </TouchableOpacity>
@@ -60,16 +73,9 @@ export default function TopMatches() {
 
         <TouchableOpacity
           style={styles.exploreButton}
-          onPress={() => router.push('/OtherMatches')}
+          onPress={() => router.push('/Allopportunities')}
         >
-          <Text style={styles.exploreButtonText}>Explore Other matches</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.allOpportunitiesButton}
-          onPress={() => router.push('/AllOpportunities')}
-        >
-          <Text style={styles.allOpportunitiesText}>Explore all opportunities</Text>
+          <Text style={styles.exploreButtonText}>Explore all opportunities</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -92,10 +98,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 30,
   },
-  logoContainer: {
+  leftSection: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+  },
+  backButton: {
+    marginRight: 8,
+  },
+  backText: {
+    fontSize: 16,
+    color: '#0a445c',
   },
   logoSmall: {
     width: 30,
@@ -164,20 +177,10 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderRadius: 25,
     alignItems: 'center',
-    marginBottom: 16,
   },
   exploreButtonText: {
     color: '#ffffff',
     fontSize: 16,
     fontWeight: '600',
-  },
-  allOpportunitiesButton: {
-    alignItems: 'center',
-    paddingVertical: 8,
-  },
-  allOpportunitiesText: {
-    color: '#46a3a4',
-    fontSize: 16,
-    textDecorationLine: 'underline',
   },
 });

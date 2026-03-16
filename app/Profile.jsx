@@ -9,26 +9,47 @@ import {
     View,
 } from 'react-native';
 import { getCurrentUser } from './services/auth-service';
+import { getUserProfile } from './services/profile-service';
+import { getSavedOpportunities } from './services/saved-opportunities-service';
 
 export default function Profile() {
   const router = useRouter();
   const [userData, setUserData] = useState(null);
+  const [profileData, setProfileData] = useState(null);
+  const [savedOpportunities, setSavedOpportunities] = useState([]);
 
   useEffect(() => {
     loadUserData();
   }, []);
 
   const loadUserData = async () => {
-    const result = await getCurrentUser();
-    if (result.success) {
-      setUserData(result.data);
+    const userResult = await getCurrentUser();
+    if (userResult.success) {
+      setUserData(userResult.data);
+      
+      const profileResult = await getUserProfile(userResult.data.$id);
+      if (profileResult.success) {
+        setProfileData(profileResult.data);
+      }
+
+      const savedResult = await getSavedOpportunities(userResult.data.$id);
+      if (savedResult.success) {
+        setSavedOpportunities(savedResult.data);
+      }
     }
   };
 
-  const savedOpportunities = [
-    { id: 1, title: 'Opportunity' },
-    { id: 2, title: 'Opportunity' },
-  ];
+  const calculateAge = (dateOfBirth) => {
+    if (!dateOfBirth) return 'N/A';
+    const birthDate = new Date(dateOfBirth);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -52,7 +73,7 @@ export default function Profile() {
         <View style={styles.infoContainer}>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Full Name</Text>
-            <Text style={styles.infoValue}>{userData?.name || 'Loading...'}</Text>
+            <Text style={styles.infoValue}>{profileData?.fullName || userData?.name || 'Loading...'}</Text>
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Email:</Text>
@@ -60,41 +81,44 @@ export default function Profile() {
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Location:</Text>
-            <Text style={styles.infoValue}>Coming soon</Text>
+            <Text style={styles.infoValue}>{profileData?.location || 'Not set'}</Text>
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Education status:</Text>
-            <Text style={styles.infoValue}>Coming soon</Text>
+            <Text style={styles.infoValue}>{profileData?.educationStatus || 'Not set'}</Text>
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Age:</Text>
-            <Text style={styles.infoValue}>Coming soon</Text>
+            <Text style={styles.infoValue}>{profileData?.dateOfBirth ? calculateAge(profileData.dateOfBirth) : 'Not set'}</Text>
           </View>
         </View>
 
-        <Text style={styles.sectionTitle}>SAVED{'\n'}OPPORTUNITIES:</Text>
-
-        <View style={styles.opportunitiesContainer}>
-          {savedOpportunities.map((opp) => (
-            <TouchableOpacity
-              key={opp.id}
-              style={styles.opportunityCard}
-              onPress={() => router.push('/OpportunityDetail')}
-            >
-              <View style={styles.opportunityIcon}>
-                <Image
-                  source={require('../assets/images/icon.png')}
-                  style={styles.iconImage}
-                  resizeMode="contain"
-                />
-              </View>
-              <Text style={styles.opportunityTitle}>{opp.title}</Text>
-              <TouchableOpacity style={styles.readMoreButton}>
-                <Text style={styles.readMoreText}>Read more</Text>
-              </TouchableOpacity>
-            </TouchableOpacity>
-          ))}
-        </View>
+        {savedOpportunities.length > 0 && (
+          <>
+            <Text style={styles.sectionTitle}>SAVED{'\n'}OPPORTUNITIES:</Text>
+            <View style={styles.opportunitiesContainer}>
+              {savedOpportunities.map((opp) => (
+                <TouchableOpacity
+                  key={opp.$id}
+                  style={styles.opportunityCard}
+                  onPress={() => router.push('/Opportunitydetail')}
+                >
+                  <View style={styles.opportunityIcon}>
+                    <Image
+                      source={require('../assets/images/icon.png')}
+                      style={styles.iconImage}
+                      resizeMode="contain"
+                    />
+                  </View>
+                  <Text style={styles.opportunityTitle}>{opp.opportunityTitle}</Text>
+                  <TouchableOpacity style={styles.readMoreButton}>
+                    <Text style={styles.readMoreText}>Read more</Text>
+                  </TouchableOpacity>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </>
+        )}
 
         <TouchableOpacity
           style={styles.continueButton}
@@ -178,6 +202,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: '#0a445c',
+    marginTop: 30,
     marginBottom: 20,
     lineHeight: 28,
   },

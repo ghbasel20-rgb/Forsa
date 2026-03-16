@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Image,
     ScrollView,
@@ -9,18 +9,26 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
+import { getAllOpportunities } from './services/opportunities-service';
 
 export default function AllOpportunities() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
+  const [allOpportunities, setAllOpportunities] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const allOpportunities = [
-    { id: 1, title: 'Opportunity', location: 'Tel Aviv' },
-    { id: 2, title: 'Opportunity', location: 'Jerusalem' },
-    { id: 3, title: 'Opportunity', location: 'Haifa' },
-    { id: 4, title: 'Opportunity', location: 'Beer Sheva' },
-  ];
+  useEffect(() => {
+    loadOpportunities();
+  }, []);
+
+  const loadOpportunities = async () => {
+    const result = await getAllOpportunities();
+    if (result.success) {
+      setAllOpportunities(result.data);
+    }
+    setLoading(false);
+  };
 
   const filteredOpportunities = allOpportunities.filter(opp =>
     opp.title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -81,24 +89,30 @@ export default function AllOpportunities() {
         </View>
 
         <View style={styles.opportunitiesContainer}>
-          {filteredOpportunities.map((opp) => (
-            <View key={opp.id} style={styles.opportunityCard}>
-              <View style={styles.iconContainer}>
-                <Image
-                  source={require('../assets/images/icon.png')}
-                  style={styles.opportunityIcon}
-                  resizeMode="contain"
-                />
+          {loading ? (
+            <Text style={styles.loadingText}>Loading opportunities...</Text>
+          ) : filteredOpportunities.length === 0 ? (
+            <Text style={styles.loadingText}>No opportunities found</Text>
+          ) : (
+            filteredOpportunities.map((opp) => (
+              <View key={opp.$id} style={styles.opportunityCard}>
+                <View style={styles.iconContainer}>
+                  <Image
+                    source={require('../assets/images/icon.png')}
+                    style={styles.opportunityIcon}
+                    resizeMode="contain"
+                  />
+                </View>
+                <Text style={styles.opportunityTitle}>{opp.title}</Text>
+                <TouchableOpacity
+                  style={styles.readMoreButton}
+                  onPress={() => router.push(`/Opportunitydetail?id=${opp.$id}`)}
+                >
+                  <Text style={styles.readMoreText}>Read more</Text>
+                </TouchableOpacity>
               </View>
-              <Text style={styles.opportunityTitle}>{opp.title}</Text>
-              <TouchableOpacity
-                style={styles.readMoreButton}
-                onPress={() => router.push('/Opportunitydetail')}
-              >
-                <Text style={styles.readMoreText}>Read more</Text>
-              </TouchableOpacity>
-            </View>
-          ))}
+            ))
+          )}
         </View>
       </View>
     </ScrollView>
@@ -185,6 +199,12 @@ const styles = StyleSheet.create({
   },
   opportunitiesContainer: {
     gap: 16,
+  },
+  loadingText: {
+    textAlign: 'center',
+    color: '#46a3a4',
+    fontSize: 16,
+    marginTop: 20,
   },
   opportunityCard: {
     backgroundColor: '#ffffff',
