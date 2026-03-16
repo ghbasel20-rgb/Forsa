@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import {
     Alert,
     Image,
+    Linking,
     ScrollView,
     StyleSheet,
     Text,
@@ -75,6 +76,20 @@ export default function Opportunitydetail() {
     }
   };
 
+  const handleOpenURL = async (url) => {
+    let formattedUrl = url;
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      formattedUrl = 'https://' + url;
+    }
+    
+    const canOpen = await Linking.canOpenURL(formattedUrl);
+    if (canOpen) {
+      await Linking.openURL(formattedUrl);
+    } else {
+      Alert.alert('Error', 'Cannot open this URL');
+    }
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
@@ -141,7 +156,9 @@ export default function Opportunitydetail() {
             {opportunity.url && (
               <View style={styles.infoSection}>
                 <Text style={styles.label}>Apply/Learn More:</Text>
-                <Text style={styles.urlText}>{opportunity.url}</Text>
+                <TouchableOpacity onPress={() => handleOpenURL(opportunity.url)}>
+                  <Text style={styles.urlText}>{opportunity.url}</Text>
+                </TouchableOpacity>
               </View>
             )}
           </>

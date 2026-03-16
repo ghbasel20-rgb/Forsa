@@ -1,5 +1,6 @@
+import { useFocusEffect } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
     Image,
     ScrollView,
@@ -18,9 +19,11 @@ export default function Profile() {
   const [profileData, setProfileData] = useState(null);
   const [savedOpportunities, setSavedOpportunities] = useState([]);
 
-  useEffect(() => {
-    loadUserData();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      loadUserData();
+    }, [])
+  );
 
   const loadUserData = async () => {
     const userResult = await getCurrentUser();
@@ -98,11 +101,7 @@ export default function Profile() {
             <Text style={styles.sectionTitle}>SAVED{'\n'}OPPORTUNITIES:</Text>
             <View style={styles.opportunitiesContainer}>
               {savedOpportunities.map((opp) => (
-                <TouchableOpacity
-                  key={opp.$id}
-                  style={styles.opportunityCard}
-                  onPress={() => router.push('/Opportunitydetail')}
-                >
+                <View key={opp.$id} style={styles.opportunityCard}>
                   <View style={styles.opportunityIcon}>
                     <Image
                       source={require('../assets/images/icon.png')}
@@ -111,10 +110,13 @@ export default function Profile() {
                     />
                   </View>
                   <Text style={styles.opportunityTitle}>{opp.opportunityTitle}</Text>
-                  <TouchableOpacity style={styles.readMoreButton}>
+                  <TouchableOpacity
+                    style={styles.readMoreButton}
+                    onPress={() => router.push(`/Opportunitydetail?id=${opp.opportunityId}`)}
+                  >
                     <Text style={styles.readMoreText}>Read more</Text>
                   </TouchableOpacity>
-                </TouchableOpacity>
+                </View>
               ))}
             </View>
           </>

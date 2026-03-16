@@ -25,6 +25,28 @@ export default function OtherMatches() {
     }
   };
 
+  if (opportunities.length === 0) {
+    return (
+      <ScrollView style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()}>
+            <Text style={styles.backButton}>←</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('/Profile')}>
+            <Image
+              source={require('../assets/images/home-icon.png')}
+              style={styles.homeIcon}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+        </View>
+
+        <Text style={styles.title}>OTHER{'\n'}MATCHES</Text>
+        <Text style={styles.noMatches}>No more opportunities available</Text>
+      </ScrollView>
+    );
+  }
+
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
@@ -130,6 +152,12 @@ const styles = StyleSheet.create({
     color: '#0a445c',
     marginBottom: 30,
     lineHeight: 42,
+  },
+  noMatches: {
+    textAlign: 'center',
+    color: '#46a3a4',
+    fontSize: 16,
+    marginTop: 20,
   },
   matchesContainer: {
     gap: 16,

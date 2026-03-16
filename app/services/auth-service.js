@@ -1,6 +1,13 @@
 import { account, ID } from '../config/appwrite-config';
+
 export const signUp = async (email, password, name) => {
   try {
+    try {
+      await account.deleteSession('current');
+    } catch (error) {
+      console.log('No session to delete');
+    }
+
     const response = await account.create(
       ID.unique(), 
       email,
