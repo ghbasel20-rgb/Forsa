@@ -98,7 +98,7 @@ Forsa/
 
 **Dev of the Month:** Basel Ghrayeb
 
-**Supporting Developers:** Basel Ghrayeb
+**Supporting Developers:** Anna Samofalova
 
 ## Contributing
 
