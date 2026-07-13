@@ -96,11 +96,7 @@ Forsa/
 
 **Lead Developer:** Basel Ghrayeb
 
-**Dev of the Month:** Basel Ghrayeb
-
 **Supporting Developers:** Anna Samofalova
 
-## Contributing
 
-This project is open for collaboration. More developers will be joining soon to expand functionality and features.
 
