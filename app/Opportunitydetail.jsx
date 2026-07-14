@@ -110,7 +110,7 @@ export default function Opportunitydetail() {
           </View>
           <TouchableOpacity onPress={() => router.push('/Profile')}>
             <Image
-              source={require('../assets/images/home-icon.png')}
+              source={require('../assets/images/home-icon.svg')}
               style={styles.homeIcon}
               resizeMode="contain"
             />
@@ -119,7 +119,7 @@ export default function Opportunitydetail() {
 
         <View style={styles.iconContainer}>
           <Image
-            source={require('../assets/images/icon.png')}
+            source={require('../assets/images/icon.svg')}
             style={styles.opportunityIcon}
             resizeMode="contain"
           />

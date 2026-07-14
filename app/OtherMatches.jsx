@@ -34,7 +34,7 @@ export default function OtherMatches() {
           </TouchableOpacity>
           <TouchableOpacity onPress={() => router.push('/Profile')}>
             <Image
-              source={require('../assets/images/home-icon.png')}
+              source={require('../assets/images/home-icon.svg')}
               style={styles.homeIcon}
               resizeMode="contain"
             />
@@ -67,7 +67,7 @@ export default function OtherMatches() {
           </View>
           <TouchableOpacity onPress={() => router.push('/Profile')}>
             <Image
-              source={require('../assets/images/home-icon.png')}
+              source={require('../assets/images/home-icon.svg')}
               style={styles.homeIcon}
               resizeMode="contain"
             />
