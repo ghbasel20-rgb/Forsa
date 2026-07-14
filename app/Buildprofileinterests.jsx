@@ -2,15 +2,15 @@ import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
   Alert,
-  Image,
   Modal,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
+import Logo from '../assets/images/Logo.svg';
 import { useProfile } from './ProfileContext';
 import { getCurrentUser } from './services/auth-service';
 import { createUserProfile } from './services/profile-service';
@@ -119,11 +119,7 @@ export default function Buildprofileinterests() {
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <Image
-            source={require('../assets/images/Logo.svg')}
-            style={styles.logoSmall}
-            resizeMode="contain"
-          />
+          <Logo style={styles.logoSmall} />
           <Text style={styles.brandName}>FORSA</Text>
         </View>
 

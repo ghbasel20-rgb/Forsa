@@ -4,15 +4,15 @@ import React, { useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
-  Image,
   Platform,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
+import Logo from '../assets/images/Logo.svg';
 import { useProfile } from './ProfileContext';
 import { signUp } from './services/auth-service';
 
@@ -80,11 +80,7 @@ export default function SignUp() {
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <Image
-            source={require('../assets/images/Logo.svg')}
-            style={styles.logoSmall}
-            resizeMode="contain"
-          />
+          <Logo style={styles.logoSmall} />
           <Text style={styles.brandName}>FORSA</Text>
         </View>
 

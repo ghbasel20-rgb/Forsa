@@ -3,13 +3,13 @@ import React, { useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
-  Image,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
+import Logo from '../assets/images/Logo.svg';
 import { signIn, signOut } from './services/auth-service';
 
 export default function SignIn() {
@@ -46,11 +46,7 @@ export default function SignIn() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Image
-          source={require('../assets/images/Logo.svg')}
-          style={styles.logoSmall}
-          resizeMode="contain"
-        />
+        <Logo style={styles.logoSmall} />
         <Text style={styles.brandName}>FORSA</Text>
       </View>
 

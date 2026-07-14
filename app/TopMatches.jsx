@@ -1,13 +1,13 @@
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-  Image,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
+import HomeIcon from '../assets/images/home-icon.svg';
 import { getAllOpportunities } from './services/opportunities-service';
 
 export default function TopMatches() {
@@ -30,19 +30,11 @@ export default function TopMatches() {
       <View style={styles.container}>
         <View style={styles.header}>
           <View style={styles.logoContainer}>
-            <Image
-              source={require('../assets/images/Logo.svg')}
-              style={styles.logoSmall}
-              resizeMode="contain"
-            />
+            <Logo style={styles.logoSmall} />
             <Text style={styles.brandName}>FORSA</Text>
           </View>
           <TouchableOpacity onPress={() => router.push('/Profile')}>
-            <Image
-              source={require('../assets/images/home-icon.svg')}
-              style={styles.homeIcon}
-              resizeMode="contain"
-            />
+            <HomeIcon style={styles.homeIcon} />
           </TouchableOpacity>
         </View>
 
