@@ -76,8 +76,8 @@ export default function Buildprofileinterests() {
   };
 
   const handleNext = async () => {
-    if (selectedInterests.length === 0) {
-      Alert.alert('Error', 'Please select at least one interest');
+    if (selectedInterests.length < 3) {
+      Alert.alert('Error', 'Please select at least three interests');
       return;
     }
 
