@@ -1,12 +1,12 @@
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-    Image,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { getAllOpportunities } from './services/opportunities-service';
 
@@ -31,7 +31,7 @@ export default function TopMatches() {
         <View style={styles.header}>
           <View style={styles.logoContainer}>
             <Image
-              source={require('../assets/images/Logo.png')}
+              source={require('../assets/images/Logo.svg')}
               style={styles.logoSmall}
               resizeMode="contain"
             />

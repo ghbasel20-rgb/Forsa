@@ -2,12 +2,12 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
-    Image,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { getCurrentUser } from './services/auth-service';
 import { getUserProfile } from './services/profile-service';
@@ -59,7 +59,7 @@ export default function Profile() {
       <View style={styles.container}>
         <View style={styles.header}>
           <Image
-            source={require('../assets/images/Logo.png')}
+            source={require('../assets/images/Logo.svg')}
             style={styles.logoSmall}
             resizeMode="contain"
           />
