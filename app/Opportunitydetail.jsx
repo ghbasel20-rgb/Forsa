@@ -1,14 +1,14 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-    Alert,
-    Image,
-    Linking,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Alert,
+  Image,
+  Linking,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { getCurrentUser } from './services/auth-service';
 import { getOpportunityById } from './services/opportunities-service';
@@ -102,7 +102,7 @@ export default function Opportunitydetail() {
               <Text style={styles.backText}>{'< Back'}</Text>
             </TouchableOpacity>
             <Image
-              source={require('../assets/images/Logo.png')}
+              source={require('../assets/images/Logo.svg')}
               style={styles.logoSmall}
               resizeMode="contain"
             />
@@ -110,7 +110,7 @@ export default function Opportunitydetail() {
           </View>
           <TouchableOpacity onPress={() => router.push('/Profile')}>
             <Image
-              source={require('../assets/images/home-icon.png')}
+              source={require('../assets/images/home-icon.svg')}
               style={styles.homeIcon}
               resizeMode="contain"
             />
@@ -119,7 +119,7 @@ export default function Opportunitydetail() {
 
         <View style={styles.iconContainer}>
           <Image
-            source={require('../assets/images/icon.png')}
+            source={require('../assets/images/icon.svg')}
             style={styles.opportunityIcon}
             resizeMode="contain"
           />

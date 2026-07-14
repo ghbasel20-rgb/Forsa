@@ -76,8 +76,8 @@ export default function Buildprofileinterests() {
   };
 
   const handleNext = async () => {
-    if (selectedInterests.length === 0) {
-      Alert.alert('Error', 'Please select at least one interest');
+    if (selectedInterests.length < 3) {
+      Alert.alert('Error', 'Please select at least three interests');
       return;
     }
 
@@ -120,7 +120,7 @@ export default function Buildprofileinterests() {
       <View style={styles.container}>
         <View style={styles.header}>
           <Image
-            source={require('../assets/images/Logo.png')}
+            source={require('../assets/images/Logo.svg')}
             style={styles.logoSmall}
             resizeMode="contain"
           />

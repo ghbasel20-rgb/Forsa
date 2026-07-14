@@ -15,7 +15,7 @@ export default function Index() {
     <View style={styles.container}>
       <View style={styles.logoContainer}>
         <Image
-          source={require('../assets/images/Logo.png')}
+          source={require('../assets/images/Logo.svg')}
           style={styles.logo}
           resizeMode="contain"
         />
