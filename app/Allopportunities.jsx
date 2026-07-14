@@ -55,7 +55,7 @@ export default function AllOpportunities() {
           <View style={styles.rightSection}>
             <TouchableOpacity onPress={() => setShowSearch(!showSearch)}>
               <Image
-                source={require('../assets/images/Search.png')}
+                source={require('../assets/images/Search.svg')}
                 style={styles.searchIcon}
                 resizeMode="contain"
               />
