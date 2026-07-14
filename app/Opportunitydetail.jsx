@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import Logo from '../assets/images/Logo.svg';
 import { getCurrentUser } from './services/auth-service';
 import { getOpportunityById } from './services/opportunities-service';
 import { checkIfSaved, saveOpportunity, unsaveOpportunity } from './services/saved-opportunities-service';
@@ -101,19 +102,11 @@ export default function Opportunitydetail() {
             >
               <Text style={styles.backText}>{'< Back'}</Text>
             </TouchableOpacity>
-            <Image
-              source={require('../assets/images/Logo.svg')}
-              style={styles.logoSmall}
-              resizeMode="contain"
-            />
+            <Logo style={styles.logoSmall} />
             <Text style={styles.brandName}>FORSA</Text>
           </View>
           <TouchableOpacity onPress={() => router.push('/Profile')}>
-            <Image
-              source={require('../assets/images/home-icon.svg')}
-              style={styles.homeIcon}
-              resizeMode="contain"
-            />
+            <HomeIcon style={styles.homeIcon} />
           </TouchableOpacity>
         </View>
 

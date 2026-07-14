@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import Logo from '../assets/images/Logo.svg';
 import { getAllOpportunities } from './services/opportunities-service';
 
 export default function AllOpportunities() {
@@ -45,27 +46,15 @@ export default function AllOpportunities() {
             >
               <Text style={styles.backText}>{'< Back'}</Text>
             </TouchableOpacity>
-            <Image
-              source={require('../assets/images/Logo.svg')}
-              style={styles.logoSmall}
-              resizeMode="contain"
-            />
+            <Logo style={styles.logoSmall} />
             <Text style={styles.brandName}>FORSA</Text>
           </View>
           <View style={styles.rightSection}>
             <TouchableOpacity onPress={() => setShowSearch(!showSearch)}>
-              <Image
-                source={require('../assets/images/Search.svg')}
-                style={styles.searchIcon}
-                resizeMode="contain"
-              />
+              <SearchIcon style={styles.searchIcon} />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => router.push('/Profile')}>
-              <Image
-                source={require('../assets/images/home-icon.svg')}
-                style={styles.homeIcon}
-                resizeMode="contain"
-              />
+              <HomeIcon style={styles.homeIcon} />
             </TouchableOpacity>
           </View>
         </View>

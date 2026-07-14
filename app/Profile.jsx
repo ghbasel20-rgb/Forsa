@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import Logo from '../assets/images/Logo.svg';
 import { getCurrentUser } from './services/auth-service';
 import { getUserProfile } from './services/profile-service';
 import { getSavedOpportunities } from './services/saved-opportunities-service';
@@ -58,11 +59,7 @@ export default function Profile() {
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <Image
-            source={require('../assets/images/Logo.svg')}
-            style={styles.logoSmall}
-            resizeMode="contain"
-          />
+         <Logo style={styles.logoSmall} />
           <Text style={styles.brandName}>FORSA</Text>
         </View>
 

@@ -1,12 +1,12 @@
 import { useRouter } from 'expo-router';
 import React from 'react';
 import {
-  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
+import Logo from '../assets/images/Logo.svg';
 
 export default function Index() {
   const router = useRouter();
@@ -14,11 +14,7 @@ export default function Index() {
   return (
     <View style={styles.container}>
       <View style={styles.logoContainer}>
-        <Image
-          source={require('../assets/images/Logo.svg')}
-          style={styles.logo}
-          resizeMode="contain"
-        />
+        <Logo style={styles.logo} />
         <Text style={styles.brandName}>FORSA</Text>
       </View>
 
