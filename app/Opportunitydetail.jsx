@@ -119,7 +119,7 @@ export default function Opportunitydetail() {
 
         <View style={styles.iconContainer}>
           <Image
-            source={require('../assets/images/icon.svg')}
+            source={require('../assets/images/icon.png')}
             style={styles.opportunityIcon}
             resizeMode="contain"
           />
