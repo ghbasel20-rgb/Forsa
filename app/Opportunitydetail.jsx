@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import HomeIcon from '../assets/images/home-icon.svg';
 import Logo from '../assets/images/Logo.svg';
 import { getCurrentUser } from './services/auth-service';
 import { getOpportunityById } from './services/opportunities-service';
