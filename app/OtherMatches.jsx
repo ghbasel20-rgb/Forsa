@@ -9,20 +9,33 @@ import {
 } from 'react-native';
 import Logo from '../assets/images/Logo.svg';
 import HomeIcon from '../assets/images/home-icon.svg';
-import { getAllOpportunities } from './services/opportunities-service';
+import { getAllOpportunities, getMatchedOpportunities } from './services/opportunities-service';
+import { getCurrentUser } from './services/auth-service';
+import { getUserProfile } from './services/profile-service';
 
 export default function OtherMatches() {
   const router = useRouter();
   const [opportunities, setOpportunities] = useState([]);
+  const [topMatchCount, setTopMatchCount] = useState(0);
 
   useEffect(() => {
     loadOpportunities();
   }, []);
 
   const loadOpportunities = async () => {
-    const result = await getAllOpportunities();
-    if (result.success) {
-      setOpportunities(result.data.slice(3, 6));
+    const userResult = await getCurrentUser();
+    if (!userResult.success) {
+      return;
+    }
+
+    const profileResult = await getUserProfile(userResult.data.$id);
+    const profile = profileResult.success ? profileResult.data : null;
+
+    const opportunitiesResult = await getAllOpportunities();
+    if (opportunitiesResult.success) {
+      const { topMatches, otherMatches } = getMatchedOpportunities(opportunitiesResult.data, profile);
+      setTopMatchCount(topMatches.length);
+      setOpportunities(otherMatches);
     }
   };
 
@@ -69,7 +82,7 @@ export default function OtherMatches() {
           {opportunities.map((match, index) => (
             <View key={match.$id} style={styles.matchCard}>
               <View style={styles.numberBadge}>
-                <Text style={styles.numberText}>#{index + 4}</Text>
+                <Text style={styles.numberText}>#{topMatchCount + index + 1}</Text>
               </View>
               <Text style={styles.matchTitle}>{match.title}</Text>
               <TouchableOpacity

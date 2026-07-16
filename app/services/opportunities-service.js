@@ -69,10 +69,62 @@ export const searchOpportunities = async (searchQuery) => {
       OPPORTUNITIES_COLLECTION_ID,
       [Query.search('title', searchQuery)]
     );
-    
+
     return { success: true, data: response.documents };
   } catch (error) {
     console.error('Search opportunities error:', error);
     return { success: false, error: error.message };
   }
+};
+
+const scoreOpportunityMatch = (opportunity, profile) => {
+  const userSelections = new Set([
+    ...(profile?.skills || []),
+    ...(profile?.interests || []),
+  ]);
+  const opportunitySelections = new Set([
+    ...(opportunity.skills || []),
+    ...(opportunity.interests || []),
+  ]);
+
+  let overlap = 0;
+  opportunitySelections.forEach((item) => {
+    if (userSelections.has(item)) {
+      overlap += 1;
+    }
+  });
+
+  return overlap;
+};
+
+export const getMatchedOpportunities = (opportunities, profile) => {
+  const userSelectionCount =
+    (profile?.skills?.length || 0) + (profile?.interests?.length || 0);
+  const strongAlignmentThreshold = Math.max(2, Math.ceil(userSelectionCount / 2));
+
+  const scored = opportunities
+    .map((opportunity) => ({
+      opportunity,
+      score: scoreOpportunityMatch(opportunity, profile),
+    }))
+    .filter((entry) => entry.score > 0)
+    .sort((a, b) => {
+      if (b.score !== a.score) {
+        return b.score - a.score;
+      }
+      return new Date(b.opportunity.$createdAt) - new Date(a.opportunity.$createdAt);
+    });
+
+  const topMatches = scored
+    .filter((entry) => entry.score >= strongAlignmentThreshold)
+    .slice(0, 3)
+    .map((entry) => entry.opportunity);
+
+  const topMatchIds = new Set(topMatches.map((opportunity) => opportunity.$id));
+
+  const otherMatches = scored
+    .filter((entry) => !topMatchIds.has(entry.opportunity.$id))
+    .map((entry) => entry.opportunity);
+
+  return { topMatches, otherMatches };
 };
