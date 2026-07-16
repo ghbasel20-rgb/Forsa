@@ -51,6 +51,7 @@ export default function BuildProfileSkills() {
     'Content Creation',
     'Social Media',
     'SEO',
+    'Cooking',
     'Other',
   ];
 
