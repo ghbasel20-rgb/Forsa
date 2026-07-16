@@ -30,11 +30,11 @@ export default function TopMatches() {
       <View style={styles.container}>
         <View style={styles.header}>
           <View style={styles.logoContainer}>
-            <Logo style={styles.logoSmall} />
+            <Logo width={30} height={30} style={styles.logoSmall} />
             <Text style={styles.brandName}>FORSA</Text>
           </View>
           <TouchableOpacity onPress={() => router.push('/Profile')}>
-            <HomeIcon style={styles.homeIcon} />
+            <HomeIcon width={40} height={40} style={styles.homeIcon} />
           </TouchableOpacity>
         </View>
 

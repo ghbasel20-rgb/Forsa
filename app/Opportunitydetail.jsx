@@ -102,11 +102,11 @@ export default function Opportunitydetail() {
             >
               <Text style={styles.backText}>{'< Back'}</Text>
             </TouchableOpacity>
-            <Logo style={styles.logoSmall} />
+            <Logo width={30} height={30} style={styles.logoSmall} />
             <Text style={styles.brandName}>FORSA</Text>
           </View>
           <TouchableOpacity onPress={() => router.push('/Profile')}>
-            <HomeIcon style={styles.homeIcon} />
+            <HomeIcon width={40} height={40} style={styles.homeIcon} />
           </TouchableOpacity>
         </View>
 

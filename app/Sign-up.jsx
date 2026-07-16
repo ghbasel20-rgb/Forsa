@@ -80,7 +80,7 @@ export default function SignUp() {
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <Logo style={styles.logoSmall} />
+          <Logo width={30} height={30} style={styles.logoSmall} />
           <Text style={styles.brandName}>FORSA</Text>
         </View>
 

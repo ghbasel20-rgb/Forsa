@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import Logo from '../assets/images/Logo.svg';
 import HomeIcon from '../assets/images/home-icon.svg';
 import { getAllOpportunities } from './services/opportunities-service';
 
@@ -33,7 +34,7 @@ export default function OtherMatches() {
             <Text style={styles.backButton}>←</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => router.push('/Profile')}>
-            <HomeIcon style={styles.homeIcon} />
+            <HomeIcon width={40} height={40} style={styles.homeIcon} />
           </TouchableOpacity>
         </View>
 
@@ -54,11 +55,11 @@ export default function OtherMatches() {
             >
               <Text style={styles.backText}>{'< Back'}</Text>
             </TouchableOpacity>
-            <Logo style={styles.logoSmall} />
+            <Logo width={30} height={30} style={styles.logoSmall} />
             <Text style={styles.brandName}>FORSA</Text>
           </View>
           <TouchableOpacity onPress={() => router.push('/Profile')}>
-            <HomeIcon style={styles.homeIcon} />
+            <HomeIcon width={40} height={40} style={styles.homeIcon} />
           </TouchableOpacity>
         </View>
 
