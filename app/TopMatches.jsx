@@ -9,7 +9,9 @@ import {
 } from 'react-native';
 import HomeIcon from '../assets/images/home-icon.svg';
 import Logo from '../assets/images/Logo.svg';
-import { getAllOpportunities } from './services/opportunities-service';
+import { getAllOpportunities, getMatchedOpportunities } from './services/opportunities-service';
+import { getCurrentUser } from './services/auth-service';
+import { getUserProfile } from './services/profile-service';
 
 export default function TopMatches() {
   const router = useRouter();
@@ -20,9 +22,18 @@ export default function TopMatches() {
   }, []);
 
   const loadOpportunities = async () => {
-    const result = await getAllOpportunities();
-    if (result.success) {
-      setOpportunities(result.data.slice(0, 3));
+    const userResult = await getCurrentUser();
+    if (!userResult.success) {
+      return;
+    }
+
+    const profileResult = await getUserProfile(userResult.data.$id);
+    const profile = profileResult.success ? profileResult.data : null;
+
+    const opportunitiesResult = await getAllOpportunities();
+    if (opportunitiesResult.success) {
+      const { topMatches } = getMatchedOpportunities(opportunitiesResult.data, profile);
+      setOpportunities(topMatches);
     }
   };
 
