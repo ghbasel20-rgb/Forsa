@@ -102,7 +102,7 @@ export default function Opportunitydetail() {
             >
               <Text style={styles.backText}>{'< Back'}</Text>
             </TouchableOpacity>
-            <Logo width={30} height={30} style={styles.logoSmall} />
+            <Logo width={38} height={38} style={styles.logoSmall} />
             <Text style={styles.brandName}>FORSA</Text>
           </View>
           <TouchableOpacity onPress={() => router.push('/Profile')}>
@@ -194,8 +194,8 @@ const styles = StyleSheet.create({
     color: '#0a445c',
   },
   logoSmall: {
-    width: 30,
-    height: 30,
+    width: 38,
+    height: 38,
   },
   brandName: {
     fontSize: 16,
