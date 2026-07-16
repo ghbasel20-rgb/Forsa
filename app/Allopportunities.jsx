@@ -46,15 +46,15 @@ export default function AllOpportunities() {
             >
               <Text style={styles.backText}>{'< Back'}</Text>
             </TouchableOpacity>
-            <Logo style={styles.logoSmall} />
+            <Logo width={30} height={30} style={styles.logoSmall} />
             <Text style={styles.brandName}>FORSA</Text>
           </View>
           <View style={styles.rightSection}>
             <TouchableOpacity onPress={() => setShowSearch(!showSearch)}>
-              <SearchIcon style={styles.searchIcon} />
+              <SearchIcon width={30} height={30} style={styles.searchIcon} />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => router.push('/Profile')}>
-              <HomeIcon style={styles.homeIcon} />
+              <HomeIcon width={40} height={40} style={styles.homeIcon} />
             </TouchableOpacity>
           </View>
         </View>

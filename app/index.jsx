@@ -14,7 +14,7 @@ export default function Index() {
   return (
     <View style={styles.container}>
       <View style={styles.logoContainer}>
-        <Logo style={styles.logo} />
+        <Logo width={180} height={180} style={styles.logo} />
         <Text style={styles.brandName}>FORSA</Text>
       </View>
 
