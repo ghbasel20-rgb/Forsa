@@ -9,7 +9,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import HomeIcon from '../assets/images/home-icon.svg';
 import Logo from '../assets/images/Logo.svg';
+import SearchIcon from '../assets/images/Search.svg';
 import { getAllOpportunities } from './services/opportunities-service';
 
 export default function AllOpportunities() {
