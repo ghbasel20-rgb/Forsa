@@ -59,7 +59,7 @@ export default function Profile() {
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
         <View style={styles.header}>
-         <Logo width={30} height={30} style={styles.logoSmall} />
+         <Logo width={38} height={38} style={styles.logoSmall} />
           <Text style={styles.brandName}>FORSA</Text>
         </View>
 
@@ -148,8 +148,8 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   logoSmall: {
-    width: 30,
-    height: 30,
+    width: 38,
+    height: 38,
   },
   brandName: {
     fontSize: 16,
