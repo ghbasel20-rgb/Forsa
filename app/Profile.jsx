@@ -12,6 +12,7 @@ import Logo from '../assets/images/Logo.svg';
 import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
 import { getCurrentUser } from './services/auth-service';
+import { exploreOpportunities } from './services/navigation-service';
 import { getUserProfile } from './services/profile-service';
 import { getSavedOpportunities } from './services/saved-opportunities-service';
 
@@ -119,7 +120,7 @@ export default function Profile() {
 
           <TouchableOpacity
             style={styles.continueButton}
-            onPress={() => router.push('/TopMatches')}
+            onPress={() => exploreOpportunities(router)}
           >
             <Text style={styles.continueButtonText}>Continue exploring</Text>
           </TouchableOpacity>

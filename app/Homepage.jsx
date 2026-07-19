@@ -13,8 +13,7 @@ import PurplePfpIcon from '../assets/images/purplePfp.svg';
 import PurpleSearchIcon from '../assets/images/purplesearch.svg';
 import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
-import { getCurrentUser } from './services/auth-service';
-import { getUserProfile } from './services/profile-service';
+import { exploreOpportunities } from './services/navigation-service';
 
 const successStories = [
   { id: '1', name: 'Sarah Cohen', info: 'Placed in a 3-month internship' },
@@ -24,20 +23,6 @@ const successStories = [
 
 export default function Homepage() {
   const router = useRouter();
-
-  const handleExploreOpportunities = async () => {
-    const userResult = await getCurrentUser();
-    if (!userResult.success) {
-      return;
-    }
-
-    const profileResult = await getUserProfile(userResult.data.$id);
-    if (profileResult.success && profileResult.data.hasCompletedSkillsInterests) {
-      router.push('/TopMatches');
-    } else {
-      router.push('/Buildprofileskills');
-    }
-  };
 
   return (
     <View style={styles.screen}>
@@ -52,16 +37,16 @@ export default function Homepage() {
             <View style={styles.gridRow}>
               <TouchableOpacity style={styles.gridItem} onPress={() => router.push('/Profile')}>
                 <View style={styles.iconCircle}>
-                  <PurplePfpIcon width={44} height={44} />
+                  <PurplePfpIcon width={44} height={44} viewBox="15 2 29 30" />
                 </View>
                 <View style={styles.labelPill}>
                   <Text style={styles.labelText}>your profile</Text>
                 </View>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.gridItem} onPress={handleExploreOpportunities}>
+              <TouchableOpacity style={styles.gridItem} onPress={() => exploreOpportunities(router)}>
                 <View style={styles.iconCircle}>
-                  <PurpleSearchIcon width={44} height={44} />
+                  <PurpleSearchIcon width={44} height={44} viewBox="37.65 6.64 62.55 66.85" />
                 </View>
                 <View style={styles.labelPill}>
                   <Text style={styles.labelText}>Explore opportunities</Text>
@@ -81,7 +66,7 @@ export default function Homepage() {
 
               <TouchableOpacity style={styles.gridItem} onPress={() => router.push('/Contact')}>
                 <View style={styles.iconCircle}>
-                  <ContactIcon width={44} height={44} />
+                  <ContactIcon width={44} height={44} viewBox="17.4 0 80.2 80.2" />
                 </View>
                 <View style={styles.labelPill}>
                   <Text style={styles.labelText}>Contact us</Text>
