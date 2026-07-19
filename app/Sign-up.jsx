@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
+  Modal,
   Platform,
   ScrollView,
   StyleSheet,
@@ -11,20 +12,29 @@ import {
   View
 } from 'react-native';
 import Logo from '../assets/images/Logo.svg';
-import { useProfile } from './ProfileContext';
 import Text from './components/AppText';
 import TextInput from './components/AppTextInput';
 import { signUp } from './services/auth-service';
+import { createUserProfile } from './services/profile-service';
+
+const statusOptions = [
+  'High School Student',
+  'High School Graduate',
+  'University Student',
+  'University Graduate',
+  'Other',
+];
 
 export default function SignUp() {
   const router = useRouter();
-  const { updateProfile } = useProfile();
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [status, setStatus] = useState('');
+  const [showStatusModal, setShowStatusModal] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const onDateChange = (event, selectedDate) => {
@@ -45,7 +55,7 @@ export default function SignUp() {
   };
 
   const handleSignUp = async () => {
-    if (!fullName || !email || !password || !confirmPassword) {
+    if (!fullName || !email || !password || !confirmPassword || !status) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
@@ -62,17 +72,29 @@ export default function SignUp() {
 
     setLoading(true);
     const result = await signUp(email, password, fullName);
+
+    if (!result.success) {
+      setLoading(false);
+      Alert.alert('Error', result.error);
+      return;
+    }
+
+    const profileResult = await createUserProfile(result.data.$id, {
+      fullName,
+      email: result.data.email,
+      dateOfBirth: dateOfBirth.toISOString(),
+      educationStatus: status,
+      skills: [],
+      interests: [],
+      hasCompletedSkillsInterests: false,
+    });
     setLoading(false);
 
-    if (result.success) {
-      updateProfile({
-        fullName,
-        dateOfBirth: dateOfBirth.toISOString(),
-      });
+    if (profileResult.success) {
       Alert.alert('Success', 'Account created successfully!');
-      router.push('/Buildprofile');
+      router.push('/Homepage');
     } else {
-      Alert.alert('Error', result.error);
+      Alert.alert('Error', profileResult.error);
     }
   };
 
@@ -142,6 +164,15 @@ export default function SignUp() {
           )}
 
           <TouchableOpacity
+            style={styles.input}
+            onPress={() => setShowStatusModal(true)}
+          >
+            <Text style={[styles.dateText, !status && styles.placeholderText]}>
+              {status || 'Status'}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
             style={styles.button}
             onPress={handleSignUp}
             disabled={loading}
@@ -159,6 +190,35 @@ export default function SignUp() {
             </Text>
           </TouchableOpacity>
         </View>
+
+        <Modal
+          visible={showStatusModal}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setShowStatusModal(false)}
+        >
+          <TouchableOpacity
+            style={styles.modalOverlay}
+            activeOpacity={1}
+            onPress={() => setShowStatusModal(false)}
+          >
+            <View style={styles.modalContent} onStartShouldSetResponder={() => true}>
+              <Text style={styles.modalTitle}>Select Status</Text>
+              {statusOptions.map((option) => (
+                <TouchableOpacity
+                  key={option}
+                  style={styles.modalOption}
+                  onPress={() => {
+                    setStatus(option);
+                    setShowStatusModal(false);
+                  }}
+                >
+                  <Text style={styles.modalOptionText}>{option}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </TouchableOpacity>
+        </Modal>
       </View>
     </ScrollView>
   );
@@ -212,6 +272,38 @@ const styles = StyleSheet.create({
     color: '#0a445c',
   },
   dateText: {
+    fontSize: 16,
+    color: '#0a445c',
+  },
+  placeholderText: {
+    color: '#46a3a4',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: '#ffffff',
+    borderRadius: 20,
+    padding: 20,
+    width: '80%',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#0a445c',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  modalOption: {
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e1e4e4',
+  },
+  modalOptionText: {
     fontSize: 16,
     color: '#0a445c',
   },

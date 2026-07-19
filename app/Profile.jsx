@@ -80,11 +80,7 @@ export default function Profile() {
             <Text style={styles.infoValue}>{userData?.email || 'Loading...'}</Text>
           </View>
           <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>Location:</Text>
-            <Text style={styles.infoValue}>{profileData?.location || 'Not set'}</Text>
-          </View>
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>Education status:</Text>
+            <Text style={styles.infoLabel}>Status:</Text>
             <Text style={styles.infoValue}>{profileData?.educationStatus || 'Not set'}</Text>
           </View>
           <View style={styles.infoRow}>
