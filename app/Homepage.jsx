@@ -11,6 +11,7 @@ import EventsIcon from '../assets/images/events.svg';
 import Logo from '../assets/images/Logo.svg';
 import PurplePfpIcon from '../assets/images/purplePfp.svg';
 import PurpleSearchIcon from '../assets/images/purplesearch.svg';
+import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
 import { getCurrentUser } from './services/auth-service';
 import { getUserProfile } from './services/profile-service';
@@ -39,76 +40,82 @@ export default function Homepage() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Logo width={38} height={38} style={styles.logoSmall} />
-          <Text style={styles.brandName}>FORSA</Text>
-        </View>
-
-        <View style={styles.grid}>
-          <View style={styles.gridRow}>
-            <TouchableOpacity style={styles.gridItem} onPress={() => router.push('/Profile')}>
-              <View style={styles.iconCircle}>
-                <PurplePfpIcon width={44} height={44} />
-              </View>
-              <View style={styles.labelPill}>
-                <Text style={styles.labelText}>your profile</Text>
-              </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.gridItem} onPress={handleExploreOpportunities}>
-              <View style={styles.iconCircle}>
-                <PurpleSearchIcon width={44} height={44} />
-              </View>
-              <View style={styles.labelPill}>
-                <Text style={styles.labelText}>Explore opportunities</Text>
-              </View>
-            </TouchableOpacity>
+    <View style={styles.screen}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <Logo width={38} height={38} style={styles.logoSmall} />
+            <Text style={styles.brandName}>FORSA</Text>
           </View>
 
-          <View style={styles.gridRow}>
-            <TouchableOpacity style={styles.gridItem} onPress={() => router.push('/Events')}>
-              <View style={styles.iconCircle}>
-                <EventsIcon width={44} height={44} />
-              </View>
-              <View style={styles.labelPill}>
-                <Text style={styles.labelText}>JOIN our events!</Text>
-              </View>
-            </TouchableOpacity>
+          <View style={styles.grid}>
+            <View style={styles.gridRow}>
+              <TouchableOpacity style={styles.gridItem} onPress={() => router.push('/Profile')}>
+                <View style={styles.iconCircle}>
+                  <PurplePfpIcon width={44} height={44} />
+                </View>
+                <View style={styles.labelPill}>
+                  <Text style={styles.labelText}>your profile</Text>
+                </View>
+              </TouchableOpacity>
 
-            <TouchableOpacity style={styles.gridItem} onPress={() => router.push('/Contact')}>
-              <View style={styles.iconCircle}>
-                <ContactIcon width={44} height={44} />
-              </View>
-              <View style={styles.labelPill}>
-                <Text style={styles.labelText}>Contact us</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <View style={styles.divider} />
-
-        <Text style={styles.sectionTitle}>SUCCESS STORIES</Text>
-
-        <View style={styles.storiesContainer}>
-          {successStories.map((story) => (
-            <View key={story.id} style={styles.storyRow}>
-              <View style={styles.storyPhoto} />
-              <View style={styles.storyInfo}>
-                <Text style={styles.storyName}>{story.name}</Text>
-                <Text style={styles.storyDetail}>{`#${story.info}`}</Text>
-              </View>
+              <TouchableOpacity style={styles.gridItem} onPress={handleExploreOpportunities}>
+                <View style={styles.iconCircle}>
+                  <PurpleSearchIcon width={44} height={44} />
+                </View>
+                <View style={styles.labelPill}>
+                  <Text style={styles.labelText}>Explore opportunities</Text>
+                </View>
+              </TouchableOpacity>
             </View>
-          ))}
+
+            <View style={styles.gridRow}>
+              <TouchableOpacity style={styles.gridItem} onPress={() => router.push('/Events')}>
+                <View style={styles.iconCircle}>
+                  <EventsIcon width={44} height={44} />
+                </View>
+                <View style={styles.labelPill}>
+                  <Text style={styles.labelText}>JOIN our events!</Text>
+                </View>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.gridItem} onPress={() => router.push('/Contact')}>
+                <View style={styles.iconCircle}>
+                  <ContactIcon width={44} height={44} />
+                </View>
+                <View style={styles.labelPill}>
+                  <Text style={styles.labelText}>Contact us</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <View style={styles.divider} />
+
+          <Text style={styles.sectionTitle}>SUCCESS STORIES</Text>
+
+          <View style={styles.storiesContainer}>
+            {successStories.map((story) => (
+              <View key={story.id} style={styles.storyRow}>
+                <View style={styles.storyPhoto} />
+                <View style={styles.storyInfo}>
+                  <Text style={styles.storyName}>{story.name}</Text>
+                  <Text style={styles.storyDetail}>{`#${story.info}`}</Text>
+                </View>
+              </View>
+            ))}
+          </View>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+      <BottomNav />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+  },
   scrollContainer: {
     flexGrow: 1,
   },

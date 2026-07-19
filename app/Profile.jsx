@@ -9,6 +9,7 @@ import {
   View,
 } from 'react-native';
 import Logo from '../assets/images/Logo.svg';
+import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
 import { getCurrentUser } from './services/auth-service';
 import { getUserProfile } from './services/profile-service';
@@ -56,77 +57,83 @@ export default function Profile() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <View style={styles.container}>
-        <View style={styles.header}>
-         <Logo width={38} height={38} style={styles.logoSmall} />
-          <Text style={styles.brandName}>FORSA</Text>
-        </View>
+    <View style={styles.screen}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <Logo width={38} height={38} style={styles.logoSmall} />
+            <Text style={styles.brandName}>FORSA</Text>
+          </View>
 
-        <View style={styles.profileHeader}>
-          <View style={styles.avatarContainer}>
-            <Text style={styles.avatarIcon}>👤</Text>
-          </View>
-          <Text style={styles.profileTitle}>MY PROFILE</Text>
-        </View>
-
-        <View style={styles.infoContainer}>
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>Full Name</Text>
-            <Text style={styles.infoValue}>{profileData?.fullName || userData?.name || 'Loading...'}</Text>
-          </View>
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>Email:</Text>
-            <Text style={styles.infoValue}>{userData?.email || 'Loading...'}</Text>
-          </View>
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>Status:</Text>
-            <Text style={styles.infoValue}>{profileData?.educationStatus || 'Not set'}</Text>
-          </View>
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>Age:</Text>
-            <Text style={styles.infoValue}>{profileData?.dateOfBirth ? calculateAge(profileData.dateOfBirth) : 'Not set'}</Text>
-          </View>
-        </View>
-
-        {savedOpportunities.length > 0 && (
-          <>
-            <Text style={styles.sectionTitle}>SAVED{'\n'}OPPORTUNITIES:</Text>
-            <View style={styles.opportunitiesContainer}>
-              {savedOpportunities.map((opp) => (
-                <View key={opp.$id} style={styles.opportunityCard}>
-                  <View style={styles.opportunityIcon}>
-                    <Image
-                      source={require('../assets/images/icon.png')}
-                      style={styles.iconImage}
-                      resizeMode="contain"
-                    />
-                  </View>
-                  <Text style={styles.opportunityTitle}>{opp.opportunityTitle}</Text>
-                  <TouchableOpacity
-                    style={styles.readMoreButton}
-                    onPress={() => router.push(`/Opportunitydetail?id=${opp.opportunityId}`)}
-                  >
-                    <Text style={styles.readMoreText}>Read more</Text>
-                  </TouchableOpacity>
-                </View>
-              ))}
+          <View style={styles.profileHeader}>
+            <View style={styles.avatarContainer}>
+              <Text style={styles.avatarIcon}>👤</Text>
             </View>
-          </>
-        )}
+            <Text style={styles.profileTitle}>MY PROFILE</Text>
+          </View>
 
-        <TouchableOpacity
-          style={styles.continueButton}
-          onPress={() => router.push('/TopMatches')}
-        >
-          <Text style={styles.continueButtonText}>Continue exploring</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+          <View style={styles.infoContainer}>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Full Name</Text>
+              <Text style={styles.infoValue}>{profileData?.fullName || userData?.name || 'Loading...'}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Email:</Text>
+              <Text style={styles.infoValue}>{userData?.email || 'Loading...'}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Status:</Text>
+              <Text style={styles.infoValue}>{profileData?.educationStatus || 'Not set'}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Age:</Text>
+              <Text style={styles.infoValue}>{profileData?.dateOfBirth ? calculateAge(profileData.dateOfBirth) : 'Not set'}</Text>
+            </View>
+          </View>
+
+          {savedOpportunities.length > 0 && (
+            <>
+              <Text style={styles.sectionTitle}>SAVED{'\n'}OPPORTUNITIES:</Text>
+              <View style={styles.opportunitiesContainer}>
+                {savedOpportunities.map((opp) => (
+                  <View key={opp.$id} style={styles.opportunityCard}>
+                    <View style={styles.opportunityIcon}>
+                      <Image
+                        source={require('../assets/images/icon.png')}
+                        style={styles.iconImage}
+                        resizeMode="contain"
+                      />
+                    </View>
+                    <Text style={styles.opportunityTitle}>{opp.opportunityTitle}</Text>
+                    <TouchableOpacity
+                      style={styles.readMoreButton}
+                      onPress={() => router.push(`/Opportunitydetail?id=${opp.opportunityId}`)}
+                    >
+                      <Text style={styles.readMoreText}>Read more</Text>
+                    </TouchableOpacity>
+                  </View>
+                ))}
+              </View>
+            </>
+          )}
+
+          <TouchableOpacity
+            style={styles.continueButton}
+            onPress={() => router.push('/TopMatches')}
+          >
+            <Text style={styles.continueButtonText}>Continue exploring</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+      <BottomNav />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+  },
   scrollContainer: {
     flexGrow: 1,
   },

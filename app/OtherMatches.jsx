@@ -46,7 +46,7 @@ export default function OtherMatches() {
           <TouchableOpacity onPress={() => router.back()}>
             <Text style={styles.backButton}>←</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.push('/Profile')}>
+          <TouchableOpacity onPress={() => router.push('/Homepage')}>
             <HomeIcon width={40} height={40} style={styles.homeIcon} />
           </TouchableOpacity>
         </View>
@@ -71,7 +71,7 @@ export default function OtherMatches() {
             <Logo width={38} height={38} style={styles.logoSmall} />
             <Text style={styles.brandName}>FORSA</Text>
           </View>
-          <TouchableOpacity onPress={() => router.push('/Profile')}>
+          <TouchableOpacity onPress={() => router.push('/Homepage')}>
             <HomeIcon width={40} height={40} style={styles.homeIcon} />
           </TouchableOpacity>
         </View>

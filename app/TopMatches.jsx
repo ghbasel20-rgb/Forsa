@@ -6,8 +6,8 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import HomeIcon from '../assets/images/home-icon.svg';
 import Logo from '../assets/images/Logo.svg';
+import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
 import { getAllOpportunities, getMatchedOpportunities } from './services/opportunities-service';
 import { getCurrentUser } from './services/auth-service';
@@ -38,56 +38,59 @@ export default function TopMatches() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <View style={styles.logoContainer}>
-            <Logo width={38} height={38} style={styles.logoSmall} />
-            <Text style={styles.brandName}>FORSA</Text>
+    <View style={styles.screen}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <View style={styles.logoContainer}>
+              <Logo width={38} height={38} style={styles.logoSmall} />
+              <Text style={styles.brandName}>FORSA</Text>
+            </View>
           </View>
-          <TouchableOpacity onPress={() => router.push('/Profile')}>
-            <HomeIcon width={40} height={40} style={styles.homeIcon} />
+
+          <Text style={styles.title}>YOUR TOP{'\n'}MATCHES</Text>
+
+          <View style={styles.matchesContainer}>
+            {opportunities.map((match, index) => (
+              <View key={match.$id} style={styles.matchCard}>
+                <View style={styles.numberBadge}>
+                  <Text style={styles.numberText}>#{index + 1}</Text>
+                </View>
+                <Text style={styles.matchTitle}>{match.title}</Text>
+                <TouchableOpacity
+                  style={styles.readMoreButton}
+                  onPress={() => router.push(`/Opportunitydetail?id=${match.$id}`)}
+                >
+                  <Text style={styles.readMoreText}>Read more</Text>
+                </TouchableOpacity>
+              </View>
+            ))}
+          </View>
+
+          <TouchableOpacity
+            style={styles.exploreButton}
+            onPress={() => router.push('/OtherMatches')}
+          >
+            <Text style={styles.exploreButtonText}>Explore Other matches</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.allOpportunitiesButton}
+            onPress={() => router.push('/Allopportunities')}
+          >
+            <Text style={styles.allOpportunitiesText}>Explore all opportunities</Text>
           </TouchableOpacity>
         </View>
-
-        <Text style={styles.title}>YOUR TOP{'\n'}MATCHES</Text>
-
-        <View style={styles.matchesContainer}>
-          {opportunities.map((match, index) => (
-            <View key={match.$id} style={styles.matchCard}>
-              <View style={styles.numberBadge}>
-                <Text style={styles.numberText}>#{index + 1}</Text>
-              </View>
-              <Text style={styles.matchTitle}>{match.title}</Text>
-              <TouchableOpacity
-                style={styles.readMoreButton}
-                onPress={() => router.push(`/Opportunitydetail?id=${match.$id}`)}
-              >
-                <Text style={styles.readMoreText}>Read more</Text>
-              </TouchableOpacity>
-            </View>
-          ))}
-        </View>
-
-        <TouchableOpacity
-          style={styles.exploreButton}
-          onPress={() => router.push('/OtherMatches')}
-        >
-          <Text style={styles.exploreButtonText}>Explore Other matches</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.allOpportunitiesButton}
-          onPress={() => router.push('/Allopportunities')}
-        >
-          <Text style={styles.allOpportunitiesText}>Explore all opportunities</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+      </ScrollView>
+      <BottomNav />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+  },
   scrollContainer: {
     flexGrow: 1,
   },
@@ -117,10 +120,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#0a445c',
     letterSpacing: 1,
-  },
-  homeIcon: {
-    width: 40,
-    height: 40,
   },
   title: {
     fontSize: 36,

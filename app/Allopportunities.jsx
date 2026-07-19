@@ -55,7 +55,7 @@ export default function AllOpportunities() {
             <TouchableOpacity onPress={() => setShowSearch(!showSearch)}>
               <SearchIcon width={30} height={30} style={styles.searchIcon} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push('/Profile')}>
+            <TouchableOpacity onPress={() => router.push('/Homepage')}>
               <HomeIcon width={40} height={40} style={styles.homeIcon} />
             </TouchableOpacity>
           </View>
