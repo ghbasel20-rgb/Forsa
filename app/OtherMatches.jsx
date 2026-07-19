@@ -3,12 +3,12 @@ import React, { useEffect, useState } from 'react';
 import {
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View
 } from 'react-native';
 import Logo from '../assets/images/Logo.svg';
 import HomeIcon from '../assets/images/home-icon.svg';
+import Text from './components/AppText';
 import { getAllOpportunities, getMatchedOpportunities } from './services/opportunities-service';
 import { getCurrentUser } from './services/auth-service';
 import { getUserProfile } from './services/profile-service';

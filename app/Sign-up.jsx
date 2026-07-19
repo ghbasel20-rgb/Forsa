@@ -7,13 +7,13 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
-  Text,
-  TextInput,
   TouchableOpacity,
   View
 } from 'react-native';
 import Logo from '../assets/images/Logo.svg';
 import { useProfile } from './ProfileContext';
+import Text from './components/AppText';
+import TextInput from './components/AppTextInput';
 import { signUp } from './services/auth-service';
 
 export default function SignUp() {

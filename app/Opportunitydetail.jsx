@@ -6,12 +6,12 @@ import {
   Linking,
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from 'react-native';
 import HomeIcon from '../assets/images/home-icon.svg';
 import Logo from '../assets/images/Logo.svg';
+import Text from './components/AppText';
 import { getCurrentUser } from './services/auth-service';
 import { getOpportunityById } from './services/opportunities-service';
 import { checkIfSaved, saveOpportunity, unsaveOpportunity } from './services/saved-opportunities-service';

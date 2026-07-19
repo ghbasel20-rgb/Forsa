@@ -5,11 +5,11 @@ import {
   Image,
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from 'react-native';
 import Logo from '../assets/images/Logo.svg';
+import Text from './components/AppText';
 import { getCurrentUser } from './services/auth-service';
 import { getUserProfile } from './services/profile-service';
 import { getSavedOpportunities } from './services/saved-opportunities-service';

@@ -4,12 +4,12 @@ import {
   ActivityIndicator,
   Alert,
   StyleSheet,
-  Text,
-  TextInput,
   TouchableOpacity,
   View
 } from 'react-native';
 import Logo from '../assets/images/Logo.svg';
+import Text from './components/AppText';
+import TextInput from './components/AppTextInput';
 import { signIn, signOut } from './services/auth-service';
 
 export default function SignIn() {
