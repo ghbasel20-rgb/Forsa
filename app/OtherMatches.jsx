@@ -9,6 +9,7 @@ import {
 import Logo from '../assets/images/Logo.svg';
 import HomeIcon from '../assets/images/home-icon.svg';
 import Text from './components/AppText';
+import TitleText from './components/TitleText';
 import { getAllOpportunities, getMatchedOpportunities } from './services/opportunities-service';
 import { getCurrentUser } from './services/auth-service';
 import { getUserProfile } from './services/profile-service';
@@ -51,7 +52,7 @@ export default function OtherMatches() {
           </TouchableOpacity>
         </View>
 
-        <Text style={styles.title}>OTHER{'\n'}MATCHES</Text>
+        <TitleText style={styles.title}>OTHER{'\n'}MATCHES</TitleText>
         <Text style={styles.noMatches}>No more opportunities available</Text>
       </ScrollView>
     );
@@ -76,7 +77,7 @@ export default function OtherMatches() {
           </TouchableOpacity>
         </View>
 
-        <Text style={styles.title}>OTHER{'\n'}MATCHES:</Text>
+        <TitleText style={styles.title}>OTHER{'\n'}MATCHES:</TitleText>
 
         <View style={styles.matchesContainer}>
           {opportunities.map((match, index) => (

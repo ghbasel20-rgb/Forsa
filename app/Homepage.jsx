@@ -13,6 +13,7 @@ import PurplePfpIcon from '../assets/images/purplePfp.svg';
 import PurpleSearchIcon from '../assets/images/purplesearch.svg';
 import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
+import TitleText from './components/TitleText';
 import { exploreOpportunities } from './services/navigation-service';
 
 const successStories = [
@@ -70,7 +71,7 @@ export default function Homepage() {
                   <ContactIcon width={52} height={52} viewBox="17.4 0 80.2 80.2" />
                 </View>
                 <View style={styles.labelPill}>
-                  <Text style={styles.labelText}>Contact us</Text>
+                  <TitleText style={styles.labelText}>Contact us</TitleText>
                 </View>
               </TouchableOpacity>
             </View>
@@ -78,7 +79,7 @@ export default function Homepage() {
 
           <View style={styles.divider} />
 
-          <Text style={styles.sectionTitle}>SUCCESS STORIES</Text>
+          <TitleText style={styles.sectionTitle}>SUCCESS STORIES</TitleText>
 
           <View style={styles.storiesContainer}>
             {successStories.map((story) => (

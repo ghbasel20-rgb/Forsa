@@ -11,6 +11,7 @@ import {
 import Logo from '../assets/images/Logo.svg';
 import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
+import TitleText from './components/TitleText';
 import { getCurrentUser } from './services/auth-service';
 import { exploreOpportunities } from './services/navigation-service';
 import { getUserProfile } from './services/profile-service';
@@ -70,7 +71,7 @@ export default function Profile() {
             <View style={styles.avatarContainer}>
               <Text style={styles.avatarIcon}>👤</Text>
             </View>
-            <Text style={styles.profileTitle}>MY PROFILE</Text>
+            <TitleText style={styles.profileTitle}>MY PROFILE</TitleText>
           </View>
 
           <View style={styles.infoContainer}>
@@ -83,7 +84,7 @@ export default function Profile() {
               <Text style={styles.infoValue}>{userData?.email || 'Loading...'}</Text>
             </View>
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Status:</Text>
+              <TitleText style={styles.infoLabel}>Status:</TitleText>
               <Text style={styles.infoValue}>{profileData?.educationStatus || 'Not set'}</Text>
             </View>
             <View style={styles.infoRow}>

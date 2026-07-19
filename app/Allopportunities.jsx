@@ -12,6 +12,7 @@ import Logo from '../assets/images/Logo.svg';
 import SearchIcon from '../assets/images/Search.svg';
 import Text from './components/AppText';
 import TextInput from './components/AppTextInput';
+import TitleText from './components/TitleText';
 import { getAllOpportunities } from './services/opportunities-service';
 
 export default function AllOpportunities() {
@@ -73,7 +74,7 @@ export default function AllOpportunities() {
           </View>
         )}
 
-        <Text style={styles.title}>ALL{'\n'}OPPORTUNITIES</Text>
+        <TitleText style={styles.title}>ALL{'\n'}OPPORTUNITIES</TitleText>
 
         <View style={styles.locationFilter}>
           <Text style={styles.locationLabel}>Location:</Text>

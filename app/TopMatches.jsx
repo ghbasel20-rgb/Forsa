@@ -9,6 +9,7 @@ import {
 import Logo from '../assets/images/Logo.svg';
 import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
+import TitleText from './components/TitleText';
 import { getAllOpportunities, getMatchedOpportunities } from './services/opportunities-service';
 import { getCurrentUser } from './services/auth-service';
 import { getUserProfile } from './services/profile-service';
@@ -48,7 +49,7 @@ export default function TopMatches() {
             </View>
           </View>
 
-          <Text style={styles.title}>YOUR TOP{'\n'}MATCHES</Text>
+          <TitleText style={styles.title}>YOUR TOP{'\n'}MATCHES</TitleText>
 
           <View style={styles.matchesContainer}>
             {opportunities.map((match, index) => (
