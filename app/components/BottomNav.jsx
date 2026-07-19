@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { usePathname, useRouter } from 'expo-router';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import EventsIcon from '../../assets/images/events.svg';
@@ -16,15 +16,18 @@ const tabs = [
 
 export default function BottomNav() {
   const router = useRouter();
+  const pathname = usePathname();
 
   return (
     <View style={styles.container}>
-      {tabs.map(({ label, route, Icon, viewBox }) => (
-        <TouchableOpacity key={label} style={styles.tab} onPress={() => router.push(route)}>
-          <Icon width={26} height={26} {...(viewBox ? { viewBox } : {})} />
-          <Text style={styles.label}>{label}</Text>
-        </TouchableOpacity>
-      ))}
+      {tabs
+        .filter(({ route }) => route !== pathname)
+        .map(({ label, route, Icon, viewBox }) => (
+          <TouchableOpacity key={label} style={styles.tab} onPress={() => router.push(route)}>
+            <Icon width={26} height={26} {...(viewBox ? { viewBox } : {})} />
+            <Text style={styles.label}>{label}</Text>
+          </TouchableOpacity>
+        ))}
     </View>
   );
 }

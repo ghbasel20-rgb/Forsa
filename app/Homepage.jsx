@@ -29,7 +29,7 @@ export default function Homepage() {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <Logo width={50} height={50} style={styles.logoSmall} />
+            <Logo width={64} height={64} style={styles.logoSmall} />
             <Text style={styles.brandName}>FORSA</Text>
           </View>
 
@@ -118,12 +118,12 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#0a445c',
     borderRadius: 25,
-    paddingVertical: 14,
+    paddingVertical: 16,
     marginBottom: 30,
   },
   logoSmall: {
-    width: 50,
-    height: 50,
+    width: 64,
+    height: 64,
   },
   brandName: {
     fontSize: 22,
