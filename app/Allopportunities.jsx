@@ -4,12 +4,14 @@ import {
   Image,
   ScrollView,
   StyleSheet,
-  Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
+import HomeIcon from '../assets/images/home-icon.svg';
 import Logo from '../assets/images/Logo.svg';
+import SearchIcon from '../assets/images/Search.svg';
+import Text from './components/AppText';
+import TextInput from './components/AppTextInput';
 import { getAllOpportunities } from './services/opportunities-service';
 
 export default function AllOpportunities() {
