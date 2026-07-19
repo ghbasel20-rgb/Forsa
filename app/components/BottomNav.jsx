@@ -6,7 +6,6 @@ import PurplePfpIcon from '../../assets/images/purplePfp.svg';
 import PurpleHomeIcon from '../../assets/images/purplehome.svg';
 import PurpleSearchIcon from '../../assets/images/purplesearch.svg';
 import Text from './AppText';
-import TitleText from './TitleText';
 
 const tabs = [
   { label: 'Home', route: '/Homepage', Icon: PurpleHomeIcon, viewBox: '317.91 15.7 804.26 776.27' },
@@ -23,15 +22,12 @@ export default function BottomNav() {
     <View style={styles.container}>
       {tabs
         .filter(({ route }) => route !== pathname)
-        .map(({ label, route, Icon, viewBox }) => {
-          const LabelText = label === 'Opportunities' ? TitleText : Text;
-          return (
-            <TouchableOpacity key={label} style={styles.tab} onPress={() => router.push(route)}>
-              <Icon width={26} height={26} {...(viewBox ? { viewBox } : {})} />
-              <LabelText style={styles.label}>{label}</LabelText>
-            </TouchableOpacity>
-          );
-        })}
+        .map(({ label, route, Icon, viewBox }) => (
+          <TouchableOpacity key={label} style={styles.tab} onPress={() => router.push(route)}>
+            <Icon width={26} height={26} {...(viewBox ? { viewBox } : {})} />
+            <Text style={styles.label}>{label}</Text>
+          </TouchableOpacity>
+        ))}
     </View>
   );
 }
