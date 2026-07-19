@@ -71,7 +71,7 @@ export default function Homepage() {
                   <ContactIcon width={52} height={52} viewBox="17.4 0 80.2 80.2" />
                 </View>
                 <View style={styles.labelPill}>
-                  <TitleText style={styles.labelText}>Contact us</TitleText>
+                  <Text style={styles.labelText}>Contact us</Text>
                 </View>
               </TouchableOpacity>
             </View>
