@@ -14,7 +14,6 @@ export const createUserProfile = async (userId, profileData) => {
         fullName: profileData.fullName,
         email: profileData.email,
         dateOfBirth: profileData.dateOfBirth,
-        location: profileData.location,
         educationStatus: profileData.educationStatus,
         skills: profileData.skills,
         interests: profileData.interests,

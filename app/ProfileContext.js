@@ -4,12 +4,7 @@ const ProfileContext = createContext();
 
 export const ProfileProvider = ({ children }) => {
   const [profileData, setProfileData] = useState({
-    fullName: '',
-    dateOfBirth: '',
-    location: '',
-    educationStatus: '',
     skills: [],
-    interests: [],
   });
 
   const updateProfile = (data) => {
@@ -18,12 +13,7 @@ export const ProfileProvider = ({ children }) => {
 
   const clearProfile = () => {
     setProfileData({
-      fullName: '',
-      dateOfBirth: '',
-      location: '',
-      educationStatus: '',
       skills: [],
-      interests: [],
     });
   };
 
