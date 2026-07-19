@@ -18,6 +18,7 @@ export const createUserProfile = async (userId, profileData) => {
         educationStatus: profileData.educationStatus,
         skills: profileData.skills,
         interests: profileData.interests,
+        hasCompletedSkillsInterests: profileData.hasCompletedSkillsInterests ?? false,
       }
     );
     
