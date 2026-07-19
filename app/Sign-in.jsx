@@ -37,7 +37,7 @@ export default function SignIn() {
 
     if (result.success) {
       Alert.alert('Success', 'Logged in successfully!');
-      router.push('/Profile');
+      router.push('/Homepage');
     } else {
       Alert.alert('Error', result.error);
     }

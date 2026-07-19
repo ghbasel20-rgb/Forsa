@@ -13,7 +13,7 @@ import { useProfile } from './ProfileContext';
 import Text from './components/AppText';
 import TextInput from './components/AppTextInput';
 import { getCurrentUser } from './services/auth-service';
-import { createUserProfile } from './services/profile-service';
+import { getUserProfile, updateUserProfile } from './services/profile-service';
 
 export default function Buildprofileinterests() {
   const router = useRouter();
@@ -90,22 +90,22 @@ export default function Buildprofileinterests() {
 
       const userId = currentUserResult.data.$id;
 
-      const completeProfile = {
-        fullName: profileData.fullName || '',
-        email: currentUserResult.data.email,
-        dateOfBirth: profileData.dateOfBirth || new Date().toISOString(),
-        location: profileData.location || '',
-        educationStatus: profileData.educationStatus || '',
+      const profileResult = await getUserProfile(userId);
+      if (!profileResult.success) {
+        Alert.alert('Error', 'Could not find your profile');
+        return;
+      }
+
+      const result = await updateUserProfile(profileResult.data.$id, {
         skills: profileData.skills || [],
         interests: selectedInterests,
-      };
-
-      const result = await createUserProfile(userId, completeProfile);
+        hasCompletedSkillsInterests: true,
+      });
 
       if (result.success) {
         clearProfile();
-        Alert.alert('Success', 'Profile created successfully!');
-        router.push('/Profile');
+        Alert.alert('Success', 'Profile updated successfully!');
+        router.push('/TopMatches');
       } else {
         Alert.alert('Error', result.error);
       }

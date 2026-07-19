@@ -12,10 +12,12 @@ import Logo from '../assets/images/Logo.svg';
 import { useProfile } from './ProfileContext';
 import Text from './components/AppText';
 import TextInput from './components/AppTextInput';
+import { getCurrentUser } from './services/auth-service';
+import { createUserProfile } from './services/profile-service';
 
 export default function BuildProfile() {
   const router = useRouter();
-  const { updateProfile } = useProfile();
+  const { profileData, updateProfile } = useProfile();
   const [location, setLocation] = useState('');
   const [educationStatus, setEducationStatus] = useState('');
   const [showLocationModal, setShowLocationModal] = useState(false);
@@ -97,14 +99,35 @@ export default function BuildProfile() {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!location || !educationStatus) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
 
-    updateProfile({ location, educationStatus });
-    router.push('/Buildprofileskills');
+    const userResult = await getCurrentUser();
+    if (!userResult.success) {
+      Alert.alert('Error', 'Could not get user information');
+      return;
+    }
+
+    const result = await createUserProfile(userResult.data.$id, {
+      fullName: profileData.fullName || '',
+      email: userResult.data.email,
+      dateOfBirth: profileData.dateOfBirth || new Date().toISOString(),
+      location,
+      educationStatus,
+      skills: [],
+      interests: [],
+      hasCompletedSkillsInterests: false,
+    });
+
+    if (result.success) {
+      updateProfile({ location, educationStatus });
+      router.push('/Homepage');
+    } else {
+      Alert.alert('Error', result.error);
+    }
   };
 
   return (
