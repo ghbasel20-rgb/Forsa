@@ -35,6 +35,8 @@ export default function SignUp() {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [status, setStatus] = useState('');
   const [showStatusModal, setShowStatusModal] = useState(false);
+  const [showCustomStatusInput, setShowCustomStatusInput] = useState(false);
+  const [customStatus, setCustomStatus] = useState('');
   const [loading, setLoading] = useState(false);
 
   const onDateChange = (event, selectedDate) => {
@@ -52,6 +54,24 @@ export default function SignUp() {
       month: 'long',
       day: 'numeric',
     });
+  };
+
+  const handleStatusSelect = (option) => {
+    if (option === 'Other') {
+      setShowStatusModal(false);
+      setShowCustomStatusInput(true);
+    } else {
+      setStatus(option);
+      setShowStatusModal(false);
+    }
+  };
+
+  const handleCustomStatusSubmit = () => {
+    if (customStatus.trim()) {
+      setStatus(customStatus.trim());
+      setShowCustomStatusInput(false);
+      setCustomStatus('');
+    }
   };
 
   const handleSignUp = async () => {
@@ -208,14 +228,38 @@ export default function SignUp() {
                 <TouchableOpacity
                   key={option}
                   style={styles.modalOption}
-                  onPress={() => {
-                    setStatus(option);
-                    setShowStatusModal(false);
-                  }}
+                  onPress={() => handleStatusSelect(option)}
                 >
                   <Text style={styles.modalOptionText}>{option}</Text>
                 </TouchableOpacity>
               ))}
+            </View>
+          </TouchableOpacity>
+        </Modal>
+
+        <Modal
+          visible={showCustomStatusInput}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setShowCustomStatusInput(false)}
+        >
+          <TouchableOpacity
+            style={styles.modalOverlay}
+            activeOpacity={1}
+            onPress={() => setShowCustomStatusInput(false)}
+          >
+            <View style={styles.modalContent} onStartShouldSetResponder={() => true}>
+              <Text style={styles.modalTitle}>Enter Your Status</Text>
+              <TextInput
+                style={styles.customInput}
+                placeholder="Type your status"
+                placeholderTextColor="#46a3a4"
+                value={customStatus}
+                onChangeText={setCustomStatus}
+              />
+              <TouchableOpacity style={styles.submitButton} onPress={handleCustomStatusSubmit}>
+                <Text style={styles.buttonText}>Submit</Text>
+              </TouchableOpacity>
             </View>
           </TouchableOpacity>
         </Modal>
@@ -306,6 +350,23 @@ const styles = StyleSheet.create({
   modalOptionText: {
     fontSize: 16,
     color: '#0a445c',
+  },
+  customInput: {
+    backgroundColor: '#ffffff',
+    borderWidth: 2,
+    borderColor: '#46a3a4',
+    borderRadius: 25,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    fontSize: 16,
+    color: '#0a445c',
+    marginBottom: 16,
+  },
+  submitButton: {
+    backgroundColor: '#c6a2ba',
+    paddingVertical: 14,
+    borderRadius: 25,
+    alignItems: 'center',
   },
   button: {
     backgroundColor: '#c6a2ba',
