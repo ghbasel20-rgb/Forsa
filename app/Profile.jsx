@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
     color: '#0a445c',
     marginTop: 30,
     marginBottom: 20,
-    lineHeight: 28,
+    lineHeight: 35,
   },
   opportunitiesContainer: {
     gap: 16,

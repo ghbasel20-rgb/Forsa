@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#0a445c',
     marginBottom: 30,
-    lineHeight: 42,
+    lineHeight: 52,
   },
   formContainer: {
     gap: 16,
