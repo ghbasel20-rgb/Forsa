@@ -5,13 +5,16 @@ import HomeIcon from '../assets/images/home-icon.svg';
 import Logo from '../assets/images/Logo.svg';
 import Text from './components/AppText';
 import TitleText from './components/TitleText';
+import { getCurrentUser } from './services/auth-service';
 import { getEventById } from './services/events-service';
+import { getSavedEventStatus } from './services/saved-events-service';
 
 export default function EventDetail() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [applicationId, setApplicationId] = useState(null);
 
   useEffect(() => {
     loadEvent();
@@ -24,6 +27,15 @@ export default function EventDetail() {
     if (result.success) {
       setEvent(result.data);
     }
+
+    const userResult = await getCurrentUser();
+    if (userResult.success) {
+      const statusResult = await getSavedEventStatus({ eventId: id, userId: userResult.data.$id });
+      if (statusResult.success && statusResult.isApplied) {
+        setApplicationId(statusResult.documentId);
+      }
+    }
+
     setLoading(false);
   };
 
@@ -86,6 +98,17 @@ export default function EventDetail() {
                 <Text style={styles.value}>{event.content}</Text>
               </View>
             )}
+
+            <TouchableOpacity
+              style={styles.applyButton}
+              onPress={() =>
+                applicationId
+                  ? router.push(`/Status?id=${applicationId}`)
+                  : router.push(`/Application?eventId=${event.$id}`)
+              }
+            >
+              <Text style={styles.applyButtonText}>{applicationId ? 'View status' : 'Apply'}</Text>
+            </TouchableOpacity>
           </>
         )}
       </View>
@@ -156,5 +179,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#0a445c',
     lineHeight: 24,
+  },
+  applyButton: {
+    backgroundColor: '#c6a2ba',
+    paddingVertical: 16,
+    borderRadius: 25,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  applyButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
