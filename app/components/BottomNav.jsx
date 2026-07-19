@@ -35,9 +35,7 @@ export default function BottomNav() {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    backgroundColor: '#ffffff',
-    borderTopWidth: 1,
-    borderTopColor: '#e1e4e4',
+    backgroundColor: '#0E445C',
     paddingVertical: 10,
     paddingBottom: 16,
   },
@@ -48,7 +46,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 11,
-    color: '#0a445c',
+    color: '#ffffff',
     fontWeight: '600',
   },
 });

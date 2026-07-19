@@ -32,6 +32,7 @@ export default function Homepage() {
             <Logo width={64} height={64} style={styles.logoSmall} />
             <Text style={styles.brandName}>FORSA</Text>
           </View>
+          <View style={styles.headerUnderline} />
 
           <View style={styles.grid}>
             <View style={styles.gridRow}>
@@ -113,12 +114,13 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    borderWidth: 2,
-    borderColor: '#0a445c',
-    borderRadius: 25,
-    paddingVertical: 16,
+    justifyContent: 'flex-start',
+    gap: 10,
+    marginBottom: 12,
+  },
+  headerUnderline: {
+    height: 2,
+    backgroundColor: '#46a3a4',
     marginBottom: 30,
   },
   logoSmall: {
@@ -126,7 +128,7 @@ const styles = StyleSheet.create({
     height: 64,
   },
   brandName: {
-    fontSize: 22,
+    fontSize: 28,
     fontWeight: 'bold',
     color: '#0a445c',
     letterSpacing: 1,
