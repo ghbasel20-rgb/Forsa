@@ -29,7 +29,7 @@ export default function Homepage() {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <Logo width={38} height={38} style={styles.logoSmall} />
+            <Logo width={50} height={50} style={styles.logoSmall} />
             <Text style={styles.brandName}>FORSA</Text>
           </View>
 
@@ -66,7 +66,7 @@ export default function Homepage() {
 
               <TouchableOpacity style={styles.gridItem} onPress={() => router.push('/Contact')}>
                 <View style={styles.iconCircle}>
-                  <ContactIcon width={44} height={44} viewBox="17.4 0 80.2 80.2" />
+                  <ContactIcon width={52} height={52} viewBox="17.4 0 80.2 80.2" />
                 </View>
                 <View style={styles.labelPill}>
                   <Text style={styles.labelText}>Contact us</Text>
@@ -118,15 +118,15 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#0a445c',
     borderRadius: 25,
-    paddingVertical: 12,
+    paddingVertical: 14,
     marginBottom: 30,
   },
   logoSmall: {
-    width: 38,
-    height: 38,
+    width: 50,
+    height: 50,
   },
   brandName: {
-    fontSize: 16,
+    fontSize: 22,
     fontWeight: 'bold',
     color: '#0a445c',
     letterSpacing: 1,
