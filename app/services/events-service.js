@@ -42,6 +42,10 @@ const scoreEventMatch = (event, profile) => {
     ...(event.interests || []),
   ]);
 
+  if (eventSelections.size === 0) {
+    return 0;
+  }
+
   let overlap = 0;
   eventSelections.forEach((item) => {
     if (userSelections.has(item)) {
@@ -49,7 +53,7 @@ const scoreEventMatch = (event, profile) => {
     }
   });
 
-  return overlap;
+  return Math.round((overlap / eventSelections.size) * 100);
 };
 
 export const getMatchedEvents = (events, profile) => {

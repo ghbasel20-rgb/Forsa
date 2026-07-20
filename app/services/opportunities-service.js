@@ -87,6 +87,10 @@ const scoreOpportunityMatch = (opportunity, profile) => {
     ...(opportunity.interests || []),
   ]);
 
+  if (opportunitySelections.size === 0) {
+    return 0;
+  }
+
   let overlap = 0;
   opportunitySelections.forEach((item) => {
     if (userSelections.has(item)) {
@@ -94,7 +98,7 @@ const scoreOpportunityMatch = (opportunity, profile) => {
     }
   });
 
-  return overlap;
+  return Math.round((overlap / opportunitySelections.size) * 100);
 };
 
 export const getMatchedOpportunities = (opportunities, profile) => {

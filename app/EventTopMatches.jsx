@@ -65,7 +65,7 @@ export default function EventTopMatches() {
                 </View>
                 <Text style={styles.matchTitle}>{match.title}</Text>
                 <View style={styles.scoreBadge}>
-                  <Text style={styles.scoreText}>{match.matchScore}</Text>
+                  <Text style={styles.scoreText}>{match.matchScore}%</Text>
                 </View>
                 <View style={styles.readMoreButton}>
                   <Text style={styles.readMoreText}>Read more</Text>
