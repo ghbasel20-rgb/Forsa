@@ -17,9 +17,9 @@ import TitleText from './components/TitleText';
 import { exploreOpportunities } from './services/navigation-service';
 
 const successStories = [
-  { id: '1', name: 'yamen abdulaziz', info: 'Placed in a 3-month internship' },
-  { id: '2', name: 'samir ibrahim', info: 'Landed a volunteering role' },
-  { id: '3', name: 'Razi shiek ahmad', info: 'Completed a mentorship program' },
+  { id: '1', name: 'Yamen Abdulaziz', info: 'Placed in a 3-month internship' },
+  { id: '2', name: 'Samir Ibrahim', info: 'Landed a volunteering role' },
+  { id: '3', name: 'Razi Shiek Ahmad', info: 'Completed a mentorship program' },
 ];
 
 export default function Homepage() {
