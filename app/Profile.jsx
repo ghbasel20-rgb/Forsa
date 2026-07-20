@@ -3,6 +3,8 @@ import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
   Image,
+  Modal,
+  Pressable,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -26,6 +28,7 @@ export default function Profile() {
   const [profileData, setProfileData] = useState(null);
   const [savedOpportunities, setSavedOpportunities] = useState([]);
   const [appliedEvents, setAppliedEvents] = useState([]);
+  const [settingsMenuVisible, setSettingsMenuVisible] = useState(false);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -65,6 +68,7 @@ export default function Profile() {
   };
 
   const handleLogout = async () => {
+    setSettingsMenuVisible(false);
     await signOut();
     router.replace('/Sign-in');
   };
@@ -86,14 +90,35 @@ export default function Profile() {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <TouchableOpacity onPress={handleLogout}>
-              <SettingsIcon width={26} height={26} />
+            <TouchableOpacity
+              style={styles.settingsButton}
+              onPress={() => setSettingsMenuVisible(true)}
+            >
+              <SettingsIcon width={34} height={34} />
             </TouchableOpacity>
             <View style={styles.headerBrand}>
               <Logo width={38} height={38} style={styles.logoSmall} />
               <Text style={styles.brandName}>FORSA</Text>
             </View>
           </View>
+
+          <Modal
+            transparent
+            visible={settingsMenuVisible}
+            animationType="fade"
+            onRequestClose={() => setSettingsMenuVisible(false)}
+          >
+            <Pressable
+              style={styles.menuOverlay}
+              onPress={() => setSettingsMenuVisible(false)}
+            >
+              <View style={styles.settingsMenu}>
+                <TouchableOpacity style={styles.settingsMenuItem} onPress={handleLogout}>
+                  <Text style={styles.settingsMenuItemText}>Log out</Text>
+                </TouchableOpacity>
+              </View>
+            </Pressable>
+          </Modal>
 
           <View style={styles.profileHeader}>
             <View style={styles.avatarContainer}>
@@ -112,7 +137,7 @@ export default function Profile() {
               <Text style={styles.infoValue}>{userData?.email || 'Loading...'}</Text>
             </View>
             <View style={styles.infoRow}>
-              <TitleText style={styles.infoLabel}>Status:</TitleText>
+              <Text style={styles.infoLabel}>Status:</Text>
               <Text style={styles.infoValue}>{profileData?.educationStatus || 'Not set'}</Text>
             </View>
             <View style={styles.infoRow}>
@@ -209,6 +234,35 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+  },
+  settingsButton: {
+    padding: 8,
+  },
+  menuOverlay: {
+    flex: 1,
+  },
+  settingsMenu: {
+    position: 'absolute',
+    top: 96,
+    left: 20,
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    paddingVertical: 6,
+    minWidth: 140,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 5,
+  },
+  settingsMenuItem: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+  },
+  settingsMenuItemText: {
+    fontSize: 15,
+    color: '#0a445c',
+    fontWeight: '500',
   },
   logoSmall: {
     width: 38,
