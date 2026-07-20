@@ -13,8 +13,8 @@ import {
 import Logo from '../assets/images/Logo.svg';
 import Text from './components/AppText';
 import TextInput from './components/AppTextInput';
-import TitleText from './components/TitleText';
 import StatusPickerModal from './components/StatusPickerModal';
+import TitleText from './components/TitleText';
 import { signUp } from './services/auth-service';
 import { createUserProfile } from './services/profile-service';
 
@@ -97,7 +97,7 @@ export default function SignUp() {
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <Logo width={38} height={38} style={styles.logoSmall} />
+          <Logo width={38} height={38} />
           <Text style={styles.brandName}>FORSA</Text>
         </View>
 

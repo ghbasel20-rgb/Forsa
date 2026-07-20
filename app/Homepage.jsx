@@ -29,7 +29,7 @@ export default function Homepage() {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <Logo width={64} height={64} style={styles.logoSmall} />
+            <Logo width={64} height={64} />
             <Text style={styles.brandName}>FORSA</Text>
           </View>
           <View style={styles.headerUnderline} />

@@ -47,7 +47,7 @@ export default function SignIn() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Logo width={38} height={38} style={styles.logoSmall} />
+        <Logo width={38} height={38} />
         <Text style={styles.brandName}>FORSA</Text>
       </View>
 
