@@ -18,7 +18,7 @@ import { exploreOpportunities } from './services/navigation-service';
 
 const successStories = [
   { id: '1', name: 'yamen abdulaziz', info: 'Placed in a 3-month internship' },
-  { id: '2', name: 'samir ibraheem', info: 'Landed a volunteering role' },
+  { id: '2', name: 'samir ibrahim', info: 'Landed a volunteering role' },
   { id: '3', name: 'Razi shiek ahmad', info: 'Completed a mentorship program' },
 ];
 
