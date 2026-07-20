@@ -13,11 +13,11 @@ import {
 import Logo from '../assets/images/Logo.svg';
 import EditIcon from '../assets/images/edit.svg';
 import SettingsIcon from '../assets/images/settings.svg';
+import Text from './components/AppText';
 import BackButton from './components/BackButton';
 import BottomNav from './components/BottomNav';
-import Text from './components/AppText';
-import TitleText from './components/TitleText';
 import StatusPickerModal from './components/StatusPickerModal';
+import TitleText from './components/TitleText';
 import { getCurrentUser, signOut } from './services/auth-service';
 import { getEventById } from './services/events-service';
 import { getUserProfile, updateUserProfile } from './services/profile-service';
@@ -111,7 +111,7 @@ export default function Profile() {
               </TouchableOpacity>
             </View>
             <View style={styles.headerBrand}>
-              <Logo width={38} height={38} style={styles.logoSmall} />
+              <Logo width={38} height={38}  />
               <Text style={styles.brandName}>FORSA</Text>
             </View>
           </View>
