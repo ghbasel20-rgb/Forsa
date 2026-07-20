@@ -13,7 +13,7 @@ import PurplePfpIcon from '../assets/images/purplePfp.svg';
 import PurpleSearchIcon from '../assets/images/purplesearch.svg';
 import Text from './components/AppText';
 import TitleText from './components/TitleText';
-import { exploreOpportunities } from './services/navigation-service';
+import { exploreEvents, exploreOpportunities } from './services/navigation-service';
 
 const successStories = [
   { id: '1', name: 'yamen abdulaziz', info: 'Placed in a 3-month internship' },
@@ -56,7 +56,7 @@ export default function Homepage() {
             </View>
 
             <View style={styles.gridRow}>
-              <TouchableOpacity style={styles.gridItem} onPress={() => router.push('/Events')}>
+              <TouchableOpacity style={styles.gridItem} onPress={() => exploreEvents(router)}>
                 <View style={styles.iconCircle}>
                   <EventsIcon width={44} height={44} />
                 </View>

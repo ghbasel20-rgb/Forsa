@@ -31,3 +31,49 @@ export const getEventById = async (eventId) => {
     return { success: false, error: error.message };
   }
 };
+
+const scoreEventMatch = (event, profile) => {
+  const userSelections = new Set([
+    ...(profile?.skills || []),
+    ...(profile?.interests || []),
+  ]);
+  const eventSelections = new Set([
+    ...(event.skills || []),
+    ...(event.interests || []),
+  ]);
+
+  let overlap = 0;
+  eventSelections.forEach((item) => {
+    if (userSelections.has(item)) {
+      overlap += 1;
+    }
+  });
+
+  return overlap;
+};
+
+export const getMatchedEvents = (events, profile) => {
+  const userSelectionCount =
+    (profile?.skills?.length || 0) + (profile?.interests?.length || 0);
+  const strongAlignmentThreshold = Math.max(2, Math.ceil(userSelectionCount / 2));
+
+  const scored = events
+    .map((event) => ({
+      event,
+      score: scoreEventMatch(event, profile),
+    }))
+    .filter((entry) => entry.score > 0)
+    .sort((a, b) => {
+      if (b.score !== a.score) {
+        return b.score - a.score;
+      }
+      return new Date(b.event.$createdAt) - new Date(a.event.$createdAt);
+    });
+
+  const topMatches = scored
+    .filter((entry) => entry.score >= strongAlignmentThreshold)
+    .slice(0, 3)
+    .map((entry) => entry.event);
+
+  return { topMatches };
+};

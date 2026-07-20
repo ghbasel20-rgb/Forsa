@@ -3,6 +3,7 @@ import { Linking, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-n
 import InstaIcon from '../assets/images/insta.svg';
 import Logo from '../assets/images/Logo.svg';
 import WhatsIcon from '../assets/images/whats.svg';
+import BackButton from './components/BackButton';
 import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
 import TitleText from './components/TitleText';
@@ -24,6 +25,7 @@ export default function Contact() {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.header}>
+            <BackButton />
             <Logo width={38} height={38} style={styles.logoSmall} />
             <Text style={styles.brandName}>FORSA</Text>
           </View>

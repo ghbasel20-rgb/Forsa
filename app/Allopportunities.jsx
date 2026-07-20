@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import HomeIcon from '../assets/images/home-icon.svg';
 import Logo from '../assets/images/Logo.svg';
-import SearchIcon from '../assets/images/Search.svg';
 import Text from './components/AppText';
 import TextInput from './components/AppTextInput';
 import TitleText from './components/TitleText';
@@ -18,7 +17,6 @@ import { getAllOpportunities } from './services/opportunities-service';
 export default function AllOpportunities() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
-  const [showSearch, setShowSearch] = useState(false);
   const [allOpportunities, setAllOpportunities] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -53,28 +51,23 @@ export default function AllOpportunities() {
             <Text style={styles.brandName}>FORSA</Text>
           </View>
           <View style={styles.rightSection}>
-            <TouchableOpacity onPress={() => setShowSearch(!showSearch)}>
-              <SearchIcon width={30} height={30} style={styles.searchIcon} />
-            </TouchableOpacity>
             <TouchableOpacity onPress={() => router.push('/Homepage')}>
               <HomeIcon width={40} height={40} style={styles.homeIcon} />
             </TouchableOpacity>
           </View>
         </View>
 
-        {showSearch && (
-          <View style={styles.searchContainer}>
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Search opportunities..."
-              placeholderTextColor="#46a3a4"
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-            />
-          </View>
-        )}
-
         <TitleText style={styles.title}>ALL{'\n'}OPPORTUNITIES</TitleText>
+
+        <View style={styles.searchContainer}>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search opportunities..."
+            placeholderTextColor="#46a3a4"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+        </View>
 
         <View style={styles.locationFilter}>
           <Text style={styles.locationLabel}>Location:</Text>
@@ -87,7 +80,11 @@ export default function AllOpportunities() {
             <Text style={styles.loadingText}>No opportunities found</Text>
           ) : (
             filteredOpportunities.map((opp) => (
-              <View key={opp.$id} style={styles.opportunityCard}>
+              <TouchableOpacity
+                key={opp.$id}
+                style={styles.opportunityCard}
+                onPress={() => router.push(`/Opportunitydetail?id=${opp.$id}`)}
+              >
                 <View style={styles.iconContainer}>
                   <Image
                     source={require('../assets/images/icon.png')}
@@ -96,16 +93,17 @@ export default function AllOpportunities() {
                   />
                 </View>
                 <Text style={styles.opportunityTitle}>{opp.title}</Text>
-                <TouchableOpacity
-                  style={styles.readMoreButton}
-                  onPress={() => router.push(`/Opportunitydetail?id=${opp.$id}`)}
-                >
-                  <Text style={styles.readMoreText}>Read more</Text>
-                </TouchableOpacity>
-              </View>
+              </TouchableOpacity>
             ))
           )}
         </View>
+
+        <TouchableOpacity
+          style={styles.topMatchesButton}
+          onPress={() => router.push('/TopMatches')}
+        >
+          <Text style={styles.topMatchesText}>View your top matches</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
@@ -153,10 +151,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#0a445c',
     letterSpacing: 1,
-  },
-  searchIcon: {
-    width: 30,
-    height: 30,
   },
   homeIcon: {
     width: 40,
@@ -225,14 +219,14 @@ const styles = StyleSheet.create({
     color: '#46a3a4',
     fontWeight: '500',
   },
-  readMoreButton: {
-    backgroundColor: '#e1e4e4',
+  topMatchesButton: {
+    alignItems: 'center',
     paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 15,
+    marginTop: 16,
   },
-  readMoreText: {
-    color: '#0a445c',
-    fontSize: 12,
+  topMatchesText: {
+    color: '#46a3a4',
+    fontSize: 16,
+    textDecorationLine: 'underline',
   },
 });

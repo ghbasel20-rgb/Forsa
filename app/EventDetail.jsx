@@ -99,16 +99,16 @@ export default function EventDetail() {
               </View>
             )}
 
-            <TouchableOpacity
-              style={styles.applyButton}
-              onPress={() =>
-                applicationId
-                  ? router.push(`/Status?id=${applicationId}`)
-                  : router.push(`/Application?eventId=${event.$id}`)
-              }
-            >
-              <Text style={styles.applyButtonText}>{applicationId ? 'View status' : 'Apply'}</Text>
-            </TouchableOpacity>
+            {applicationId ? (
+              <Text style={styles.joinedText}>You have already joined this event</Text>
+            ) : (
+              <TouchableOpacity
+                style={styles.applyButton}
+                onPress={() => router.push(`/Application?eventId=${event.$id}`)}
+              >
+                <Text style={styles.applyButtonText}>Apply</Text>
+              </TouchableOpacity>
+            )}
           </>
         )}
       </View>
@@ -191,5 +191,12 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 16,
     fontWeight: '600',
+  },
+  joinedText: {
+    textAlign: 'center',
+    color: '#46a3a4',
+    fontSize: 16,
+    fontWeight: '600',
+    marginTop: 10,
   },
 });

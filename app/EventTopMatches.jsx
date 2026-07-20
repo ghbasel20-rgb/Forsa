@@ -11,19 +11,19 @@ import BackButton from './components/BackButton';
 import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
 import TitleText from './components/TitleText';
-import { getAllOpportunities, getMatchedOpportunities } from './services/opportunities-service';
+import { getEvents, getMatchedEvents } from './services/events-service';
 import { getCurrentUser } from './services/auth-service';
 import { getUserProfile } from './services/profile-service';
 
-export default function TopMatches() {
+export default function EventTopMatches() {
   const router = useRouter();
-  const [opportunities, setOpportunities] = useState([]);
+  const [events, setEvents] = useState([]);
 
   useEffect(() => {
-    loadOpportunities();
+    loadEvents();
   }, []);
 
-  const loadOpportunities = async () => {
+  const loadEvents = async () => {
     const userResult = await getCurrentUser();
     if (!userResult.success) {
       return;
@@ -32,10 +32,10 @@ export default function TopMatches() {
     const profileResult = await getUserProfile(userResult.data.$id);
     const profile = profileResult.success ? profileResult.data : null;
 
-    const opportunitiesResult = await getAllOpportunities();
-    if (opportunitiesResult.success) {
-      const { topMatches } = getMatchedOpportunities(opportunitiesResult.data, profile);
-      setOpportunities(topMatches);
+    const eventsResult = await getEvents();
+    if (eventsResult.success) {
+      const { topMatches } = getMatchedEvents(eventsResult.data, profile);
+      setEvents(topMatches);
     }
   };
 
@@ -51,28 +51,31 @@ export default function TopMatches() {
             </View>
           </View>
 
-          <TitleText style={styles.title}>YOUR TOP{'\n'}MATCHES</TitleText>
+          <TitleText style={styles.title}>YOUR TOP{'\n'}EVENT MATCHES</TitleText>
 
           <View style={styles.matchesContainer}>
-            {opportunities.map((match, index) => (
+            {events.map((match, index) => (
               <TouchableOpacity
                 key={match.$id}
                 style={styles.matchCard}
-                onPress={() => router.push(`/Opportunitydetail?id=${match.$id}`)}
+                onPress={() => router.push(`/EventDetail?id=${match.$id}`)}
               >
                 <View style={styles.numberBadge}>
                   <Text style={styles.numberText}>#{index + 1}</Text>
                 </View>
                 <Text style={styles.matchTitle}>{match.title}</Text>
+                <View style={styles.readMoreButton}>
+                  <Text style={styles.readMoreText}>Read more</Text>
+                </View>
               </TouchableOpacity>
             ))}
           </View>
 
           <TouchableOpacity
-            style={styles.allOpportunitiesButton}
-            onPress={() => router.push('/Allopportunities')}
+            style={styles.allEventsButton}
+            onPress={() => router.push('/Events')}
           >
-            <Text style={styles.allOpportunitiesText}>Explore all opportunities</Text>
+            <Text style={styles.allEventsText}>Explore all events</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -153,11 +156,21 @@ const styles = StyleSheet.create({
     color: '#46a3a4',
     fontWeight: '500',
   },
-  allOpportunitiesButton: {
+  readMoreButton: {
+    backgroundColor: '#e1e4e4',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 15,
+  },
+  readMoreText: {
+    color: '#0a445c',
+    fontSize: 12,
+  },
+  allEventsButton: {
     alignItems: 'center',
     paddingVertical: 8,
   },
-  allOpportunitiesText: {
+  allEventsText: {
     color: '#46a3a4',
     fontSize: 16,
     textDecorationLine: 'underline',
