@@ -11,14 +11,16 @@ import {
   View,
 } from 'react-native';
 import Logo from '../assets/images/Logo.svg';
+import EditIcon from '../assets/images/edit.svg';
 import SettingsIcon from '../assets/images/settings.svg';
+import BackButton from './components/BackButton';
 import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
 import TitleText from './components/TitleText';
+import StatusPickerModal from './components/StatusPickerModal';
 import { getCurrentUser, signOut } from './services/auth-service';
 import { getEventById } from './services/events-service';
-import { exploreOpportunities } from './services/navigation-service';
-import { getUserProfile } from './services/profile-service';
+import { getUserProfile, updateUserProfile } from './services/profile-service';
 import { getSavedEvents } from './services/saved-events-service';
 import { getSavedOpportunities } from './services/saved-opportunities-service';
 
@@ -29,6 +31,7 @@ export default function Profile() {
   const [savedOpportunities, setSavedOpportunities] = useState([]);
   const [appliedEvents, setAppliedEvents] = useState([]);
   const [settingsMenuVisible, setSettingsMenuVisible] = useState(false);
+  const [showStatusModal, setShowStatusModal] = useState(false);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -73,6 +76,14 @@ export default function Profile() {
     router.replace('/Sign-in');
   };
 
+  const saveStatus = async (newStatus) => {
+    setShowStatusModal(false);
+    const result = await updateUserProfile(profileData.$id, { educationStatus: newStatus });
+    if (result.success) {
+      setProfileData(result.data);
+    }
+  };
+
   const calculateAge = (dateOfBirth) => {
     if (!dateOfBirth) return 'N/A';
     const birthDate = new Date(dateOfBirth);
@@ -90,12 +101,15 @@ export default function Profile() {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <TouchableOpacity
-              style={styles.settingsButton}
-              onPress={() => setSettingsMenuVisible(true)}
-            >
-              <SettingsIcon width={34} height={34} />
-            </TouchableOpacity>
+            <View style={styles.headerLeft}>
+              <BackButton />
+              <TouchableOpacity
+                style={styles.settingsButton}
+                onPress={() => setSettingsMenuVisible(true)}
+              >
+                <SettingsIcon width={34} height={34} />
+              </TouchableOpacity>
+            </View>
             <View style={styles.headerBrand}>
               <Logo width={38} height={38} style={styles.logoSmall} />
               <Text style={styles.brandName}>FORSA</Text>
@@ -136,22 +150,74 @@ export default function Profile() {
               <Text style={styles.infoLabel}>Email:</Text>
               <Text style={styles.infoValue}>{userData?.email || 'Loading...'}</Text>
             </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Status:</Text>
+            <TouchableOpacity
+              style={styles.infoRow}
+              onPress={() => setShowStatusModal(true)}
+            >
+              <View style={styles.infoLabelRow}>
+                <Text style={styles.infoLabel}>Status:</Text>
+                <EditIcon width={32} height={32} />
+              </View>
               <Text style={styles.infoValue}>{profileData?.educationStatus || 'Not set'}</Text>
-            </View>
+            </TouchableOpacity>
             <View style={styles.infoRow}>
               <Text style={styles.infoLabel}>Age:</Text>
               <Text style={styles.infoValue}>{profileData?.dateOfBirth ? calculateAge(profileData.dateOfBirth) : 'Not set'}</Text>
             </View>
           </View>
 
+          <View style={styles.sectionHeaderRow}>
+            <Text style={styles.sectionTitleInline}>SKILLS</Text>
+            <TouchableOpacity onPress={() => router.push('/Buildprofileskills?edit=true')}>
+              <EditIcon width={38} height={38} />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.chipsContainer}>
+            {profileData?.skills?.length > 0 ? (
+              profileData.skills.map((skill) => (
+                <View key={skill} style={styles.chip}>
+                  <Text style={styles.chipText}>{skill}</Text>
+                </View>
+              ))
+            ) : (
+              <Text style={styles.emptyText}>No skills added yet</Text>
+            )}
+          </View>
+
+          <View style={styles.sectionHeaderRow}>
+            <Text style={styles.sectionTitleInline}>INTERESTS</Text>
+            <TouchableOpacity onPress={() => router.push('/Buildprofileinterests?edit=true')}>
+              <EditIcon width={38} height={38} />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.chipsContainer}>
+            {profileData?.interests?.length > 0 ? (
+              profileData.interests.map((interest) => (
+                <View key={interest} style={styles.chip}>
+                  <Text style={styles.chipText}>{interest}</Text>
+                </View>
+              ))
+            ) : (
+              <Text style={styles.emptyText}>No interests added yet</Text>
+            )}
+          </View>
+
+          <StatusPickerModal
+            visible={showStatusModal}
+            onClose={() => setShowStatusModal(false)}
+            onSubmit={saveStatus}
+          />
+
           {savedOpportunities.length > 0 && (
             <>
               <Text style={styles.sectionTitle}>SAVED{'\n'}OPPORTUNITIES:</Text>
               <View style={styles.opportunitiesContainer}>
                 {savedOpportunities.map((opp) => (
-                  <View key={opp.$id} style={styles.opportunityCard}>
+                  <TouchableOpacity
+                    key={opp.$id}
+                    style={styles.opportunityCard}
+                    onPress={() => router.push(`/Opportunitydetail?id=${opp.opportunityId}`)}
+                  >
                     <View style={styles.opportunityIcon}>
                       <Image
                         source={require('../assets/images/icon.png')}
@@ -160,13 +226,7 @@ export default function Profile() {
                       />
                     </View>
                     <Text style={styles.opportunityTitle}>{opp.opportunityTitle}</Text>
-                    <TouchableOpacity
-                      style={styles.readMoreButton}
-                      onPress={() => router.push(`/Opportunitydetail?id=${opp.opportunityId}`)}
-                    >
-                      <Text style={styles.readMoreText}>Read more</Text>
-                    </TouchableOpacity>
-                  </View>
+                  </TouchableOpacity>
                 ))}
               </View>
             </>
@@ -197,13 +257,6 @@ export default function Profile() {
               </View>
             </>
           )}
-
-          <TouchableOpacity
-            style={styles.continueButton}
-            onPress={() => exploreOpportunities(router)}
-          >
-            <Text style={styles.continueButtonText}>Continue exploring</Text>
-          </TouchableOpacity>
         </View>
       </ScrollView>
       <BottomNav />
@@ -234,6 +287,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   settingsButton: {
     padding: 8,
@@ -304,6 +361,12 @@ const styles = StyleSheet.create({
     borderBottomColor: '#46a3a4',
     paddingVertical: 12,
   },
+  infoLabelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 4,
+  },
   infoLabel: {
     fontSize: 16,
     color: '#46a3a4',
@@ -321,6 +384,39 @@ const styles = StyleSheet.create({
     marginTop: 30,
     marginBottom: 20,
     lineHeight: 35,
+  },
+  sectionHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 10,
+    marginBottom: 12,
+  },
+  sectionTitleInline: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#0a445c',
+  },
+  chipsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+    marginBottom: 20,
+  },
+  chip: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 18,
+    backgroundColor: '#46a3a4',
+  },
+  chipText: {
+    color: '#ffffff',
+    fontSize: 13,
+  },
+  emptyText: {
+    fontSize: 14,
+    color: '#46a3a4',
+    fontStyle: 'italic',
   },
   opportunitiesContainer: {
     gap: 16,
@@ -362,16 +458,5 @@ const styles = StyleSheet.create({
   readMoreText: {
     color: '#0a445c',
     fontSize: 12,
-  },
-  continueButton: {
-    backgroundColor: '#c6a2ba',
-    paddingVertical: 16,
-    borderRadius: 25,
-    alignItems: 'center',
-  },
-  continueButtonText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '600',
   },
 });

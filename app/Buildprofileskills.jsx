@@ -1,8 +1,7 @@
-import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import React, { useEffect, useState } from 'react';
 import {
   Alert,
-  Modal,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -11,14 +10,30 @@ import {
 import Logo from '../assets/images/Logo.svg';
 import { useProfile } from './ProfileContext';
 import Text from './components/AppText';
-import TextInput from './components/AppTextInput';
+import BackButton from './components/BackButton';
+import ChipSelector from './components/ChipSelector';
+import { getCurrentUser } from './services/auth-service';
+import { getUserProfile, updateUserProfile } from './services/profile-service';
 
 export default function BuildProfileSkills() {
   const router = useRouter();
+  const { edit, flow } = useLocalSearchParams();
   const { updateProfile } = useProfile();
   const [selectedSkills, setSelectedSkills] = useState([]);
-  const [showCustomSkillInput, setShowCustomSkillInput] = useState(false);
-  const [customSkill, setCustomSkill] = useState('');
+
+  useEffect(() => {
+    const loadExistingSkills = async () => {
+      const userResult = await getCurrentUser();
+      if (!userResult.success) return;
+
+      const profileResult = await getUserProfile(userResult.data.$id);
+      if (profileResult.success && profileResult.data.skills?.length > 0) {
+        setSelectedSkills(profileResult.data.skills);
+      }
+    };
+
+    loadExistingSkills();
+  }, []);
 
   const skills = [
     'Programming',
@@ -55,108 +70,63 @@ export default function BuildProfileSkills() {
     'Other',
   ];
 
-  const toggleSkill = (skill) => {
-    if (skill === 'Other') {
-      setShowCustomSkillInput(true);
-    } else if (selectedSkills.includes(skill)) {
-      setSelectedSkills(selectedSkills.filter(s => s !== skill));
-    } else {
-      setSelectedSkills([...selectedSkills, skill]);
-    }
-  };
-
-  const handleCustomSkillSubmit = () => {
-    if (customSkill.trim()) {
-      setSelectedSkills([...selectedSkills, customSkill.trim()]);
-      setShowCustomSkillInput(false);
-      setCustomSkill('');
-    }
-  };
-
-  const handleNext = () => {
+  const handleNext = async () => {
     if (selectedSkills.length === 0) {
       Alert.alert('Error', 'Please select at least one skill');
       return;
     }
 
+    if (edit) {
+      const userResult = await getCurrentUser();
+      if (!userResult.success) {
+        Alert.alert('Error', 'Could not get user information');
+        return;
+      }
+
+      const profileResult = await getUserProfile(userResult.data.$id);
+      if (!profileResult.success) {
+        Alert.alert('Error', 'Could not find your profile');
+        return;
+      }
+
+      const result = await updateUserProfile(profileResult.data.$id, { skills: selectedSkills });
+      if (result.success) {
+        router.push('/Profile');
+      } else {
+        Alert.alert('Error', result.error);
+      }
+      return;
+    }
+
     updateProfile({ skills: selectedSkills });
-    router.push('/Buildprofileinterests');
+    router.push({ pathname: '/Buildprofileinterests', params: flow ? { flow } : {} });
   };
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <Logo width={38} height={38} style={styles.logoSmall} />
-          <Text style={styles.brandName}>FORSA</Text>
+          <BackButton />
+          <View style={styles.logoContainer}>
+            <Logo width={38} height={38} style={styles.logoSmall} />
+            <Text style={styles.brandName}>FORSA</Text>
+          </View>
         </View>
 
         <Text style={styles.title}>SELECT YOUR{'\n'}SKILLS</Text>
 
-        <View style={styles.chipsContainer}>
-          {skills.map((skill) => (
-            <TouchableOpacity
-              key={skill}
-              style={[
-                styles.chip,
-                selectedSkills.includes(skill) && styles.chipSelected
-              ]}
-              onPress={() => toggleSkill(skill)}
-            >
-              <Text
-                style={[
-                  styles.chipText,
-                  selectedSkills.includes(skill) && styles.chipTextSelected
-                ]}
-              >
-                {skill}
-              </Text>
-            </TouchableOpacity>
-          ))}
-          
-          {selectedSkills.filter(skill => !skills.includes(skill)).map((customSkill) => (
-            <TouchableOpacity
-              key={customSkill}
-              style={[styles.chip, styles.chipSelected]}
-              onPress={() => setSelectedSkills(selectedSkills.filter(s => s !== customSkill))}
-            >
-              <Text style={[styles.chipText, styles.chipTextSelected]}>
-                {customSkill}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+        <ChipSelector
+          options={skills}
+          selected={selectedSkills}
+          onChange={setSelectedSkills}
+          modalTitle="Enter Your Skill"
+          placeholder="Type your skill"
+          submitLabel="Add Skill"
+        />
 
         <TouchableOpacity style={styles.button} onPress={handleNext}>
-          <Text style={styles.buttonText}>Next</Text>
+          <Text style={styles.buttonText}>{edit ? 'Finish Editing' : 'Next'}</Text>
         </TouchableOpacity>
-
-        <Modal
-          visible={showCustomSkillInput}
-          transparent={true}
-          animationType="fade"
-          onRequestClose={() => setShowCustomSkillInput(false)}
-        >
-          <TouchableOpacity
-            style={styles.modalOverlay}
-            activeOpacity={1}
-            onPress={() => setShowCustomSkillInput(false)}
-          >
-            <View style={styles.modalContent} onStartShouldSetResponder={() => true}>
-              <Text style={styles.modalTitle}>Enter Your Skill</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Type your skill"
-                placeholderTextColor="#46a3a4"
-                value={customSkill}
-                onChangeText={setCustomSkill}
-              />
-              <TouchableOpacity style={styles.submitButton} onPress={handleCustomSkillSubmit}>
-                <Text style={styles.buttonText}>Add Skill</Text>
-              </TouchableOpacity>
-            </View>
-          </TouchableOpacity>
-        </Modal>
       </View>
     </ScrollView>
   );
@@ -175,8 +145,12 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     marginBottom: 40,
+  },
+  logoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 8,
   },
   logoSmall: {
@@ -196,31 +170,6 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     lineHeight: 52,
   },
-  chipsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-    marginBottom: 24,
-  },
-  chip: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 20,
-    borderWidth: 2,
-    borderColor: '#46a3a4',
-    backgroundColor: 'transparent',
-  },
-  chipSelected: {
-    backgroundColor: '#46a3a4',
-    borderColor: '#46a3a4',
-  },
-  chipText: {
-    color: '#46a3a4',
-    fontSize: 14,
-  },
-  chipTextSelected: {
-    color: '#ffffff',
-  },
   button: {
     backgroundColor: '#c6a2ba',
     paddingVertical: 16,
@@ -232,41 +181,5 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 16,
     fontWeight: '600',
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContent: {
-    backgroundColor: '#ffffff',
-    borderRadius: 20,
-    padding: 20,
-    width: '80%',
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#0a445c',
-    marginBottom: 16,
-    textAlign: 'center',
-  },
-  input: {
-    backgroundColor: '#ffffff',
-    borderWidth: 2,
-    borderColor: '#46a3a4',
-    borderRadius: 25,
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    fontSize: 16,
-    color: '#0a445c',
-    marginBottom: 16,
-  },
-  submitButton: {
-    backgroundColor: '#c6a2ba',
-    paddingVertical: 14,
-    borderRadius: 25,
-    alignItems: 'center',
   },
 });

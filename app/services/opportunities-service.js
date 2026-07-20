@@ -120,11 +120,5 @@ export const getMatchedOpportunities = (opportunities, profile) => {
     .slice(0, 3)
     .map((entry) => entry.opportunity);
 
-  const topMatchIds = new Set(topMatches.map((opportunity) => opportunity.$id));
-
-  const otherMatches = scored
-    .filter((entry) => !topMatchIds.has(entry.opportunity.$id))
-    .map((entry) => entry.opportunity);
-
-  return { topMatches, otherMatches };
+  return { topMatches };
 };

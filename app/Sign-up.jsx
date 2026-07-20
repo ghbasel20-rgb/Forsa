@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
-  Modal,
   Platform,
   ScrollView,
   StyleSheet,
@@ -15,16 +14,9 @@ import Logo from '../assets/images/Logo.svg';
 import Text from './components/AppText';
 import TextInput from './components/AppTextInput';
 import TitleText from './components/TitleText';
+import StatusPickerModal from './components/StatusPickerModal';
 import { signUp } from './services/auth-service';
 import { createUserProfile } from './services/profile-service';
-
-const statusOptions = [
-  'High School Student',
-  'High School Graduate',
-  'University Student',
-  'University Graduate',
-  'Other',
-];
 
 export default function SignUp() {
   const router = useRouter();
@@ -33,11 +25,10 @@ export default function SignUp() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState(new Date());
+  const [dobSelected, setDobSelected] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [status, setStatus] = useState('');
   const [showStatusModal, setShowStatusModal] = useState(false);
-  const [showCustomStatusInput, setShowCustomStatusInput] = useState(false);
-  const [customStatus, setCustomStatus] = useState('');
   const [loading, setLoading] = useState(false);
 
   const onDateChange = (event, selectedDate) => {
@@ -46,6 +37,7 @@ export default function SignUp() {
     }
     if (selectedDate) {
       setDateOfBirth(selectedDate);
+      setDobSelected(true);
     }
   };
 
@@ -57,26 +49,8 @@ export default function SignUp() {
     });
   };
 
-  const handleStatusSelect = (option) => {
-    if (option === 'Other') {
-      setShowStatusModal(false);
-      setShowCustomStatusInput(true);
-    } else {
-      setStatus(option);
-      setShowStatusModal(false);
-    }
-  };
-
-  const handleCustomStatusSubmit = () => {
-    if (customStatus.trim()) {
-      setStatus(customStatus.trim());
-      setShowCustomStatusInput(false);
-      setCustomStatus('');
-    }
-  };
-
   const handleSignUp = async () => {
-    if (!fullName || !email || !password || !confirmPassword || !status) {
+    if (!fullName || !email || !password || !confirmPassword || !status || !dobSelected) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
@@ -171,7 +145,9 @@ export default function SignUp() {
             style={styles.input}
             onPress={() => setShowDatePicker(true)}
           >
-            <Text style={styles.dateText}>{formatDate(dateOfBirth)}</Text>
+            <Text style={[styles.dateText, !dobSelected && styles.placeholderText]}>
+              {dobSelected ? formatDate(dateOfBirth) : 'Date of Birth'}
+            </Text>
           </TouchableOpacity>
 
           {showDatePicker && (
@@ -212,58 +188,14 @@ export default function SignUp() {
           </TouchableOpacity>
         </View>
 
-        <Modal
+        <StatusPickerModal
           visible={showStatusModal}
-          transparent={true}
-          animationType="fade"
-          onRequestClose={() => setShowStatusModal(false)}
-        >
-          <TouchableOpacity
-            style={styles.modalOverlay}
-            activeOpacity={1}
-            onPress={() => setShowStatusModal(false)}
-          >
-            <View style={styles.modalContent} onStartShouldSetResponder={() => true}>
-              <Text style={styles.modalTitle}>Select Status</Text>
-              {statusOptions.map((option) => (
-                <TouchableOpacity
-                  key={option}
-                  style={styles.modalOption}
-                  onPress={() => handleStatusSelect(option)}
-                >
-                  <Text style={styles.modalOptionText}>{option}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </TouchableOpacity>
-        </Modal>
-
-        <Modal
-          visible={showCustomStatusInput}
-          transparent={true}
-          animationType="fade"
-          onRequestClose={() => setShowCustomStatusInput(false)}
-        >
-          <TouchableOpacity
-            style={styles.modalOverlay}
-            activeOpacity={1}
-            onPress={() => setShowCustomStatusInput(false)}
-          >
-            <View style={styles.modalContent} onStartShouldSetResponder={() => true}>
-              <Text style={styles.modalTitle}>Enter Your Status</Text>
-              <TextInput
-                style={styles.customInput}
-                placeholder="Type your status"
-                placeholderTextColor="#46a3a4"
-                value={customStatus}
-                onChangeText={setCustomStatus}
-              />
-              <TouchableOpacity style={styles.submitButton} onPress={handleCustomStatusSubmit}>
-                <Text style={styles.buttonText}>Submit</Text>
-              </TouchableOpacity>
-            </View>
-          </TouchableOpacity>
-        </Modal>
+          onClose={() => setShowStatusModal(false)}
+          onSubmit={(value) => {
+            setStatus(value);
+            setShowStatusModal(false);
+          }}
+        />
       </View>
     </ScrollView>
   );
@@ -322,52 +254,6 @@ const styles = StyleSheet.create({
   },
   placeholderText: {
     color: '#46a3a4',
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContent: {
-    backgroundColor: '#ffffff',
-    borderRadius: 20,
-    padding: 20,
-    width: '80%',
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#0a445c',
-    marginBottom: 16,
-    textAlign: 'center',
-  },
-  modalOption: {
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e1e4e4',
-  },
-  modalOptionText: {
-    fontSize: 16,
-    color: '#0a445c',
-  },
-  customInput: {
-    backgroundColor: '#ffffff',
-    borderWidth: 2,
-    borderColor: '#46a3a4',
-    borderRadius: 25,
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    fontSize: 16,
-    color: '#0a445c',
-    marginBottom: 16,
-  },
-  submitButton: {
-    backgroundColor: '#c6a2ba',
-    paddingVertical: 14,
-    borderRadius: 25,
-    alignItems: 'center',
   },
   button: {
     backgroundColor: '#c6a2ba',

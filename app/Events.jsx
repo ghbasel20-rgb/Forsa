@@ -2,8 +2,10 @@ import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Logo from '../assets/images/Logo.svg';
+import BackButton from './components/BackButton';
 import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
+import TextInput from './components/AppTextInput';
 import TitleText from './components/TitleText';
 import { getEvents } from './services/events-service';
 
@@ -11,6 +13,7 @@ export default function Events() {
   const router = useRouter();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     loadEvents();
@@ -24,25 +27,44 @@ export default function Events() {
     setLoading(false);
   };
 
+  const filteredEvents = events.filter((event) =>
+    event.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <View style={styles.screen}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.header}>
+            <BackButton />
             <Logo width={38} height={38} style={styles.logoSmall} />
             <Text style={styles.brandName}>FORSA</Text>
           </View>
 
           <TitleText style={styles.title}>OUR EVENTS</TitleText>
 
+          <View style={styles.searchContainer}>
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search events..."
+              placeholderTextColor="#46a3a4"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+          </View>
+
           <View style={styles.eventsContainer}>
             {loading ? (
               <Text style={styles.loadingText}>Loading events...</Text>
-            ) : events.length === 0 ? (
+            ) : filteredEvents.length === 0 ? (
               <Text style={styles.loadingText}>No events found</Text>
             ) : (
-              events.map((event) => (
-                <View key={event.$id} style={styles.eventCard}>
+              filteredEvents.map((event) => (
+                <TouchableOpacity
+                  key={event.$id}
+                  style={styles.eventCard}
+                  onPress={() => router.push(`/EventDetail?id=${event.$id}`)}
+                >
                   <View style={styles.eventCardTop}>
                     <View style={styles.iconContainer}>
                       <Image
@@ -53,13 +75,7 @@ export default function Events() {
                     </View>
                     <Text style={styles.eventTitle}>{event.title}</Text>
                   </View>
-                  <TouchableOpacity
-                    style={styles.readMoreButton}
-                    onPress={() => router.push(`/EventDetail?id=${event.$id}`)}
-                  >
-                    <Text style={styles.readMoreText}>Read more</Text>
-                  </TouchableOpacity>
-                </View>
+                </TouchableOpacity>
               ))
             )}
           </View>
@@ -106,6 +122,19 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     lineHeight: 50,
   },
+  searchContainer: {
+    marginBottom: 20,
+  },
+  searchInput: {
+    backgroundColor: '#ffffff',
+    borderWidth: 2,
+    borderColor: '#46a3a4',
+    borderRadius: 25,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    fontSize: 16,
+    color: '#0a445c',
+  },
   eventsContainer: {
     gap: 16,
   },
@@ -146,16 +175,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#0a445c',
     fontWeight: '500',
-  },
-  readMoreButton: {
-    backgroundColor: '#e1e4e4',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 15,
-    alignSelf: 'flex-end',
-  },
-  readMoreText: {
-    color: '#0a445c',
-    fontSize: 12,
   },
 });
