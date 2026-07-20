@@ -98,10 +98,6 @@ const scoreOpportunityMatch = (opportunity, profile) => {
 };
 
 export const getMatchedOpportunities = (opportunities, profile) => {
-  const userSelectionCount =
-    (profile?.skills?.length || 0) + (profile?.interests?.length || 0);
-  const strongAlignmentThreshold = Math.max(2, Math.ceil(userSelectionCount / 2));
-
   const scored = opportunities
     .map((opportunity) => ({
       opportunity,
@@ -116,9 +112,8 @@ export const getMatchedOpportunities = (opportunities, profile) => {
     });
 
   const topMatches = scored
-    .filter((entry) => entry.score >= strongAlignmentThreshold)
     .slice(0, 3)
-    .map((entry) => entry.opportunity);
+    .map((entry) => ({ ...entry.opportunity, matchScore: entry.score }));
 
   return { topMatches };
 };

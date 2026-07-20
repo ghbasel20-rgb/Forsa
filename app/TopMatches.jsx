@@ -64,6 +64,9 @@ export default function TopMatches() {
                   <Text style={styles.numberText}>#{index + 1}</Text>
                 </View>
                 <Text style={styles.matchTitle}>{match.title}</Text>
+                <View style={styles.scoreBadge}>
+                  <Text style={styles.scoreText}>{match.matchScore}</Text>
+                </View>
               </TouchableOpacity>
             ))}
           </View>
@@ -152,6 +155,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#46a3a4',
     fontWeight: '500',
+  },
+  scoreBadge: {
+    backgroundColor: '#e1e4e4',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 15,
+  },
+  scoreText: {
+    color: '#0a445c',
+    fontSize: 14,
+    fontWeight: '700',
   },
   allOpportunitiesButton: {
     alignItems: 'center',
