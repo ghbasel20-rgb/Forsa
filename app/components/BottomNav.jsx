@@ -1,4 +1,4 @@
-import { usePathname, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import EventsIcon from '../../assets/images/events.svg';
@@ -15,24 +15,21 @@ const tabs = [
   { label: 'Opportunities', route: '/TopMatches', Icon: PurpleSearchIcon, viewBox: '37.65 6.64 62.55 66.85', onPress: exploreOpportunities },
 ];
 
-export default function BottomNav({ hideTab }) {
+export default function BottomNav() {
   const router = useRouter();
-  const pathname = usePathname();
 
   return (
     <View style={styles.container}>
-      {tabs
-        .filter(({ label, route }) => route !== pathname && label !== hideTab)
-        .map(({ label, route, Icon, viewBox, onPress }) => (
-          <TouchableOpacity
-            key={label}
-            style={styles.tab}
-            onPress={() => (onPress ? onPress(router) : router.push(route))}
-          >
-            <Icon width={26} height={26} {...(viewBox ? { viewBox } : {})} />
-            <Text style={styles.label}>{label}</Text>
-          </TouchableOpacity>
-        ))}
+      {tabs.map(({ label, route, Icon, viewBox, onPress }) => (
+        <TouchableOpacity
+          key={label}
+          style={styles.tab}
+          onPress={() => (onPress ? onPress(router) : router.push(route))}
+        >
+          <Icon width={26} height={26} {...(viewBox ? { viewBox } : {})} />
+          <Text style={styles.label}>{label}</Text>
+        </TouchableOpacity>
+      ))}
     </View>
   );
 }
