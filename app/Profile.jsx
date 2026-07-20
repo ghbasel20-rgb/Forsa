@@ -9,10 +9,11 @@ import {
   View,
 } from 'react-native';
 import Logo from '../assets/images/Logo.svg';
+import SettingsIcon from '../assets/images/settings.svg';
 import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
 import TitleText from './components/TitleText';
-import { getCurrentUser } from './services/auth-service';
+import { getCurrentUser, signOut } from './services/auth-service';
 import { getEventById } from './services/events-service';
 import { exploreOpportunities } from './services/navigation-service';
 import { getUserProfile } from './services/profile-service';
@@ -63,6 +64,11 @@ export default function Profile() {
     }
   };
 
+  const handleLogout = async () => {
+    await signOut();
+    router.replace('/Sign-in');
+  };
+
   const calculateAge = (dateOfBirth) => {
     if (!dateOfBirth) return 'N/A';
     const birthDate = new Date(dateOfBirth);
@@ -80,8 +86,13 @@ export default function Profile() {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <Logo width={38} height={38} style={styles.logoSmall} />
-            <Text style={styles.brandName}>FORSA</Text>
+            <TouchableOpacity onPress={handleLogout}>
+              <SettingsIcon width={26} height={26} />
+            </TouchableOpacity>
+            <View style={styles.headerBrand}>
+              <Logo width={38} height={38} style={styles.logoSmall} />
+              <Text style={styles.brandName}>FORSA</Text>
+            </View>
           </View>
 
           <View style={styles.profileHeader}>
@@ -191,8 +202,12 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     marginBottom: 30,
+  },
+  headerBrand: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 8,
   },
   logoSmall: {
