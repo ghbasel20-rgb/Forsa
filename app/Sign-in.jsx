@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -18,22 +18,29 @@ export default function SignIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const isSubmitting = useRef(false);
 
   const handleSignIn = async () => {
+    if (isSubmitting.current) {
+      return;
+    }
+
     if (!email || !password) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
 
+    isSubmitting.current = true;
     setLoading(true);
-    
+
     try {
       await signOut();
     } catch (error) {
       console.log('No active session');
     }
-    
+
     const result = await signIn(email, password);
+    isSubmitting.current = false;
     setLoading(false);
 
     if (result.success) {
