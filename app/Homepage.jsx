@@ -12,7 +12,6 @@ import Logo from '../assets/images/Logo.svg';
 import PurplePfpIcon from '../assets/images/purplePfp.svg';
 import PurpleSearchIcon from '../assets/images/purplesearch.svg';
 import Text from './components/AppText';
-import BottomNav from './components/BottomNav';
 import TitleText from './components/TitleText';
 import { exploreOpportunities } from './services/navigation-service';
 
@@ -94,7 +93,6 @@ export default function Homepage() {
           </View>
         </View>
       </ScrollView>
-      <BottomNav />
     </View>
   );
 }
