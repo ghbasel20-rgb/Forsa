@@ -11,15 +11,15 @@ import EventsIcon from '../assets/images/events.svg';
 import Logo from '../assets/images/Logo.svg';
 import PurplePfpIcon from '../assets/images/purplePfp.svg';
 import PurpleSearchIcon from '../assets/images/purplesearch.svg';
-import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
+import BottomNav from './components/BottomNav';
 import TitleText from './components/TitleText';
 import { exploreOpportunities } from './services/navigation-service';
 
 const successStories = [
-  { id: '1', name: 'Sarah Cohen', info: 'Placed in a 3-month internship' },
-  { id: '2', name: 'Omar Khalil', info: 'Landed a volunteering role' },
-  { id: '3', name: 'Maya Levi', info: 'Completed a mentorship program' },
+  { id: '1', name: 'yamen abdulaziz', info: 'Placed in a 3-month internship' },
+  { id: '2', name: 'samir ibrahim', info: 'Landed a volunteering role' },
+  { id: '3', name: 'Razi shiek ahmad', info: 'Completed a mentorship program' },
 ];
 
 export default function Homepage() {
