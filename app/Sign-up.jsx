@@ -1,6 +1,6 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -30,6 +30,7 @@ export default function SignUp() {
   const [status, setStatus] = useState('');
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const isSubmitting = useRef(false);
 
   const onDateChange = (event, selectedDate) => {
     if (Platform.OS === 'android') {
@@ -50,6 +51,10 @@ export default function SignUp() {
   };
 
   const handleSignUp = async () => {
+    if (isSubmitting.current) {
+      return;
+    }
+
     if (!fullName || !email || !password || !confirmPassword || !status || !dobSelected) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
@@ -65,10 +70,12 @@ export default function SignUp() {
       return;
     }
 
+    isSubmitting.current = true;
     setLoading(true);
     const result = await signUp(email, password, fullName);
 
     if (!result.success) {
+      isSubmitting.current = false;
       setLoading(false);
       Alert.alert('Error', result.error);
       return;
@@ -83,6 +90,7 @@ export default function SignUp() {
       interests: [],
       hasCompletedSkillsInterests: false,
     });
+    isSubmitting.current = false;
     setLoading(false);
 
     if (profileResult.success) {
