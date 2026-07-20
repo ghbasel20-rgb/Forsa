@@ -13,6 +13,7 @@ import {
 import Logo from '../assets/images/Logo.svg';
 import Text from './components/AppText';
 import TextInput from './components/AppTextInput';
+import PasswordInput from './components/PasswordInput';
 import StatusPickerModal from './components/StatusPickerModal';
 import TitleText from './components/TitleText';
 import { signUp } from './services/auth-service';
@@ -131,22 +132,20 @@ export default function SignUp() {
             autoCapitalize="none"
           />
 
-          <TextInput
+          <PasswordInput
             style={styles.input}
             placeholder="Password"
             placeholderTextColor="#46a3a4"
             value={password}
             onChangeText={setPassword}
-            secureTextEntry
           />
 
-          <TextInput
+          <PasswordInput
             style={styles.input}
             placeholder="Confirm Password"
             placeholderTextColor="#46a3a4"
             value={confirmPassword}
             onChangeText={setConfirmPassword}
-            secureTextEntry
           />
 
           <TouchableOpacity

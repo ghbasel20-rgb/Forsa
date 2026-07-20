@@ -115,7 +115,7 @@ export default function Status() {
           )}
         </View>
       </ScrollView>
-      <BottomNav hideTab="Events" />
+      <BottomNav />
     </View>
   );
 }

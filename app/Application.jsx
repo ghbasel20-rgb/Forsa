@@ -121,7 +121,7 @@ export default function Application() {
           </TouchableOpacity>
         </View>
       </ScrollView>
-      <BottomNav hideTab="Events" />
+      <BottomNav />
     </View>
   );
 }

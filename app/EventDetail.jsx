@@ -1,13 +1,13 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import HomeIcon from '../assets/images/home-icon.svg';
 import Logo from '../assets/images/Logo.svg';
 import Text from './components/AppText';
 import TitleText from './components/TitleText';
 import { getCurrentUser } from './services/auth-service';
 import { getEventById } from './services/events-service';
-import { getSavedEventStatus } from './services/saved-events-service';
+import { getSavedEventStatus, unsaveEvent } from './services/saved-events-service';
 
 export default function EventDetail() {
   const router = useRouter();
@@ -37,6 +37,15 @@ export default function EventDetail() {
     }
 
     setLoading(false);
+  };
+
+  const handleWithdraw = async () => {
+    const result = await unsaveEvent(applicationId);
+    if (result.success) {
+      setApplicationId(null);
+    } else {
+      Alert.alert('Error', result.error);
+    }
   };
 
   return (
@@ -100,7 +109,9 @@ export default function EventDetail() {
             )}
 
             {applicationId ? (
-              <Text style={styles.joinedText}>You have already joined this event</Text>
+              <TouchableOpacity style={styles.withdrawButton} onPress={handleWithdraw}>
+                <Text style={styles.withdrawButtonText}>Withdraw application</Text>
+              </TouchableOpacity>
             ) : (
               <TouchableOpacity
                 style={styles.applyButton}
@@ -192,11 +203,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-  joinedText: {
-    textAlign: 'center',
-    color: '#46a3a4',
+  withdrawButton: {
+    borderWidth: 2,
+    borderColor: '#c6a2ba',
+    paddingVertical: 16,
+    borderRadius: 25,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  withdrawButtonText: {
+    color: '#c6a2ba',
     fontSize: 16,
     fontWeight: '600',
-    marginTop: 10,
   },
 });

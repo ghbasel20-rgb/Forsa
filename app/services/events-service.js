@@ -53,10 +53,6 @@ const scoreEventMatch = (event, profile) => {
 };
 
 export const getMatchedEvents = (events, profile) => {
-  const userSelectionCount =
-    (profile?.skills?.length || 0) + (profile?.interests?.length || 0);
-  const strongAlignmentThreshold = Math.max(2, Math.ceil(userSelectionCount / 2));
-
   const scored = events
     .map((event) => ({
       event,
@@ -71,9 +67,8 @@ export const getMatchedEvents = (events, profile) => {
     });
 
   const topMatches = scored
-    .filter((entry) => entry.score >= strongAlignmentThreshold)
     .slice(0, 3)
-    .map((entry) => entry.event);
+    .map((entry) => ({ ...entry.event, matchScore: entry.score }));
 
   return { topMatches };
 };

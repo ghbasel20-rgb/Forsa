@@ -10,6 +10,7 @@ import {
 import Logo from '../assets/images/Logo.svg';
 import Text from './components/AppText';
 import TextInput from './components/AppTextInput';
+import PasswordInput from './components/PasswordInput';
 import TitleText from './components/TitleText';
 import { signIn, signOut } from './services/auth-service';
 
@@ -74,11 +75,10 @@ export default function SignIn() {
 
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Password:</Text>
-          <TextInput
+          <PasswordInput
             style={styles.input}
             value={password}
             onChangeText={setPassword}
-            secureTextEntry
           />
         </View>
 
