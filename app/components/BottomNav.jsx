@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { usePathname, useRouter } from 'expo-router';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import EventsIcon from '../../assets/images/events.svg';
@@ -14,17 +14,20 @@ const tabs = [
   { label: 'Opportunities', route: '/TopMatches', Icon: PurpleSearchIcon, viewBox: '37.65 6.64 62.55 66.85' },
 ];
 
-export default function BottomNav() {
+export default function BottomNav({ hideTab }) {
   const router = useRouter();
+  const pathname = usePathname();
 
   return (
     <View style={styles.container}>
-      {tabs.map(({ label, route, Icon, viewBox }) => (
-        <TouchableOpacity key={label} style={styles.tab} onPress={() => router.push(route)}>
-          <Icon width={26} height={26} {...(viewBox ? { viewBox } : {})} />
-          <Text style={styles.label}>{label}</Text>
-        </TouchableOpacity>
-      ))}
+      {tabs
+        .filter(({ label, route }) => route !== pathname && label !== hideTab)
+        .map(({ label, route, Icon, viewBox }) => (
+          <TouchableOpacity key={label} style={styles.tab} onPress={() => router.push(route)}>
+            <Icon width={26} height={26} {...(viewBox ? { viewBox } : {})} />
+            <Text style={styles.label}>{label}</Text>
+          </TouchableOpacity>
+        ))}
     </View>
   );
 }
@@ -32,9 +35,7 @@ export default function BottomNav() {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    backgroundColor: '#ffffff',
-    borderTopWidth: 1,
-    borderTopColor: '#e1e4e4',
+    backgroundColor: '#0E445C',
     paddingVertical: 10,
     paddingBottom: 16,
   },
@@ -45,7 +46,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 11,
-    color: '#0a445c',
+    color: '#ffffff',
     fontWeight: '600',
   },
 });

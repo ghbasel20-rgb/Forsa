@@ -11,9 +11,12 @@ import {
 import Logo from '../assets/images/Logo.svg';
 import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
+import TitleText from './components/TitleText';
 import { getCurrentUser } from './services/auth-service';
+import { getEventById } from './services/events-service';
 import { exploreOpportunities } from './services/navigation-service';
 import { getUserProfile } from './services/profile-service';
+import { getSavedEvents } from './services/saved-events-service';
 import { getSavedOpportunities } from './services/saved-opportunities-service';
 
 export default function Profile() {
@@ -21,6 +24,7 @@ export default function Profile() {
   const [userData, setUserData] = useState(null);
   const [profileData, setProfileData] = useState(null);
   const [savedOpportunities, setSavedOpportunities] = useState([]);
+  const [appliedEvents, setAppliedEvents] = useState([]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -41,6 +45,20 @@ export default function Profile() {
       const savedResult = await getSavedOpportunities(userResult.data.$id);
       if (savedResult.success) {
         setSavedOpportunities(savedResult.data);
+      }
+
+      const appliedResult = await getSavedEvents(userResult.data.$id);
+      if (appliedResult.success) {
+        const withTitles = await Promise.all(
+          appliedResult.data.map(async (application) => {
+            const eventResult = await getEventById(application.eventId);
+            return {
+              ...application,
+              eventTitle: eventResult.success ? eventResult.data.title : 'Event',
+            };
+          })
+        );
+        setAppliedEvents(withTitles);
       }
     }
   };
@@ -70,7 +88,7 @@ export default function Profile() {
             <View style={styles.avatarContainer}>
               <Text style={styles.avatarIcon}>👤</Text>
             </View>
-            <Text style={styles.profileTitle}>MY PROFILE</Text>
+            <TitleText style={styles.profileTitle}>MY PROFILE</TitleText>
           </View>
 
           <View style={styles.infoContainer}>
@@ -83,7 +101,7 @@ export default function Profile() {
               <Text style={styles.infoValue}>{userData?.email || 'Loading...'}</Text>
             </View>
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Status:</Text>
+              <TitleText style={styles.infoLabel}>Status:</TitleText>
               <Text style={styles.infoValue}>{profileData?.educationStatus || 'Not set'}</Text>
             </View>
             <View style={styles.infoRow}>
@@ -111,6 +129,32 @@ export default function Profile() {
                       onPress={() => router.push(`/Opportunitydetail?id=${opp.opportunityId}`)}
                     >
                       <Text style={styles.readMoreText}>Read more</Text>
+                    </TouchableOpacity>
+                  </View>
+                ))}
+              </View>
+            </>
+          )}
+
+          {appliedEvents.length > 0 && (
+            <>
+              <Text style={styles.sectionTitle}>APPLIED{'\n'}EVENTS:</Text>
+              <View style={styles.opportunitiesContainer}>
+                {appliedEvents.map((application) => (
+                  <View key={application.$id} style={styles.opportunityCard}>
+                    <View style={styles.opportunityIcon}>
+                      <Image
+                        source={require('../assets/images/icon.png')}
+                        style={styles.iconImage}
+                        resizeMode="contain"
+                      />
+                    </View>
+                    <Text style={styles.opportunityTitle}>{application.eventTitle}</Text>
+                    <TouchableOpacity
+                      style={styles.readMoreButton}
+                      onPress={() => router.push(`/Status?id=${application.$id}`)}
+                    >
+                      <Text style={styles.readMoreText}>View status</Text>
                     </TouchableOpacity>
                   </View>
                 ))}

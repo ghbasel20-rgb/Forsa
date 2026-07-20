@@ -5,6 +5,7 @@ import Logo from '../assets/images/Logo.svg';
 import WhatsIcon from '../assets/images/whats.svg';
 import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
+import TitleText from './components/TitleText';
 
 const WHATSAPP_URL = 'https://chat.whatsapp.com/EudPXkosHkY9yfcOh1fjRq';
 const INSTAGRAM_URL = 'https://www.instagram.com/forsa.meet?igsh=YWVvMTZwOWl5NTN0';
@@ -27,7 +28,7 @@ export default function Contact() {
             <Text style={styles.brandName}>FORSA</Text>
           </View>
 
-          <Text style={styles.title}>CONTACT US</Text>
+          <TitleText style={styles.title}>CONTACT US</TitleText>
 
           <TouchableOpacity style={styles.contactRow} onPress={() => openLink(WHATSAPP_URL)}>
             <View style={styles.iconCircle}>

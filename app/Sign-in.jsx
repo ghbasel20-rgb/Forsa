@@ -10,6 +10,7 @@ import {
 import Logo from '../assets/images/Logo.svg';
 import Text from './components/AppText';
 import TextInput from './components/AppTextInput';
+import TitleText from './components/TitleText';
 import { signIn, signOut } from './services/auth-service';
 
 export default function SignIn() {
@@ -50,7 +51,7 @@ export default function SignIn() {
         <Text style={styles.brandName}>FORSA</Text>
       </View>
 
-      <Text style={styles.title}>LOG IN</Text>
+      <TitleText style={styles.title}>LOG IN</TitleText>
 
       <View style={styles.formContainer}>
         <View style={styles.inputContainer}>

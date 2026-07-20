@@ -14,6 +14,7 @@ import {
 import Logo from '../assets/images/Logo.svg';
 import Text from './components/AppText';
 import TextInput from './components/AppTextInput';
+import TitleText from './components/TitleText';
 import { signUp } from './services/auth-service';
 import { createUserProfile } from './services/profile-service';
 
@@ -126,7 +127,7 @@ export default function SignUp() {
           <Text style={styles.brandName}>FORSA</Text>
         </View>
 
-        <Text style={styles.title}>CREATE{'\n'}ACCOUNT</Text>
+        <TitleText style={styles.title}>CREATE{'\n'}ACCOUNT</TitleText>
 
         <View style={styles.formContainer}>
           <TextInput

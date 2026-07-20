@@ -13,6 +13,7 @@ import PurplePfpIcon from '../assets/images/purplePfp.svg';
 import PurpleSearchIcon from '../assets/images/purplesearch.svg';
 import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
+import TitleText from './components/TitleText';
 import { exploreOpportunities } from './services/navigation-service';
 
 const successStories = [
@@ -29,9 +30,10 @@ export default function Homepage() {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <Logo width={38} height={38} style={styles.logoSmall} />
+            <Logo width={64} height={64} style={styles.logoSmall} />
             <Text style={styles.brandName}>FORSA</Text>
           </View>
+          <View style={styles.headerUnderline} />
 
           <View style={styles.grid}>
             <View style={styles.gridRow}>
@@ -66,7 +68,7 @@ export default function Homepage() {
 
               <TouchableOpacity style={styles.gridItem} onPress={() => router.push('/Contact')}>
                 <View style={styles.iconCircle}>
-                  <ContactIcon width={44} height={44} viewBox="17.4 0 80.2 80.2" />
+                  <ContactIcon width={52} height={52} viewBox="17.4 0 80.2 80.2" />
                 </View>
                 <View style={styles.labelPill}>
                   <Text style={styles.labelText}>Contact us</Text>
@@ -77,7 +79,7 @@ export default function Homepage() {
 
           <View style={styles.divider} />
 
-          <Text style={styles.sectionTitle}>SUCCESS STORIES</Text>
+          <TitleText style={styles.sectionTitle}>SUCCESS STORIES</TitleText>
 
           <View style={styles.storiesContainer}>
             {successStories.map((story) => (
@@ -114,19 +116,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
-    borderWidth: 2,
-    borderColor: '#0a445c',
-    borderRadius: 25,
-    paddingVertical: 12,
+    gap: 10,
+    marginBottom: 12,
+  },
+  headerUnderline: {
+    height: 2,
+    backgroundColor: '#46a3a4',
     marginBottom: 30,
   },
   logoSmall: {
-    width: 38,
-    height: 38,
+    width: 64,
+    height: 64,
   },
   brandName: {
-    fontSize: 16,
+    fontSize: 28,
     fontWeight: 'bold',
     color: '#0a445c',
     letterSpacing: 1,
