@@ -127,6 +127,17 @@ export default function Profile() {
               onPress={() => setSettingsMenuVisible(false)}
             >
               <View style={styles.settingsMenu}>
+                {profileData?.isAdmin === true && (
+                  <TouchableOpacity
+                    style={styles.settingsMenuItem}
+                    onPress={() => {
+                      setSettingsMenuVisible(false);
+                      router.push('/Admin');
+                    }}
+                  >
+                    <Text style={styles.settingsMenuItemText}>Admin</Text>
+                  </TouchableOpacity>
+                )}
                 <TouchableOpacity style={styles.settingsMenuItem} onPress={handleLogout}>
                   <Text style={styles.settingsMenuItemText}>Log out</Text>
                 </TouchableOpacity>

@@ -65,7 +65,7 @@ export default function TopMatches() {
                 </View>
                 <Text style={styles.matchTitle}>{match.title}</Text>
                 <View style={styles.scoreBadge}>
-                  <Text style={styles.scoreText}>{match.matchPercentage}%</Text>
+                  <Text style={styles.scoreText}>{match.matchPercentage}% Match</Text>
                 </View>
               </TouchableOpacity>
             ))}
