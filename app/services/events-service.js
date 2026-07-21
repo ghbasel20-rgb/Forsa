@@ -32,6 +32,38 @@ export const getEventById = async (eventId) => {
   }
 };
 
+export const isEventClosed = (dueDate) => {
+  if (!dueDate) return false;
+  return new Date(dueDate).getTime() < Date.now();
+};
+
+export const formatDueDate = (dueDate) => {
+  if (!dueDate) return null;
+  if (isEventClosed(dueDate)) return 'Closed';
+
+  const due = new Date(dueDate);
+  const startOfDue = new Date(due.getFullYear(), due.getMonth(), due.getDate());
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+
+  const daysLeft = Math.round((startOfDue - startOfToday) / (1000 * 60 * 60 * 24));
+
+  if (daysLeft <= 0) return 'Closes today';
+  if (daysLeft === 1) return '1 day left';
+  if (daysLeft <= 7) return `${daysLeft} days left`;
+
+  return `Apply by ${due.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+};
+
+export const formatFullDueDate = (dueDate) => {
+  if (!dueDate) return null;
+  return new Date(dueDate).toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  });
+};
+
 export const scoreEventMatch = (event, profile) => {
   const userSelections = new Set([
     ...(profile?.skills || []),

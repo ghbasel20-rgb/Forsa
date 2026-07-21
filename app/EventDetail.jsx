@@ -7,7 +7,7 @@ import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
 import TitleText from './components/TitleText';
 import { getCurrentUser } from './services/auth-service';
-import { getEventById } from './services/events-service';
+import { formatFullDueDate, getEventById, isEventClosed } from './services/events-service';
 import { getSavedEventStatus, unsaveEvent } from './services/saved-events-service';
 
 export default function EventDetail() {
@@ -49,6 +49,8 @@ export default function EventDetail() {
     }
   };
 
+  const closed = event ? isEventClosed(event.dueDate) : false;
+
   return (
     <View style={styles.screen}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -75,6 +77,16 @@ export default function EventDetail() {
 
           {!loading && event && (
             <>
+              {event.dueDate && (
+                <View style={[styles.deadlineBar, closed && styles.deadlineBarClosed]}>
+                  <Text style={styles.deadlineText}>
+                    {closed
+                      ? 'Applications closed'
+                      : `Application deadline: ${formatFullDueDate(event.dueDate)}`}
+                  </Text>
+                </View>
+              )}
+
               {event.details && (
                 <View style={styles.infoSection}>
                   <Text style={styles.label}>Details:</Text>
@@ -114,14 +126,14 @@ export default function EventDetail() {
                 <TouchableOpacity style={styles.withdrawButton} onPress={handleWithdraw}>
                   <Text style={styles.withdrawButtonText}>Withdraw application</Text>
                 </TouchableOpacity>
-              ) : (
+              ) : !closed ? (
                 <TouchableOpacity
                   style={styles.applyButton}
                   onPress={() => router.push(`/Application?eventId=${event.$id}`)}
                 >
                   <Text style={styles.applyButtonText}>Apply</Text>
                 </TouchableOpacity>
-              )}
+              ) : null}
             </>
           )}
         </View>
@@ -183,6 +195,22 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     lineHeight: 50,
     textAlign: 'center',
+  },
+  deadlineBar: {
+    backgroundColor: '#0a445c',
+    borderRadius: 25,
+    paddingVertical: 14,
+    alignItems: 'center',
+    marginBottom: 30,
+  },
+  deadlineBarClosed: {
+    backgroundColor: '#8a8a8a',
+  },
+  deadlineText: {
+    color: '#ffffff',
+    fontSize: 15,
+    fontWeight: 'bold',
+    letterSpacing: 0.5,
   },
   infoSection: {
     marginBottom: 30,

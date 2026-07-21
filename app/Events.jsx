@@ -11,16 +11,16 @@ import Text from './components/AppText';
 import TextInput from './components/AppTextInput';
 import TitleText from './components/TitleText';
 import { getCurrentUser } from './services/auth-service';
-import { getEvents, scoreEventMatch } from './services/events-service';
+import { formatDueDate, getEvents, isEventClosed, scoreEventMatch } from './services/events-service';
 import { getUserProfile } from './services/profile-service';
 import { getSavedEvents } from './services/saved-events-service';
 import {
   AGE_BUCKETS,
   eventMatchesAgeBuckets,
+  EVENT_SORT_OPTIONS,
   getDistinctValues,
   MATCH_THRESHOLD_OPTIONS,
   sortItems,
-  SORT_OPTIONS,
 } from './utils/filterUtils';
 
 const APPLIED_OPTIONS = [
@@ -76,6 +76,8 @@ export default function Events() {
       events.map((event) => ({
         ...event,
         matchPercentage: scoreEventMatch(event, profile).matchPercentage,
+        isClosed: isEventClosed(event.dueDate),
+        dueDateText: formatDueDate(event.dueDate),
       })),
     [events, profile]
   );
@@ -182,7 +184,7 @@ export default function Events() {
               value={matchThreshold}
               onChange={setMatchThreshold}
             />
-            <SingleChoiceRow label="Sort By" options={SORT_OPTIONS} value={sortBy} onChange={setSortBy} />
+            <SingleChoiceRow label="Sort By" options={EVENT_SORT_OPTIONS} value={sortBy} onChange={setSortBy} />
           </FilterPanel>
 
           <View style={styles.eventsContainer}>
@@ -194,7 +196,7 @@ export default function Events() {
               filteredEvents.map((event) => (
                 <TouchableOpacity
                   key={event.$id}
-                  style={styles.eventCard}
+                  style={[styles.eventCard, event.isClosed && styles.eventCardClosed]}
                   onPress={() => router.push(`/EventDetail?id=${event.$id}`)}
                 >
                   <View style={styles.eventCardTop}>
@@ -205,11 +207,28 @@ export default function Events() {
                         resizeMode="contain"
                       />
                     </View>
-                    <Text style={styles.eventTitle}>{event.title}</Text>
+                    <Text style={[styles.eventTitle, event.isClosed && styles.eventTitleClosed]}>
+                      {event.title}
+                    </Text>
                     <View style={styles.scoreBadge}>
                       <Text style={styles.scoreText}>{event.matchPercentage}%</Text>
                     </View>
                   </View>
+
+                  {event.dueDateText && (
+                    <View style={styles.dueDateRow}>
+                      <Text
+                        style={[styles.dueDateText, event.isClosed && styles.dueDateTextClosed]}
+                      >
+                        {event.dueDateText}
+                      </Text>
+                      {event.isClosed && (
+                        <View style={styles.closedBadge}>
+                          <Text style={styles.closedBadgeText}>Closed</Text>
+                        </View>
+                      )}
+                    </View>
+                  )}
                 </TouchableOpacity>
               ))
             )}
@@ -287,6 +306,11 @@ const styles = StyleSheet.create({
     padding: 16,
     gap: 12,
   },
+  eventCardClosed: {
+    backgroundColor: '#e9e9e9',
+    borderColor: '#b5b5b5',
+    opacity: 0.7,
+  },
   eventCardTop: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -310,6 +334,33 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#0a445c',
     fontWeight: '500',
+  },
+  eventTitleClosed: {
+    color: '#8a8a8a',
+  },
+  dueDateRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  dueDateText: {
+    fontSize: 13,
+    color: '#46a3a4',
+    fontWeight: '600',
+  },
+  dueDateTextClosed: {
+    color: '#8a8a8a',
+  },
+  closedBadge: {
+    backgroundColor: '#8a8a8a',
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    borderRadius: 12,
+  },
+  closedBadgeText: {
+    color: '#ffffff',
+    fontSize: 12,
+    fontWeight: '700',
   },
   scoreBadge: {
     backgroundColor: '#e1e4e4',

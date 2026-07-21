@@ -10,6 +10,11 @@ export const SORT_OPTIONS = [
   { label: 'A-Z', value: 'alpha' },
 ];
 
+export const EVENT_SORT_OPTIONS = [
+  ...SORT_OPTIONS,
+  { label: 'Due Date (Soonest)', value: 'dueDate' },
+];
+
 export const AGE_BUCKETS = [
   { label: '13-17', min: 13, max: 17 },
   { label: '18-24', min: 18, max: 24 },
@@ -31,9 +36,20 @@ export const sortItems = (items, sortBy) => {
       return sorted.sort((a, b) => new Date(b.$createdAt) - new Date(a.$createdAt));
     case 'alpha':
       return sorted.sort((a, b) => a.title.localeCompare(b.title));
+    case 'dueDate':
+      return sorted.sort((a, b) => {
+        if (!!a.isClosed !== !!b.isClosed) return a.isClosed ? 1 : -1;
+        if (!a.dueDate && !b.dueDate) return 0;
+        if (!a.dueDate) return 1;
+        if (!b.dueDate) return -1;
+        return new Date(a.dueDate) - new Date(b.dueDate);
+      });
     case 'match':
     default:
-      return sorted.sort((a, b) => (b.matchPercentage ?? 0) - (a.matchPercentage ?? 0));
+      return sorted.sort((a, b) => {
+        if (!!a.isClosed !== !!b.isClosed) return a.isClosed ? 1 : -1;
+        return (b.matchPercentage ?? 0) - (a.matchPercentage ?? 0);
+      });
   }
 };
 
