@@ -11,6 +11,7 @@ import EventsIcon from '../assets/images/events.svg';
 import Logo from '../assets/images/Logo.svg';
 import PurplePfpIcon from '../assets/images/purplePfp.svg';
 import PurpleSearchIcon from '../assets/images/purplesearch.svg';
+import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
 import TitleText from './components/TitleText';
 import { exploreEvents, exploreOpportunities } from './services/navigation-service';
@@ -93,6 +94,7 @@ export default function Homepage() {
           </View>
         </View>
       </ScrollView>
+      <BottomNav />
     </View>
   );
 }

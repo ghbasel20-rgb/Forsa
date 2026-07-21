@@ -32,7 +32,7 @@ export const getEventById = async (eventId) => {
   }
 };
 
-const scoreEventMatch = (event, profile) => {
+export const scoreEventMatch = (event, profile) => {
   const userSelections = new Set([
     ...(profile?.skills || []),
     ...(profile?.interests || []),

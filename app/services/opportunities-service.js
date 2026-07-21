@@ -77,7 +77,7 @@ export const searchOpportunities = async (searchQuery) => {
   }
 };
 
-const scoreOpportunityMatch = (opportunity, profile) => {
+export const scoreOpportunityMatch = (opportunity, profile) => {
   const userSelections = new Set([
     ...(profile?.skills || []),
     ...(profile?.interests || []),
