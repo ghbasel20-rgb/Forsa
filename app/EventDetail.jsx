@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import HomeIcon from '../assets/images/home-icon.svg';
 import Logo from '../assets/images/Logo.svg';
-import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
+import BottomNav from './components/BottomNav';
 import TitleText from './components/TitleText';
 import { getCurrentUser } from './services/auth-service';
 import { getEventById } from './services/events-service';
@@ -177,10 +177,10 @@ const styles = StyleSheet.create({
     height: 40,
   },
   title: {
-    fontSize: 32,
+    fontSize: 28,
     color: '#0a445c',
-    marginBottom: 30,
-    lineHeight: 50,
+    marginBottom: 24,
+    lineHeight: 32,
     textAlign: 'center',
     flexShrink: 1,
     flexWrap: 'wrap',
