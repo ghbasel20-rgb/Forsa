@@ -223,11 +223,12 @@ const styles = StyleSheet.create({
     tintColor: '#ffffff',
   },
   title: {
-    fontSize: 36,
-    fontWeight: 'bold',
+    fontSize: 32,
     color: '#0a445c',
     marginBottom: 30,
     textAlign: 'center',
+    flexShrink: 1,
+    flexWrap: 'wrap',
   },
   infoSection: {
     marginBottom: 30,

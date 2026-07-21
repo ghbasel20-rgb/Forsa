@@ -2,10 +2,10 @@ import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Logo from '../assets/images/Logo.svg';
-import BackButton from './components/BackButton';
-import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
 import TextInput from './components/AppTextInput';
+import BackButton from './components/BackButton';
+import BottomNav from './components/BottomNav';
 import TitleText from './components/TitleText';
 import { getEvents } from './services/events-service';
 
@@ -116,11 +116,12 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   title: {
-    fontSize: 36,
-    fontWeight: 'bold',
+    fontSize: 32,
     color: '#0a445c',
     marginBottom: 30,
     lineHeight: 50,
+    flexShrink: 1,
+    flexWrap: 'wrap',
   },
   searchContainer: {
     marginBottom: 20,
