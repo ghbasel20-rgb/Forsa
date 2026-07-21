@@ -46,7 +46,7 @@ export default function Application() {
     setLoading(false);
   };
 
-  const closed = event ? isEventClosed(event.dueDate) : false;
+  const closed = event ? isEventClosed(event) : false;
 
   const handleApply = async () => {
     if (!userId || !eventId || !name.trim() || closed) {

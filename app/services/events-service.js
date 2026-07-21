@@ -32,14 +32,19 @@ export const getEventById = async (eventId) => {
   }
 };
 
-export const isEventClosed = (dueDate) => {
-  if (!dueDate) return false;
-  return new Date(dueDate).getTime() < Date.now();
+const isPast = (date) => (date ? new Date(date).getTime() < Date.now() : false);
+
+const formatLongDate = (date) =>
+  new Date(date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+export const isEventClosed = (event) => {
+  if (!event) return false;
+  return isPast(event.dueDate) || isPast(event.eventDate);
 };
 
 export const formatDueDate = (dueDate) => {
   if (!dueDate) return null;
-  if (isEventClosed(dueDate)) return 'Closed';
+  if (isPast(dueDate)) return 'Closed';
 
   const due = new Date(dueDate);
   const startOfDue = new Date(due.getFullYear(), due.getMonth(), due.getDate());
@@ -57,11 +62,17 @@ export const formatDueDate = (dueDate) => {
 
 export const formatFullDueDate = (dueDate) => {
   if (!dueDate) return null;
-  return new Date(dueDate).toLocaleDateString('en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  });
+  return formatLongDate(dueDate);
+};
+
+export const formatCompactEventDate = (eventDate) => {
+  if (!eventDate) return null;
+  return `Event: ${new Date(eventDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+};
+
+export const formatEventDate = (eventDate) => {
+  if (!eventDate) return null;
+  return formatLongDate(eventDate);
 };
 
 export const scoreEventMatch = (event, profile) => {

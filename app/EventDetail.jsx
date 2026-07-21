@@ -7,7 +7,12 @@ import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
 import TitleText from './components/TitleText';
 import { getCurrentUser } from './services/auth-service';
-import { formatFullDueDate, getEventById, isEventClosed } from './services/events-service';
+import {
+  formatEventDate,
+  formatFullDueDate,
+  getEventById,
+  isEventClosed,
+} from './services/events-service';
 import { getSavedEventStatus, unsaveEvent } from './services/saved-events-service';
 
 export default function EventDetail() {
@@ -49,7 +54,7 @@ export default function EventDetail() {
     }
   };
 
-  const closed = event ? isEventClosed(event.dueDate) : false;
+  const closed = event ? isEventClosed(event) : false;
 
   return (
     <View style={styles.screen}>
@@ -77,6 +82,14 @@ export default function EventDetail() {
 
           {!loading && event && (
             <>
+              {event.eventDate && (
+                <View style={styles.deadlineBar}>
+                  <Text style={styles.deadlineText}>
+                    Event date: {formatEventDate(event.eventDate)}
+                  </Text>
+                </View>
+              )}
+
               {event.dueDate && (
                 <View style={[styles.deadlineBar, closed && styles.deadlineBarClosed]}>
                   <Text style={styles.deadlineText}>

@@ -11,7 +11,13 @@ import Text from './components/AppText';
 import TextInput from './components/AppTextInput';
 import TitleText from './components/TitleText';
 import { getCurrentUser } from './services/auth-service';
-import { formatDueDate, getEvents, isEventClosed, scoreEventMatch } from './services/events-service';
+import {
+  formatCompactEventDate,
+  formatDueDate,
+  getEvents,
+  isEventClosed,
+  scoreEventMatch,
+} from './services/events-service';
 import { getUserProfile } from './services/profile-service';
 import { getSavedEvents } from './services/saved-events-service';
 import {
@@ -76,8 +82,9 @@ export default function Events() {
       events.map((event) => ({
         ...event,
         matchPercentage: scoreEventMatch(event, profile).matchPercentage,
-        isClosed: isEventClosed(event.dueDate),
+        isClosed: isEventClosed(event),
         dueDateText: formatDueDate(event.dueDate),
+        eventDateText: formatCompactEventDate(event.eventDate),
       })),
     [events, profile]
   );
@@ -228,6 +235,14 @@ export default function Events() {
                         </View>
                       )}
                     </View>
+                  )}
+
+                  {event.eventDateText && (
+                    <Text
+                      style={[styles.dueDateText, event.isClosed && styles.dueDateTextClosed]}
+                    >
+                      {event.eventDateText}
+                    </Text>
                   )}
                 </TouchableOpacity>
               ))
