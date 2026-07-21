@@ -3,9 +3,9 @@ import React, { useEffect, useState } from 'react';
 import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import HomeIcon from '../assets/images/home-icon.svg';
 import Logo from '../assets/images/Logo.svg';
-import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
 import TextInput from './components/AppTextInput';
+import BottomNav from './components/BottomNav';
 import TitleText from './components/TitleText';
 import { getCurrentUser } from './services/auth-service';
 import { getEventById } from './services/events-service';
@@ -186,12 +186,13 @@ const styles = StyleSheet.create({
     tintColor: '#ffffff',
   },
   title: {
-    fontSize: 36,
-    fontWeight: 'bold',
+    fontSize: 32,
     color: '#0a445c',
     marginBottom: 30,
     lineHeight: 50,
     textAlign: 'center',
+    flexShrink: 1,
+    flexWrap: 'wrap',
   },
   label: {
     fontSize: 18,
