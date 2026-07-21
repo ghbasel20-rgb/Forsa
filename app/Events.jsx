@@ -1,23 +1,32 @@
 import { useRouter } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import Logo from '../assets/images/Logo.svg';
-import Text from './components/AppText';
-import TextInput from './components/AppTextInput';
+import Logo from '../assets/images/logowname.svg';
 import BackButton from './components/BackButton';
 import BottomNav from './components/BottomNav';
+import FilterPanel from './components/FilterPanel';
+import FilterSection from './components/FilterSection';
+import SingleChoiceRow from './components/SingleChoiceRow';
+import Text from './components/AppText';
+import TextInput from './components/AppTextInput';
 import TitleText from './components/TitleText';
 import { getCurrentUser } from './services/auth-service';
-import { getEvents, scoreEventMatch } from './services/events-service';
+import {
+  formatCompactEventDate,
+  formatDueDate,
+  getEvents,
+  isEventClosed,
+  scoreEventMatch,
+} from './services/events-service';
 import { getUserProfile } from './services/profile-service';
 import { getSavedEvents } from './services/saved-events-service';
 import {
   AGE_BUCKETS,
   eventMatchesAgeBuckets,
+  EVENT_SORT_OPTIONS,
   getDistinctValues,
   MATCH_THRESHOLD_OPTIONS,
   sortItems,
-  SORT_OPTIONS,
 } from './utils/filterUtils';
 
 const APPLIED_OPTIONS = [
@@ -73,6 +82,9 @@ export default function Events() {
       events.map((event) => ({
         ...event,
         matchPercentage: scoreEventMatch(event, profile).matchPercentage,
+        isClosed: isEventClosed(event),
+        dueDateText: formatDueDate(event.dueDate),
+        eventDateText: formatCompactEventDate(event.eventDate),
       })),
     [events, profile]
   );
@@ -132,8 +144,7 @@ export default function Events() {
         <View style={styles.container}>
           <View style={styles.header}>
             <BackButton />
-            <Logo width={38} height={38} style={styles.logoSmall} />
-            <Text style={styles.brandName}>FORSA</Text>
+            <Logo width={173} height={38} style={styles.logoSmall} />
           </View>
 
           <TitleText style={styles.title}>OUR EVENTS</TitleText>
@@ -179,7 +190,7 @@ export default function Events() {
               value={matchThreshold}
               onChange={setMatchThreshold}
             />
-            <SingleChoiceRow label="Sort By" options={SORT_OPTIONS} value={sortBy} onChange={setSortBy} />
+            <SingleChoiceRow label="Sort By" options={EVENT_SORT_OPTIONS} value={sortBy} onChange={setSortBy} />
           </FilterPanel>
 
           <View style={styles.eventsContainer}>
@@ -191,7 +202,7 @@ export default function Events() {
               filteredEvents.map((event) => (
                 <TouchableOpacity
                   key={event.$id}
-                  style={styles.eventCard}
+                  style={[styles.eventCard, event.isClosed && styles.eventCardClosed]}
                   onPress={() => router.push(`/EventDetail?id=${event.$id}`)}
                 >
                   <View style={styles.eventCardTop}>
@@ -202,11 +213,36 @@ export default function Events() {
                         resizeMode="contain"
                       />
                     </View>
-                    <Text style={styles.eventTitle}>{event.title}</Text>
+                    <Text style={[styles.eventTitle, event.isClosed && styles.eventTitleClosed]}>
+                      {event.title}
+                    </Text>
                     <View style={styles.scoreBadge}>
                       <Text style={styles.scoreText}>{event.matchPercentage}%</Text>
                     </View>
                   </View>
+
+                  {event.dueDateText && (
+                    <View style={styles.dueDateRow}>
+                      <Text
+                        style={[styles.dueDateText, event.isClosed && styles.dueDateTextClosed]}
+                      >
+                        {event.dueDateText}
+                      </Text>
+                      {event.isClosed && (
+                        <View style={styles.closedBadge}>
+                          <Text style={styles.closedBadgeText}>Closed</Text>
+                        </View>
+                      )}
+                    </View>
+                  )}
+
+                  {event.eventDateText && (
+                    <Text
+                      style={[styles.dueDateText, event.isClosed && styles.dueDateTextClosed]}
+                    >
+                      {event.eventDateText}
+                    </Text>
+                  )}
                 </TouchableOpacity>
               ))
             )}
@@ -238,14 +274,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   logoSmall: {
-    width: 38,
+    width: 173,
     height: 38,
-  },
-  brandName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#0a445c',
-    letterSpacing: 1,
   },
   title: {
     fontSize: 32,
@@ -285,6 +315,11 @@ const styles = StyleSheet.create({
     padding: 16,
     gap: 12,
   },
+  eventCardClosed: {
+    backgroundColor: '#e9e9e9',
+    borderColor: '#b5b5b5',
+    opacity: 0.7,
+  },
   eventCardTop: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -308,6 +343,33 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#0a445c',
     fontWeight: '500',
+  },
+  eventTitleClosed: {
+    color: '#8a8a8a',
+  },
+  dueDateRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  dueDateText: {
+    fontSize: 13,
+    color: '#46a3a4',
+    fontWeight: '600',
+  },
+  dueDateTextClosed: {
+    color: '#8a8a8a',
+  },
+  closedBadge: {
+    backgroundColor: '#8a8a8a',
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    borderRadius: 12,
+  },
+  closedBadgeText: {
+    color: '#ffffff',
+    fontSize: 12,
+    fontWeight: '700',
   },
   scoreBadge: {
     backgroundColor: '#e1e4e4',

@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import Logo from '../assets/images/Logo.svg';
+import Logo from '../assets/images/logowname.svg';
 import EditIcon from '../assets/images/edit.svg';
 import SettingsIcon from '../assets/images/settings.svg';
 import Text from './components/AppText';
@@ -111,8 +111,7 @@ export default function Profile() {
               </TouchableOpacity>
             </View>
             <View style={styles.headerBrand}>
-              <Logo width={38} height={38}  />
-              <Text style={styles.brandName}>FORSA</Text>
+              <Logo width={173} height={38} />
             </View>
           </View>
 
@@ -333,14 +332,8 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   logoSmall: {
-    width: 38,
+    width: 173,
     height: 38,
-  },
-  brandName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#0a445c',
-    letterSpacing: 1,
   },
   profileHeader: {
     alignItems: 'center',

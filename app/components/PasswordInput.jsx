@@ -1,6 +1,6 @@
+import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import Text from './AppText';
 import TextInput from './AppTextInput';
 
 export default function PasswordInput({ style, ...props }) {
@@ -14,7 +14,7 @@ export default function PasswordInput({ style, ...props }) {
         secureTextEntry={!visible}
       />
       <TouchableOpacity style={styles.toggle} onPress={() => setVisible(!visible)}>
-        <Text style={styles.toggleText}>{visible ? 'Hide' : 'Show'}</Text>
+        <Ionicons name={visible ? 'eye-off' : 'eye'} size={22} color="#0E445C" />
       </TouchableOpacity>
     </View>
   );
@@ -25,15 +25,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   input: {
-    paddingRight: 70,
+    paddingRight: 48,
   },
   toggle: {
     position: 'absolute',
     right: 20,
-  },
-  toggleText: {
-    color: '#46a3a4',
-    fontSize: 14,
-    fontWeight: '600',
   },
 });

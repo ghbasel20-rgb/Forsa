@@ -2,12 +2,17 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import HomeIcon from '../assets/images/home-icon.svg';
-import Logo from '../assets/images/Logo.svg';
-import Text from './components/AppText';
+import Logo from '../assets/images/logowname.svg';
 import BottomNav from './components/BottomNav';
+import Text from './components/AppText';
 import TitleText from './components/TitleText';
 import { getCurrentUser } from './services/auth-service';
-import { getEventById } from './services/events-service';
+import {
+  formatEventDate,
+  formatFullDueDate,
+  getEventById,
+  isEventClosed,
+} from './services/events-service';
 import { getSavedEventStatus, unsaveEvent } from './services/saved-events-service';
 
 export default function EventDetail() {
@@ -49,6 +54,8 @@ export default function EventDetail() {
     }
   };
 
+  const closed = event ? isEventClosed(event) : false;
+
   return (
     <View style={styles.screen}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -61,8 +68,7 @@ export default function EventDetail() {
               >
                 <Text style={styles.backText}>{'< Back'}</Text>
               </TouchableOpacity>
-              <Logo width={38} height={38} style={styles.logoSmall} />
-              <Text style={styles.brandName}>FORSA</Text>
+              <Logo width={173} height={38} style={styles.logoSmall} />
             </View>
             <TouchableOpacity onPress={() => router.push('/Homepage')}>
               <HomeIcon width={40} height={40} style={styles.homeIcon} />
@@ -75,6 +81,24 @@ export default function EventDetail() {
 
           {!loading && event && (
             <>
+              {event.eventDate && (
+                <View style={styles.deadlineBar}>
+                  <Text style={styles.deadlineText}>
+                    Event date: {formatEventDate(event.eventDate)}
+                  </Text>
+                </View>
+              )}
+
+              {event.dueDate && (
+                <View style={[styles.deadlineBar, closed && styles.deadlineBarClosed]}>
+                  <Text style={styles.deadlineText}>
+                    {closed
+                      ? 'Applications closed'
+                      : `Application deadline: ${formatFullDueDate(event.dueDate)}`}
+                  </Text>
+                </View>
+              )}
+
               {event.details && (
                 <View style={styles.infoSection}>
                   <Text style={styles.label}>Details:</Text>
@@ -114,14 +138,14 @@ export default function EventDetail() {
                 <TouchableOpacity style={styles.withdrawButton} onPress={handleWithdraw}>
                   <Text style={styles.withdrawButtonText}>Withdraw application</Text>
                 </TouchableOpacity>
-              ) : (
+              ) : !closed ? (
                 <TouchableOpacity
                   style={styles.applyButton}
                   onPress={() => router.push(`/Application?eventId=${event.$id}`)}
                 >
                   <Text style={styles.applyButtonText}>Apply</Text>
                 </TouchableOpacity>
-              )}
+              ) : null}
             </>
           )}
         </View>
@@ -163,14 +187,8 @@ const styles = StyleSheet.create({
     color: '#0a445c',
   },
   logoSmall: {
-    width: 38,
+    width: 173,
     height: 38,
-  },
-  brandName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#0a445c',
-    letterSpacing: 1,
   },
   homeIcon: {
     width: 40,
@@ -184,6 +202,23 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     flexShrink: 1,
     flexWrap: 'wrap',
+  },
+  deadlineBar: {
+    backgroundColor: '#ffffff',
+    borderLeftWidth: 4,
+    borderLeftColor: '#0a445c',
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    marginBottom: 30,
+  },
+  deadlineBarClosed: {
+    borderLeftColor: '#8a8a8a',
+  },
+  deadlineText: {
+    color: '#0a445c',
+    fontSize: 14,
+    fontWeight: '600',
   },
   infoSection: {
     marginBottom: 30,

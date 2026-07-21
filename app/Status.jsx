@@ -2,7 +2,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Alert, Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import HomeIcon from '../assets/images/home-icon.svg';
-import Logo from '../assets/images/Logo.svg';
+import Logo from '../assets/images/logowname.svg';
 import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
 import TitleText from './components/TitleText';
@@ -59,8 +59,7 @@ export default function Status() {
               >
                 <Text style={styles.backText}>{'< Back'}</Text>
               </TouchableOpacity>
-              <Logo width={38} height={38} style={styles.logoSmall} />
-              <Text style={styles.brandName}>FORSA</Text>
+              <Logo width={173} height={38} style={styles.logoSmall} />
             </View>
             <TouchableOpacity onPress={() => router.push('/Homepage')}>
               <HomeIcon width={40} height={40} style={styles.homeIcon} />
@@ -152,14 +151,8 @@ const styles = StyleSheet.create({
     color: '#0a445c',
   },
   logoSmall: {
-    width: 38,
+    width: 173,
     height: 38,
-  },
-  brandName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#0a445c',
-    letterSpacing: 1,
   },
   homeIcon: {
     width: 40,

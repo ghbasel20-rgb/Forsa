@@ -8,7 +8,7 @@ import {
   View,
 } from 'react-native';
 import HomeIcon from '../assets/images/home-icon.svg';
-import Logo from '../assets/images/Logo.svg';
+import Logo from '../assets/images/logowname.svg';
 import BottomNav from './components/BottomNav';
 import FilterPanel from './components/FilterPanel';
 import FilterSection from './components/FilterSection';
@@ -128,8 +128,7 @@ export default function AllOpportunities() {
               >
                 <Text style={styles.backText}>{'< Back'}</Text>
               </TouchableOpacity>
-              <Logo width={38} height={38} style={styles.logoSmall} />
-              <Text style={styles.brandName}>FORSA</Text>
+              <Logo width={173} height={38} style={styles.logoSmall} />
             </View>
             <View style={styles.rightSection}>
               <TouchableOpacity onPress={() => router.push('/Homepage')}>
@@ -258,14 +257,8 @@ const styles = StyleSheet.create({
     color: '#0a445c',
   },
   logoSmall: {
-    width: 38,
+    width: 173,
     height: 38,
-  },
-  brandName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#0a445c',
-    letterSpacing: 1,
   },
   homeIcon: {
     width: 40,

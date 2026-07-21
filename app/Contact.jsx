@@ -1,7 +1,7 @@
 import React from 'react';
 import { Linking, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import InstaIcon from '../assets/images/insta.svg';
-import Logo from '../assets/images/Logo.svg';
+import Logo from '../assets/images/logowname.svg';
 import WhatsIcon from '../assets/images/whats.svg';
 import Text from './components/AppText';
 import BackButton from './components/BackButton';
@@ -26,8 +26,7 @@ export default function Contact() {
         <View style={styles.container}>
           <View style={styles.header}>
             <BackButton />
-            <Logo width={38} height={38} style={styles.logoSmall} />
-            <Text style={styles.brandName}>FORSA</Text>
+            <Logo width={173} height={38} style={styles.logoSmall} />
           </View>
 
           <TitleText style={styles.title}>CONTACT US</TitleText>
@@ -72,14 +71,8 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   logoSmall: {
-    width: 38,
+    width: 173,
     height: 38,
-  },
-  brandName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#0a445c',
-    letterSpacing: 1,
   },
   title: {
     fontSize: 32,
