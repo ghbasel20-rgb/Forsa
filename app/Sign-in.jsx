@@ -54,7 +54,9 @@ export default function SignIn() {
 
   return (
     <View style={styles.container}>
-      <BrandLogo style={styles.brandLogo} />
+      <View style={styles.logoSlot}>
+        <BrandLogo maxWidthPercent={0.75} preserveAspectRatio="xMaxYMid meet" />
+      </View>
 
       <TitleText style={styles.title}>LOG IN</TitleText>
 
@@ -108,11 +110,9 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingTop: 80,
   },
-  brandLogo: {
-    position: 'absolute',
-    top: 20,
-    right: 20,
-    zIndex: 10,
+  logoSlot: {
+    alignItems: 'flex-end',
+    marginBottom: 12,
   },
   title: {
     fontSize: 36,

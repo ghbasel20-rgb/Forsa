@@ -69,6 +69,9 @@ export default function EventDetail() {
                 <Text style={styles.backText}>{'< Back'}</Text>
               </TouchableOpacity>
             </View>
+            <View style={styles.logoSlot}>
+              <BrandLogo maxWidthPercent={0.75} preserveAspectRatio="xMaxYMid meet" />
+            </View>
             <TouchableOpacity onPress={() => router.push('/Homepage')}>
               <HomeIcon width={40} height={40} style={styles.homeIcon} />
             </TouchableOpacity>
@@ -149,7 +152,6 @@ export default function EventDetail() {
           )}
         </View>
       </ScrollView>
-      <BrandLogo style={styles.brandLogo} />
       <BottomNav />
     </View>
   );
@@ -186,11 +188,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#0a445c',
   },
-  brandLogo: {
-    position: 'absolute',
-    top: 20,
-    right: 20,
-    zIndex: 10,
+  logoSlot: {
+    flex: 1,
+    marginHorizontal: 12,
+    alignItems: 'flex-end',
   },
   homeIcon: {
     width: 40,

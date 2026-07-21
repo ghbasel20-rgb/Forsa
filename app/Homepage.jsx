@@ -7,7 +7,6 @@ import {
   View
 } from 'react-native';
 import AboutIcon from '../assets/images/aboutus.svg';
-import ContactIcon from '../assets/images/contact.svg';
 import EventsIcon from '../assets/images/events.svg';
 import Logo from '../assets/images/logowname.svg';
 import PurplePfpIcon from '../assets/images/purplePfp.svg';
@@ -64,7 +63,7 @@ export default function Homepage() {
               </View>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.gridItem} onPress={() => {}}>
+            <TouchableOpacity style={styles.gridItem} onPress={() => router.push('/AboutUs')}>
               <View style={styles.iconCircle}>
                 <AboutIcon width={48} height={48} viewBox="324 8 794 796" />
               </View>
@@ -90,13 +89,6 @@ export default function Homepage() {
             </View>
           ))}
         </View>
-
-        <TouchableOpacity style={styles.contactButton} onPress={() => router.push('/Contact')}>
-          <View style={styles.contactIconCircle}>
-            <ContactIcon width={20} height={20} viewBox="17.4 0 80.2 80.2" />
-          </View>
-          <Text style={styles.contactButtonText}>Contact Us</Text>
-        </TouchableOpacity>
       </View>
     </ScrollView>
   );
@@ -199,29 +191,5 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#46a3a4',
     marginTop: 2,
-  },
-  contactButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'center',
-    backgroundColor: '#ffffff',
-    borderRadius: 30,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    marginTop: 28,
-    gap: 10,
-  },
-  contactIconCircle: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: '#c6a2ba',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  contactButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#46a3a4',
   },
 });

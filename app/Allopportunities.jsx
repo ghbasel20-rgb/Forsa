@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import HomeIcon from '../assets/images/home-icon.svg';
 import BrandLogo from './components/BrandLogo';
 import BottomNav from './components/BottomNav';
 import FilterPanel from './components/FilterPanel';
@@ -129,10 +128,8 @@ export default function AllOpportunities() {
                 <Text style={styles.backText}>{'< Back'}</Text>
               </TouchableOpacity>
             </View>
-            <View style={styles.rightSection}>
-              <TouchableOpacity onPress={() => router.push('/Homepage')}>
-                <HomeIcon width={40} height={40} style={styles.homeIcon} />
-              </TouchableOpacity>
+            <View style={styles.logoSlot}>
+              <BrandLogo maxWidthPercent={0.75} preserveAspectRatio="xMaxYMid meet" />
             </View>
           </View>
 
@@ -214,7 +211,6 @@ export default function AllOpportunities() {
           </TouchableOpacity>
         </View>
       </ScrollView>
-      <BrandLogo style={styles.brandLogo} />
       <BottomNav />
     </View>
   );
@@ -244,11 +240,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
   },
-  rightSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 16,
-  },
   backButton: {
     marginRight: 8,
   },
@@ -256,15 +247,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#0a445c',
   },
-  brandLogo: {
-    position: 'absolute',
-    top: 20,
-    right: 20,
-    zIndex: 10,
-  },
-  homeIcon: {
-    width: 40,
-    height: 40,
+  logoSlot: {
+    flex: 1,
+    marginLeft: 12,
+    alignItems: 'flex-end',
   },
   title: {
     fontSize: 32,
