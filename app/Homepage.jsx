@@ -6,12 +6,12 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import AboutIcon from '../assets/images/aboutus.svg';
 import ContactIcon from '../assets/images/contact.svg';
 import EventsIcon from '../assets/images/events.svg';
 import Logo from '../assets/images/logowname.svg';
 import PurplePfpIcon from '../assets/images/purplePfp.svg';
 import PurpleSearchIcon from '../assets/images/purplesearch.svg';
-import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
 import TitleText from './components/TitleText';
 import { exploreEvents, exploreOpportunities } from './services/navigation-service';
@@ -26,82 +26,83 @@ export default function Homepage() {
   const router = useRouter();
 
   return (
-    <View style={styles.screen}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.container}>
-          <View style={styles.header}>
-            <Logo width={291} height={64} />
-          </View>
-          <View style={styles.headerUnderline} />
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Logo width={291} height={64} />
+        </View>
+        <View style={styles.headerUnderline} />
 
-          <View style={styles.grid}>
-            <View style={styles.gridRow}>
-              <TouchableOpacity style={styles.gridItem} onPress={() => router.push('/Profile')}>
-                <View style={styles.iconCircle}>
-                  <PurplePfpIcon width={44} height={44} viewBox="15 2 29 30" />
-                </View>
-                <View style={styles.labelPill}>
-                  <Text style={styles.labelText}>your profile</Text>
-                </View>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.gridItem} onPress={() => exploreOpportunities(router)}>
-                <View style={styles.iconCircle}>
-                  <PurpleSearchIcon width={44} height={44} viewBox="37.65 6.64 62.55 66.85" />
-                </View>
-                <View style={styles.labelPill}>
-                  <Text style={styles.labelText}>Explore opportunities</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.gridRow}>
-              <TouchableOpacity style={styles.gridItem} onPress={() => exploreEvents(router)}>
-                <View style={styles.iconCircle}>
-                  <EventsIcon width={44} height={44} />
-                </View>
-                <View style={styles.labelPill}>
-                  <Text style={styles.labelText}>JOIN our events!</Text>
-                </View>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.gridItem} onPress={() => router.push('/Contact')}>
-                <View style={styles.iconCircle}>
-                  <ContactIcon width={52} height={52} viewBox="17.4 0 80.2 80.2" />
-                </View>
-                <View style={styles.labelPill}>
-                  <Text style={styles.labelText}>Contact us</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          <View style={styles.divider} />
-
-          <TitleText style={styles.sectionTitle}>SUCCESS STORIES</TitleText>
-
-          <View style={styles.storiesContainer}>
-            {successStories.map((story) => (
-              <View key={story.id} style={styles.storyRow}>
-                <View style={styles.storyPhoto} />
-                <View style={styles.storyInfo}>
-                  <Text style={styles.storyName}>{story.name}</Text>
-                  <Text style={styles.storyDetail}>{`#${story.info}`}</Text>
-                </View>
+        <View style={styles.grid}>
+          <View style={styles.gridRow}>
+            <TouchableOpacity style={styles.gridItem} onPress={() => router.push('/Profile')}>
+              <View style={styles.iconCircle}>
+                <PurplePfpIcon width={44} height={44} viewBox="15 2 29 30" />
               </View>
-            ))}
+              <View style={styles.labelPill}>
+                <Text style={styles.labelText}>your profile</Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.gridItem} onPress={() => exploreOpportunities(router)}>
+              <View style={styles.iconCircle}>
+                <PurpleSearchIcon width={44} height={44} viewBox="37.65 6.64 62.55 66.85" />
+              </View>
+              <View style={styles.labelPill}>
+                <Text style={styles.labelText}>Explore opportunities</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.gridRow}>
+            <TouchableOpacity style={styles.gridItem} onPress={() => exploreEvents(router)}>
+              <View style={styles.iconCircle}>
+                <EventsIcon width={44} height={44} />
+              </View>
+              <View style={styles.labelPill}>
+                <Text style={styles.labelText}>JOIN our events!</Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.gridItem} onPress={() => {}}>
+              <View style={styles.iconCircle}>
+                <AboutIcon width={48} height={48} viewBox="324 8 794 796" />
+              </View>
+              <View style={styles.labelPill}>
+                <Text style={styles.labelText}>About us</Text>
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
-      </ScrollView>
-      <BottomNav />
-    </View>
+
+        <View style={styles.divider} />
+
+        <TitleText style={styles.sectionTitle}>SUCCESS STORIES</TitleText>
+
+        <View style={styles.storiesContainer}>
+          {successStories.map((story) => (
+            <View key={story.id} style={styles.storyRow}>
+              <View style={styles.storyPhoto} />
+              <View style={styles.storyInfo}>
+                <Text style={styles.storyName}>{story.name}</Text>
+                <Text style={styles.storyDetail}>{`#${story.info}`}</Text>
+              </View>
+            </View>
+          ))}
+        </View>
+
+        <TouchableOpacity style={styles.contactButton} onPress={() => router.push('/Contact')}>
+          <View style={styles.contactIconCircle}>
+            <ContactIcon width={20} height={20} viewBox="17.4 0 80.2 80.2" />
+          </View>
+          <Text style={styles.contactButtonText}>Contact Us</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-  },
   scrollContainer: {
     flexGrow: 1,
   },
@@ -198,5 +199,29 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#46a3a4',
     marginTop: 2,
+  },
+  contactButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'center',
+    backgroundColor: '#ffffff',
+    borderRadius: 30,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    marginTop: 28,
+    gap: 10,
+  },
+  contactIconCircle: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: '#c6a2ba',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  contactButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#46a3a4',
   },
 });
