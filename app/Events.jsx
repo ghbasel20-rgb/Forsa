@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import Logo from '../assets/images/Logo.svg';
+import Logo from '../assets/images/logowname.svg';
 import BackButton from './components/BackButton';
 import BottomNav from './components/BottomNav';
 import FilterPanel from './components/FilterPanel';
@@ -144,8 +144,7 @@ export default function Events() {
         <View style={styles.container}>
           <View style={styles.header}>
             <BackButton />
-            <Logo width={38} height={38} style={styles.logoSmall} />
-            <Text style={styles.brandName}>FORSA</Text>
+            <Logo width={173} height={38} style={styles.logoSmall} />
           </View>
 
           <TitleText style={styles.title}>OUR EVENTS</TitleText>
@@ -275,14 +274,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   logoSmall: {
-    width: 38,
+    width: 173,
     height: 38,
-  },
-  brandName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#0a445c',
-    letterSpacing: 1,
   },
   title: {
     fontSize: 36,

@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import Logo from '../assets/images/Logo.svg';
+import Logo from '../assets/images/logowname.svg';
 import Text from './components/AppText';
 
 export default function Index() {
@@ -14,8 +14,7 @@ export default function Index() {
   return (
     <View style={styles.container}>
       <View style={styles.logoContainer}>
-        <Logo width={180} height={180} style={styles.logo} />
-        <Text style={styles.brandName}>FORSA</Text>
+        <Logo width={260} height={57} style={styles.logo} />
       </View>
 
       <Text style={styles.tagline}>
@@ -54,15 +53,8 @@ const styles = StyleSheet.create({
     marginBottom: 60,
   },
   logo: {
-    width: 180,
-    height: 180,
-    marginBottom: 20,
-  },
-  brandName: {
-    fontSize: 48,
-    fontWeight: 'bold',
-    color: '#0a445c',
-    letterSpacing: 2,
+    width: 260,
+    height: 57,
   },
   tagline: {
     fontSize: 18,

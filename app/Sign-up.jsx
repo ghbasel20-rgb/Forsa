@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import Logo from '../assets/images/Logo.svg';
+import Logo from '../assets/images/logowname.svg';
 import Text from './components/AppText';
 import TextInput from './components/AppTextInput';
 import PasswordInput from './components/PasswordInput';
@@ -106,8 +106,7 @@ export default function SignUp() {
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <Logo width={38} height={38} />
-          <Text style={styles.brandName}>FORSA</Text>
+          <Logo width={173} height={38} />
         </View>
 
         <TitleText style={styles.title}>CREATE{'\n'}ACCOUNT</TitleText>
@@ -226,14 +225,8 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   logoSmall: {
-    width: 38,
+    width: 173,
     height: 38,
-  },
-  brandName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#0a445c',
-    letterSpacing: 1,
   },
   title: {
     fontSize: 36,

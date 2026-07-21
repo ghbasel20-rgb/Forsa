@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import Logo from '../assets/images/Logo.svg';
+import Logo from '../assets/images/logowname.svg';
 import { useProfile } from './ProfileContext';
 import Text from './components/AppText';
 import BackButton from './components/BackButton';
@@ -128,8 +128,7 @@ export default function Buildprofileinterests() {
         <View style={styles.header}>
           <BackButton />
           <View style={styles.logoContainer}>
-            <Logo width={38} height={38} style={styles.logoSmall} />
-            <Text style={styles.brandName}>FORSA</Text>
+            <Logo width={173} height={38} style={styles.logoSmall} />
           </View>
         </View>
 
@@ -174,14 +173,8 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   logoSmall: {
-    width: 38,
+    width: 173,
     height: 38,
-  },
-  brandName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#0a445c',
-    letterSpacing: 1,
   },
   title: {
     fontSize: 36,

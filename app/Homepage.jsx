@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import ContactIcon from '../assets/images/contact.svg';
 import EventsIcon from '../assets/images/events.svg';
-import Logo from '../assets/images/Logo.svg';
+import Logo from '../assets/images/logowname.svg';
 import PurplePfpIcon from '../assets/images/purplePfp.svg';
 import PurpleSearchIcon from '../assets/images/purplesearch.svg';
 import BottomNav from './components/BottomNav';
@@ -30,8 +30,7 @@ export default function Homepage() {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <Logo width={64} height={64} />
-            <Text style={styles.brandName}>FORSA</Text>
+            <Logo width={291} height={64} />
           </View>
           <View style={styles.headerUnderline} />
 
@@ -125,14 +124,8 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   logoSmall: {
-    width: 64,
+    width: 291,
     height: 64,
-  },
-  brandName: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#0a445c',
-    letterSpacing: 1,
   },
   grid: {
     gap: 20,
