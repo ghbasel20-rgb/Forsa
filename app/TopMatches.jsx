@@ -65,7 +65,7 @@ export default function TopMatches() {
                 </View>
                 <Text style={styles.matchTitle}>{match.title}</Text>
                 <View style={styles.scoreBadge}>
-                  <Text style={styles.scoreText}>{match.matchScore}%</Text>
+                  <Text style={styles.scoreText}>{match.matchPercentage}%</Text>
                 </View>
               </TouchableOpacity>
             ))}
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   scoreText: {
-    color: '#0a445c',
+    color: '#0E445C',
     fontSize: 14,
     fontWeight: '700',
   },

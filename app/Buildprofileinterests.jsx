@@ -104,7 +104,15 @@ export default function Buildprofileinterests() {
       if (result.success) {
         clearProfile();
         Alert.alert('Success', 'Profile updated successfully!');
-        router.push(edit ? '/Profile' : flow === 'events' ? '/EventTopMatches' : '/TopMatches');
+        router.push(
+          edit
+            ? '/Profile'
+            : flow === 'events'
+            ? '/EventTopMatches'
+            : flow === 'signup'
+            ? '/Homepage'
+            : '/TopMatches'
+        );
       } else {
         Alert.alert('Error', result.error);
       }
