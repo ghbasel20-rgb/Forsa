@@ -8,7 +8,7 @@ import {
   View,
 } from 'react-native';
 import HomeIcon from '../assets/images/home-icon.svg';
-import Logo from '../assets/images/logowname.svg';
+import BrandLogo from './components/BrandLogo';
 import BottomNav from './components/BottomNav';
 import FilterPanel from './components/FilterPanel';
 import FilterSection from './components/FilterSection';
@@ -214,7 +214,7 @@ export default function AllOpportunities() {
           </TouchableOpacity>
         </View>
       </ScrollView>
-      <Logo width={140} height={31} style={styles.brandLogo} />
+      <BrandLogo style={styles.brandLogo} />
       <BottomNav />
     </View>
   );

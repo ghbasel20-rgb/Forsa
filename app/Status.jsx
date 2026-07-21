@@ -2,7 +2,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Alert, Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import HomeIcon from '../assets/images/home-icon.svg';
-import Logo from '../assets/images/logowname.svg';
+import BrandLogo from './components/BrandLogo';
 import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
 import TitleText from './components/TitleText';
@@ -113,7 +113,7 @@ export default function Status() {
           )}
         </View>
       </ScrollView>
-      <Logo width={140} height={31} style={styles.brandLogo} />
+      <BrandLogo style={styles.brandLogo} />
       <BottomNav />
     </View>
   );

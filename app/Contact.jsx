@@ -1,7 +1,7 @@
 import React from 'react';
 import { Linking, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import InstaIcon from '../assets/images/insta.svg';
-import Logo from '../assets/images/logowname.svg';
+import BrandLogo from './components/BrandLogo';
 import WhatsIcon from '../assets/images/whats.svg';
 import Text from './components/AppText';
 import BackButton from './components/BackButton';
@@ -45,7 +45,7 @@ export default function Contact() {
           </TouchableOpacity>
         </View>
       </ScrollView>
-      <Logo width={140} height={31} style={styles.brandLogo} />
+      <BrandLogo style={styles.brandLogo} />
       <BottomNav />
     </View>
   );

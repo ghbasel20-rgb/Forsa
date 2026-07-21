@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import Logo from '../assets/images/logowname.svg';
+import BrandLogo from './components/BrandLogo';
 import { useProfile } from './ProfileContext';
 import Text from './components/AppText';
 import BackButton from './components/BackButton';
@@ -126,7 +126,7 @@ export default function BuildProfileSkills() {
           </TouchableOpacity>
         </View>
       </ScrollView>
-      <Logo width={140} height={31} style={styles.brandLogo} />
+      <BrandLogo style={styles.brandLogo} />
     </View>
   );
 }

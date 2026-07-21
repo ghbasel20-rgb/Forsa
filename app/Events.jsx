@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import Logo from '../assets/images/logowname.svg';
+import BrandLogo from './components/BrandLogo';
 import BackButton from './components/BackButton';
 import BottomNav from './components/BottomNav';
 import FilterPanel from './components/FilterPanel';
@@ -248,7 +248,7 @@ export default function Events() {
           </View>
         </View>
       </ScrollView>
-      <Logo width={140} height={31} style={styles.brandLogo} />
+      <BrandLogo style={styles.brandLogo} />
       <BottomNav />
     </View>
   );

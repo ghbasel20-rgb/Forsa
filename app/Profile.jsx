@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import Logo from '../assets/images/logowname.svg';
+import BrandLogo from './components/BrandLogo';
 import EditIcon from '../assets/images/edit.svg';
 import SettingsIcon from '../assets/images/settings.svg';
 import Text from './components/AppText';
@@ -266,7 +266,7 @@ export default function Profile() {
           )}
         </View>
       </ScrollView>
-      <Logo width={140} height={31} style={styles.brandLogo} />
+      <BrandLogo style={styles.brandLogo} />
       <BottomNav />
     </View>
   );

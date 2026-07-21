@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import Logo from '../assets/images/logowname.svg';
+import BrandLogo from './components/BrandLogo';
 import Text from './components/AppText';
 import TextInput from './components/AppTextInput';
 import PasswordInput from './components/PasswordInput';
@@ -54,7 +54,7 @@ export default function SignIn() {
 
   return (
     <View style={styles.container}>
-      <Logo width={140} height={31} style={styles.brandLogo} />
+      <BrandLogo style={styles.brandLogo} />
 
       <TitleText style={styles.title}>LOG IN</TitleText>
 

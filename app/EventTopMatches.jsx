@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import Logo from '../assets/images/logowname.svg';
+import BrandLogo from './components/BrandLogo';
 import BackButton from './components/BackButton';
 import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
@@ -75,7 +75,7 @@ export default function EventTopMatches() {
           </TouchableOpacity>
         </View>
       </ScrollView>
-      <Logo width={140} height={31} style={styles.brandLogo} />
+      <BrandLogo style={styles.brandLogo} />
       <BottomNav />
     </View>
   );
