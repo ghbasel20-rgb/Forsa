@@ -128,7 +128,7 @@ export default function AllOpportunities() {
               >
                 <Text style={styles.backText}>{'< Back'}</Text>
               </TouchableOpacity>
-              <Logo width={173} height={38} style={styles.logoSmall} />
+              <Logo width={200} height={44} style={styles.logoSmall} />
             </View>
             <View style={styles.rightSection}>
               <TouchableOpacity onPress={() => router.push('/Homepage')}>
@@ -257,8 +257,8 @@ const styles = StyleSheet.create({
     color: '#0a445c',
   },
   logoSmall: {
-    width: 173,
-    height: 38,
+    width: 200,
+    height: 44,
   },
   homeIcon: {
     width: 40,

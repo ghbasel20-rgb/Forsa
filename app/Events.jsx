@@ -144,7 +144,7 @@ export default function Events() {
         <View style={styles.container}>
           <View style={styles.header}>
             <BackButton />
-            <Logo width={173} height={38} style={styles.logoSmall} />
+            <Logo width={200} height={44} style={styles.logoSmall} />
           </View>
 
           <TitleText style={styles.title}>OUR EVENTS</TitleText>
@@ -274,8 +274,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   logoSmall: {
-    width: 173,
-    height: 38,
+    width: 200,
+    height: 44,
   },
   title: {
     fontSize: 32,

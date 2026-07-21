@@ -55,7 +55,7 @@ export default function SignIn() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Logo width={173} height={38} />
+        <Logo width={200} height={44} />
       </View>
 
       <TitleText style={styles.title}>LOG IN</TitleText>
@@ -118,8 +118,8 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   logoSmall: {
-    width: 173,
-    height: 38,
+    width: 200,
+    height: 44,
   },
   title: {
     fontSize: 36,

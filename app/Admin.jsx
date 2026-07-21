@@ -62,7 +62,7 @@ export default function Admin() {
           <View style={styles.header}>
             <View style={styles.leftSection}>
               <BackButton />
-              <Logo width={173} height={38} style={styles.logoSmall} />
+              <Logo width={200} height={44} style={styles.logoSmall} />
             </View>
             <TouchableOpacity onPress={() => router.push('/Homepage')}>
               <HomeIcon width={40} height={40} style={styles.homeIcon} />
@@ -154,8 +154,8 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   logoSmall: {
-    width: 173,
-    height: 38,
+    width: 200,
+    height: 44,
   },
   homeIcon: {
     width: 40,

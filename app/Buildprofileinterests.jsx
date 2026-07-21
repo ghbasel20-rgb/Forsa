@@ -128,7 +128,7 @@ export default function Buildprofileinterests() {
         <View style={styles.header}>
           <BackButton />
           <View style={styles.logoContainer}>
-            <Logo width={173} height={38} style={styles.logoSmall} />
+            <Logo width={200} height={44} style={styles.logoSmall} />
           </View>
         </View>
 
@@ -173,8 +173,8 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   logoSmall: {
-    width: 173,
-    height: 38,
+    width: 200,
+    height: 44,
   },
   title: {
     fontSize: 32,

@@ -111,7 +111,7 @@ export default function Profile() {
               </TouchableOpacity>
             </View>
             <View style={styles.headerBrand}>
-              <Logo width={173} height={38} />
+              <Logo width={200} height={44} />
             </View>
           </View>
 
@@ -332,8 +332,8 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   logoSmall: {
-    width: 173,
-    height: 38,
+    width: 200,
+    height: 44,
   },
   profileHeader: {
     alignItems: 'center',

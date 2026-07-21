@@ -29,7 +29,7 @@ export default function Homepage() {
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <Logo width={291} height={64} />
+          <Logo width={760} height={168} />
         </View>
         <View style={styles.headerUnderline} />
 
@@ -110,14 +110,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#e1e4e4',
     padding: 20,
-    paddingTop: 60,
+    paddingTop: 20,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 10,
-    marginBottom: 12,
+    marginBottom: 2,
   },
   headerUnderline: {
     height: 2,
@@ -125,8 +125,8 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   logoSmall: {
-    width: 291,
-    height: 64,
+    width: 760,
+    height: 168,
   },
   grid: {
     gap: 20,
