@@ -54,9 +54,7 @@ export default function SignIn() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Logo width={200} height={44} />
-      </View>
+      <Logo width={400} height={88} style={styles.brandLogo} />
 
       <TitleText style={styles.title}>LOG IN</TitleText>
 
@@ -108,18 +106,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#e1e4e4',
     padding: 20,
-    paddingTop: 60,
+    paddingTop: 130,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    marginBottom: 60,
-    gap: 8,
-  },
-  logoSmall: {
-    width: 200,
-    height: 44,
+  brandLogo: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    zIndex: 10,
   },
   title: {
     fontSize: 36,

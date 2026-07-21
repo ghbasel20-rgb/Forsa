@@ -103,111 +103,113 @@ export default function SignUp() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Logo width={200} height={44} />
-        </View>
+    <View style={styles.screen}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.container}>
+          <TitleText style={styles.title}>CREATE{'\n'}ACCOUNT</TitleText>
 
-        <TitleText style={styles.title}>CREATE{'\n'}ACCOUNT</TitleText>
-
-        <View style={styles.formContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Full Name"
-            placeholderTextColor="#46a3a4"
-            value={fullName}
-            onChangeText={setFullName}
-            autoCapitalize="words"
-          />
-
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            placeholderTextColor="#46a3a4"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-
-          <PasswordInput
-            style={styles.input}
-            placeholder="Password"
-            placeholderTextColor="#46a3a4"
-            value={password}
-            onChangeText={setPassword}
-          />
-
-          <PasswordInput
-            style={styles.input}
-            placeholder="Confirm Password"
-            placeholderTextColor="#46a3a4"
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-          />
-
-          <TouchableOpacity
-            style={styles.input}
-            onPress={() => setShowDatePicker(true)}
-          >
-            <Text style={[styles.dateText, !dobSelected && styles.placeholderText]}>
-              {dobSelected ? formatDate(dateOfBirth) : 'Date of Birth'}
-            </Text>
-          </TouchableOpacity>
-
-          {showDatePicker && (
-            <DateTimePicker
-              value={dateOfBirth}
-              mode="date"
-              display="default"
-              onChange={onDateChange}
-              maximumDate={new Date()}
+          <View style={styles.formContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Full Name"
+              placeholderTextColor="#46a3a4"
+              value={fullName}
+              onChangeText={setFullName}
+              autoCapitalize="words"
             />
-          )}
 
-          <TouchableOpacity
-            style={styles.input}
-            onPress={() => setShowStatusModal(true)}
-          >
-            <Text style={[styles.dateText, !status && styles.placeholderText]}>
-              {status || 'Status'}
-            </Text>
-          </TouchableOpacity>
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              placeholderTextColor="#46a3a4"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
 
-          <TouchableOpacity
-            style={styles.button}
-            onPress={handleSignUp}
-            disabled={loading}
-          >
-            {loading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.buttonText}>Create Account</Text>
+            <PasswordInput
+              style={styles.input}
+              placeholder="Password"
+              placeholderTextColor="#46a3a4"
+              value={password}
+              onChangeText={setPassword}
+            />
+
+            <PasswordInput
+              style={styles.input}
+              placeholder="Confirm Password"
+              placeholderTextColor="#46a3a4"
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+            />
+
+            <TouchableOpacity
+              style={styles.input}
+              onPress={() => setShowDatePicker(true)}
+            >
+              <Text style={[styles.dateText, !dobSelected && styles.placeholderText]}>
+                {dobSelected ? formatDate(dateOfBirth) : 'Date of Birth'}
+              </Text>
+            </TouchableOpacity>
+
+            {showDatePicker && (
+              <DateTimePicker
+                value={dateOfBirth}
+                mode="date"
+                display="default"
+                onChange={onDateChange}
+                maximumDate={new Date()}
+              />
             )}
-          </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => router.push('/Sign-in')}>
-            <Text style={styles.linkText}>
-              Already have an account? <Text style={styles.linkBold}>Log in</Text>
-            </Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.input}
+              onPress={() => setShowStatusModal(true)}
+            >
+              <Text style={[styles.dateText, !status && styles.placeholderText]}>
+                {status || 'Status'}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.button}
+              onPress={handleSignUp}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.buttonText}>Create Account</Text>
+              )}
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => router.push('/Sign-in')}>
+              <Text style={styles.linkText}>
+                Already have an account? <Text style={styles.linkBold}>Log in</Text>
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <StatusPickerModal
+            visible={showStatusModal}
+            onClose={() => setShowStatusModal(false)}
+            onSubmit={(value) => {
+              setStatus(value);
+              setShowStatusModal(false);
+            }}
+          />
         </View>
-
-        <StatusPickerModal
-          visible={showStatusModal}
-          onClose={() => setShowStatusModal(false)}
-          onSubmit={(value) => {
-            setStatus(value);
-            setShowStatusModal(false);
-          }}
-        />
-      </View>
-    </ScrollView>
+      </ScrollView>
+      <Logo width={400} height={88} style={styles.brandLogo} />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+  },
   scrollContainer: {
     flexGrow: 1,
   },
@@ -215,18 +217,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#e1e4e4',
     padding: 20,
-    paddingTop: 60,
+    paddingTop: 130,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    marginBottom: 40,
-    gap: 8,
-  },
-  logoSmall: {
-    width: 200,
-    height: 44,
+  brandLogo: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    zIndex: 10,
   },
   title: {
     fontSize: 36,

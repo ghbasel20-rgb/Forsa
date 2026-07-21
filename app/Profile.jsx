@@ -110,9 +110,6 @@ export default function Profile() {
                 <SettingsIcon width={34} height={34} />
               </TouchableOpacity>
             </View>
-            <View style={styles.headerBrand}>
-              <Logo width={200} height={44} />
-            </View>
           </View>
 
           <Modal
@@ -269,6 +266,7 @@ export default function Profile() {
           )}
         </View>
       </ScrollView>
+      <Logo width={400} height={88} style={styles.brandLogo} />
       <BottomNav />
     </View>
   );
@@ -285,18 +283,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#e1e4e4',
     padding: 20,
-    paddingTop: 60,
+    paddingTop: 130,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 30,
-  },
-  headerBrand: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
   },
   headerLeft: {
     flexDirection: 'row',
@@ -305,12 +298,18 @@ const styles = StyleSheet.create({
   settingsButton: {
     padding: 8,
   },
+  brandLogo: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    zIndex: 10,
+  },
   menuOverlay: {
     flex: 1,
   },
   settingsMenu: {
     position: 'absolute',
-    top: 96,
+    top: 166,
     left: 20,
     backgroundColor: '#ffffff',
     borderRadius: 12,
@@ -330,10 +329,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#0a445c',
     fontWeight: '500',
-  },
-  logoSmall: {
-    width: 200,
-    height: 44,
   },
   profileHeader: {
     alignItems: 'center',

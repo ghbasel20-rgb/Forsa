@@ -26,7 +26,6 @@ export default function Contact() {
         <View style={styles.container}>
           <View style={styles.header}>
             <BackButton />
-            <Logo width={200} height={44} style={styles.logoSmall} />
           </View>
 
           <TitleText style={styles.title}>CONTACT US</TitleText>
@@ -46,6 +45,7 @@ export default function Contact() {
           </TouchableOpacity>
         </View>
       </ScrollView>
+      <Logo width={400} height={88} style={styles.brandLogo} />
       <BottomNav />
     </View>
   );
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#e1e4e4',
     padding: 20,
-    paddingTop: 60,
+    paddingTop: 130,
   },
   header: {
     flexDirection: 'row',
@@ -70,9 +70,11 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 30,
   },
-  logoSmall: {
-    width: 200,
-    height: 44,
+  brandLogo: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    zIndex: 10,
   },
   title: {
     fontSize: 32,

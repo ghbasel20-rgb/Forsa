@@ -76,7 +76,6 @@ export default function Application() {
               >
                 <Text style={styles.backText}>{'< Back'}</Text>
               </TouchableOpacity>
-              <Logo width={200} height={44} style={styles.logoSmall} />
             </View>
             <TouchableOpacity onPress={() => router.push('/Homepage')}>
               <HomeIcon width={40} height={40} style={styles.homeIcon} />
@@ -130,6 +129,7 @@ export default function Application() {
           )}
         </View>
       </ScrollView>
+      <Logo width={400} height={88} style={styles.brandLogo} />
       <BottomNav />
     </View>
   );
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#e1e4e4',
     padding: 20,
-    paddingTop: 60,
+    paddingTop: 130,
   },
   header: {
     flexDirection: 'row',
@@ -166,9 +166,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#0a445c',
   },
-  logoSmall: {
-    width: 200,
-    height: 44,
+  brandLogo: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    zIndex: 10,
   },
   homeIcon: {
     width: 40,

@@ -103,35 +103,38 @@ export default function BuildProfileSkills() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <BackButton />
-          <View style={styles.logoContainer}>
-            <Logo width={200} height={44} style={styles.logoSmall} />
+    <View style={styles.screen}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <BackButton />
           </View>
+
+          <Text style={styles.title}>SELECT YOUR{'\n'}SKILLS</Text>
+
+          <ChipSelector
+            options={skills}
+            selected={selectedSkills}
+            onChange={setSelectedSkills}
+            modalTitle="Enter Your Skill"
+            placeholder="Type your skill"
+            submitLabel="Add Skill"
+          />
+
+          <TouchableOpacity style={styles.button} onPress={handleNext}>
+            <Text style={styles.buttonText}>{edit ? 'Finish Editing' : 'Next'}</Text>
+          </TouchableOpacity>
         </View>
-
-        <Text style={styles.title}>SELECT YOUR{'\n'}SKILLS</Text>
-
-        <ChipSelector
-          options={skills}
-          selected={selectedSkills}
-          onChange={setSelectedSkills}
-          modalTitle="Enter Your Skill"
-          placeholder="Type your skill"
-          submitLabel="Add Skill"
-        />
-
-        <TouchableOpacity style={styles.button} onPress={handleNext}>
-          <Text style={styles.buttonText}>{edit ? 'Finish Editing' : 'Next'}</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+      </ScrollView>
+      <Logo width={400} height={88} style={styles.brandLogo} />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+  },
   scrollContainer: {
     flexGrow: 1,
   },
@@ -139,7 +142,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#e1e4e4',
     padding: 20,
-    paddingTop: 60,
+    paddingTop: 130,
   },
   header: {
     flexDirection: 'row',
@@ -147,14 +150,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 40,
   },
-  logoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  logoSmall: {
-    width: 200,
-    height: 44,
+  brandLogo: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    zIndex: 10,
   },
   title: {
     fontSize: 32,

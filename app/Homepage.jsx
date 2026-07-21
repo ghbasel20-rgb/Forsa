@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 10,
-    marginBottom: 2,
+    marginBottom: -8,
   },
   headerUnderline: {
     height: 2,
