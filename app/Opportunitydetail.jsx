@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import HomeIcon from '../assets/images/home-icon.svg';
 import Logo from '../assets/images/Logo.svg';
+import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
 import { getCurrentUser } from './services/auth-service';
 import { getOpportunityById } from './services/opportunities-service';
@@ -93,80 +94,86 @@ export default function Opportunitydetail() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <View style={styles.leftSection}>
-            <TouchableOpacity 
-              style={styles.backButton}
-              onPress={() => router.back()}
-            >
-              <Text style={styles.backText}>{'< Back'}</Text>
+    <View style={styles.screen}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <View style={styles.leftSection}>
+              <TouchableOpacity
+                style={styles.backButton}
+                onPress={() => router.back()}
+              >
+                <Text style={styles.backText}>{'< Back'}</Text>
+              </TouchableOpacity>
+              <Logo width={38} height={38} style={styles.logoSmall} />
+              <Text style={styles.brandName}>FORSA</Text>
+            </View>
+            <TouchableOpacity onPress={() => router.push('/Homepage')}>
+              <HomeIcon width={40} height={40} style={styles.homeIcon} />
             </TouchableOpacity>
-            <Logo width={38} height={38} style={styles.logoSmall} />
-            <Text style={styles.brandName}>FORSA</Text>
           </View>
-          <TouchableOpacity onPress={() => router.push('/Homepage')}>
-            <HomeIcon width={40} height={40} style={styles.homeIcon} />
+
+          <View style={styles.iconContainer}>
+            <Image
+              source={require('../assets/images/icon.png')}
+              style={styles.opportunityIcon}
+              resizeMode="contain"
+            />
+          </View>
+
+          <Text style={styles.title}>{loading ? 'LOADING...' : opportunity?.title || 'OPPORTUNITY'}</Text>
+
+          {!loading && opportunity && (
+            <>
+              <View style={styles.infoSection}>
+                <Text style={styles.label}>Location:</Text>
+                <Text style={styles.value}>{opportunity.location || 'Not specified'}</Text>
+              </View>
+
+              <View style={styles.infoSection}>
+                <Text style={styles.label}>Category:</Text>
+                <Text style={styles.value}>{opportunity.category || 'Not specified'}</Text>
+              </View>
+
+              <View style={styles.infoSection}>
+                <Text style={styles.label}>Description:</Text>
+                <Text style={styles.value}>{opportunity.description || 'No description available'}</Text>
+              </View>
+
+              {opportunity.requirements && opportunity.requirements.length > 0 && (
+                <View style={styles.infoSection}>
+                  <Text style={styles.label}>Requirements:</Text>
+                  {opportunity.requirements.map((req, index) => (
+                    <Text key={index} style={styles.requirementItem}>• {req}</Text>
+                  ))}
+                </View>
+              )}
+
+              {opportunity.url && (
+                <View style={styles.infoSection}>
+                  <Text style={styles.label}>Apply/Learn More:</Text>
+                  <TouchableOpacity onPress={() => handleOpenURL(opportunity.url)}>
+                    <Text style={styles.urlText}>{opportunity.url}</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </>
+          )}
+
+          <TouchableOpacity style={styles.saveButton} onPress={handleSave} disabled={loading}>
+            <Text style={styles.saveButtonText}>{isSaved ? 'Unsave' : 'Save'}</Text>
           </TouchableOpacity>
         </View>
-
-        <View style={styles.iconContainer}>
-          <Image
-            source={require('../assets/images/icon.png')}
-            style={styles.opportunityIcon}
-            resizeMode="contain"
-          />
-        </View>
-
-        <Text style={styles.title}>{loading ? 'LOADING...' : opportunity?.title || 'OPPORTUNITY'}</Text>
-
-        {!loading && opportunity && (
-          <>
-            <View style={styles.infoSection}>
-              <Text style={styles.label}>Location:</Text>
-              <Text style={styles.value}>{opportunity.location || 'Not specified'}</Text>
-            </View>
-
-            <View style={styles.infoSection}>
-              <Text style={styles.label}>Category:</Text>
-              <Text style={styles.value}>{opportunity.category || 'Not specified'}</Text>
-            </View>
-
-            <View style={styles.infoSection}>
-              <Text style={styles.label}>Description:</Text>
-              <Text style={styles.value}>{opportunity.description || 'No description available'}</Text>
-            </View>
-
-            {opportunity.requirements && opportunity.requirements.length > 0 && (
-              <View style={styles.infoSection}>
-                <Text style={styles.label}>Requirements:</Text>
-                {opportunity.requirements.map((req, index) => (
-                  <Text key={index} style={styles.requirementItem}>• {req}</Text>
-                ))}
-              </View>
-            )}
-
-            {opportunity.url && (
-              <View style={styles.infoSection}>
-                <Text style={styles.label}>Apply/Learn More:</Text>
-                <TouchableOpacity onPress={() => handleOpenURL(opportunity.url)}>
-                  <Text style={styles.urlText}>{opportunity.url}</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          </>
-        )}
-
-        <TouchableOpacity style={styles.saveButton} onPress={handleSave} disabled={loading}>
-          <Text style={styles.saveButtonText}>{isSaved ? 'Unsave' : 'Save'}</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+      </ScrollView>
+      <BottomNav />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+  },
   scrollContainer: {
     flexGrow: 1,
   },
