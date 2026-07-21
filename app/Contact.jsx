@@ -3,9 +3,9 @@ import { Linking, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-n
 import InstaIcon from '../assets/images/insta.svg';
 import Logo from '../assets/images/logowname.svg';
 import WhatsIcon from '../assets/images/whats.svg';
+import Text from './components/AppText';
 import BackButton from './components/BackButton';
 import BottomNav from './components/BottomNav';
-import Text from './components/AppText';
 import TitleText from './components/TitleText';
 
 const WHATSAPP_URL = 'https://chat.whatsapp.com/EudPXkosHkY9yfcOh1fjRq';
@@ -75,11 +75,13 @@ const styles = StyleSheet.create({
     height: 38,
   },
   title: {
-    fontSize: 36,
-    fontWeight: 'bold',
+    fontSize: 32,
     color: '#0a445c',
     textAlign: 'left',
     marginBottom: 40,
+    flexShrink: 1,
+    flexWrap: 'wrap',
+    
   },
   contactRow: {
     flexDirection: 'row',

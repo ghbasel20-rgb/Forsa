@@ -195,12 +195,13 @@ const styles = StyleSheet.create({
     height: 40,
   },
   title: {
-    fontSize: 36,
-    fontWeight: 'bold',
+    fontSize: 28,
     color: '#0a445c',
-    marginBottom: 30,
-    lineHeight: 50,
+    marginBottom: 24,
+    lineHeight: 32,
     textAlign: 'center',
+    flexShrink: 1,
+    flexWrap: 'wrap',
   },
   deadlineBar: {
     backgroundColor: '#ffffff',

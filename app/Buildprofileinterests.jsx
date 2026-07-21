@@ -177,11 +177,12 @@ const styles = StyleSheet.create({
     height: 38,
   },
   title: {
-    fontSize: 36,
-    fontWeight: 'bold',
+    fontSize: 32,
     color: '#0a445c',
     marginBottom: 30,
     lineHeight: 52,
+    flexShrink: 1,
+    flexWrap: 'wrap',
   },
   button: {
     backgroundColor: '#c6a2ba',

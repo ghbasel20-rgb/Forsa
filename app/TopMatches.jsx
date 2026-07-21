@@ -11,8 +11,8 @@ import BackButton from './components/BackButton';
 import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
 import TitleText from './components/TitleText';
-import { getAllOpportunities, getMatchedOpportunities } from './services/opportunities-service';
 import { getCurrentUser } from './services/auth-service';
+import { getAllOpportunities, getMatchedOpportunities } from './services/opportunities-service';
 import { getUserProfile } from './services/profile-service';
 
 export default function TopMatches() {
@@ -112,11 +112,12 @@ const styles = StyleSheet.create({
     height: 38,
   },
   title: {
-    fontSize: 36,
-    fontWeight: 'bold',
+    fontSize: 32,
     color: '#0a445c',
     marginBottom: 30,
     lineHeight: 52,
+    flexShrink: 1,
+    flexWrap: 'wrap',
   },
   matchesContainer: {
     gap: 16,
