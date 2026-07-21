@@ -87,6 +87,10 @@ const scoreOpportunityMatch = (opportunity, profile) => {
     ...(opportunity.interests || []),
   ]);
 
+  if (opportunitySelections.size === 0) {
+    return { matchPercentage: 100, hasRequirements: false };
+  }
+
   let overlap = 0;
   opportunitySelections.forEach((item) => {
     if (userSelections.has(item)) {
@@ -94,26 +98,32 @@ const scoreOpportunityMatch = (opportunity, profile) => {
     }
   });
 
-  return overlap;
+  return {
+    matchPercentage: Math.round((overlap / opportunitySelections.size) * 100),
+    hasRequirements: true,
+  };
 };
 
 export const getMatchedOpportunities = (opportunities, profile) => {
   const scored = opportunities
     .map((opportunity) => ({
       opportunity,
-      score: scoreOpportunityMatch(opportunity, profile),
+      ...scoreOpportunityMatch(opportunity, profile),
     }))
-    .filter((entry) => entry.score > 0)
+    .filter((entry) => entry.matchPercentage > 0)
     .sort((a, b) => {
-      if (b.score !== a.score) {
-        return b.score - a.score;
+      if (a.hasRequirements !== b.hasRequirements) {
+        return a.hasRequirements ? -1 : 1;
+      }
+      if (b.matchPercentage !== a.matchPercentage) {
+        return b.matchPercentage - a.matchPercentage;
       }
       return new Date(b.opportunity.$createdAt) - new Date(a.opportunity.$createdAt);
     });
 
   const topMatches = scored
     .slice(0, 3)
-    .map((entry) => ({ ...entry.opportunity, matchScore: entry.score }));
+    .map((entry) => ({ ...entry.opportunity, matchPercentage: entry.matchPercentage }));
 
   return { topMatches };
 };

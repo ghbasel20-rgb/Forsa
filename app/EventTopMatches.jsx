@@ -65,10 +65,7 @@ export default function EventTopMatches() {
                 </View>
                 <Text style={styles.matchTitle}>{match.title}</Text>
                 <View style={styles.scoreBadge}>
-                  <Text style={styles.scoreText}>{match.matchScore}</Text>
-                </View>
-                <View style={styles.readMoreButton}>
-                  <Text style={styles.readMoreText}>Read more</Text>
+                  <Text style={styles.scoreText}>{match.matchPercentage}% Match</Text>
                 </View>
               </TouchableOpacity>
             ))}
@@ -161,24 +158,14 @@ const styles = StyleSheet.create({
   },
   scoreBadge: {
     backgroundColor: '#e1e4e4',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
     borderRadius: 15,
   },
   scoreText: {
-    color: '#0a445c',
+    color: '#0E445C',
     fontSize: 14,
     fontWeight: '700',
-  },
-  readMoreButton: {
-    backgroundColor: '#e1e4e4',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 15,
-  },
-  readMoreText: {
-    color: '#0a445c',
-    fontSize: 12,
   },
   allEventsButton: {
     alignItems: 'center',

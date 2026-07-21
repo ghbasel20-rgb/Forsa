@@ -42,6 +42,10 @@ const scoreEventMatch = (event, profile) => {
     ...(event.interests || []),
   ]);
 
+  if (eventSelections.size === 0) {
+    return { matchPercentage: 100, hasRequirements: false };
+  }
+
   let overlap = 0;
   eventSelections.forEach((item) => {
     if (userSelections.has(item)) {
@@ -49,26 +53,32 @@ const scoreEventMatch = (event, profile) => {
     }
   });
 
-  return overlap;
+  return {
+    matchPercentage: Math.round((overlap / eventSelections.size) * 100),
+    hasRequirements: true,
+  };
 };
 
 export const getMatchedEvents = (events, profile) => {
   const scored = events
     .map((event) => ({
       event,
-      score: scoreEventMatch(event, profile),
+      ...scoreEventMatch(event, profile),
     }))
-    .filter((entry) => entry.score > 0)
+    .filter((entry) => entry.matchPercentage > 0)
     .sort((a, b) => {
-      if (b.score !== a.score) {
-        return b.score - a.score;
+      if (a.hasRequirements !== b.hasRequirements) {
+        return a.hasRequirements ? -1 : 1;
+      }
+      if (b.matchPercentage !== a.matchPercentage) {
+        return b.matchPercentage - a.matchPercentage;
       }
       return new Date(b.event.$createdAt) - new Date(a.event.$createdAt);
     });
 
   const topMatches = scored
     .slice(0, 3)
-    .map((entry) => ({ ...entry.event, matchScore: entry.score }));
+    .map((entry) => ({ ...entry.event, matchPercentage: entry.matchPercentage }));
 
   return { topMatches };
 };

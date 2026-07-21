@@ -96,7 +96,7 @@ export default function SignUp() {
 
     if (profileResult.success) {
       Alert.alert('Success', 'Account created successfully!');
-      router.push('/Homepage');
+      router.push({ pathname: '/Buildprofileskills', params: { flow: 'signup' } });
     } else {
       Alert.alert('Error', profileResult.error);
     }
