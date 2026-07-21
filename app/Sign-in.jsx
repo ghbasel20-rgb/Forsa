@@ -54,7 +54,7 @@ export default function SignIn() {
 
   return (
     <View style={styles.container}>
-      <Logo width={400} height={88} style={styles.brandLogo} />
+      <Logo width={140} height={31} style={styles.brandLogo} />
 
       <TitleText style={styles.title}>LOG IN</TitleText>
 
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#e1e4e4',
     padding: 20,
-    paddingTop: 130,
+    paddingTop: 80,
   },
   brandLogo: {
     position: 'absolute',

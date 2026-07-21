@@ -113,7 +113,7 @@ export default function Status() {
           )}
         </View>
       </ScrollView>
-      <Logo width={400} height={88} style={styles.brandLogo} />
+      <Logo width={140} height={31} style={styles.brandLogo} />
       <BottomNav />
     </View>
   );
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#e1e4e4',
     padding: 20,
-    paddingTop: 130,
+    paddingTop: 80,
   },
   header: {
     flexDirection: 'row',
