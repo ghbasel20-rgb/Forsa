@@ -57,6 +57,37 @@ export const getSavedEvents = async (userId) => {
   }
 };
 
+export const getAllSavedEvents = async () => {
+  try {
+    const response = await databases.listDocuments(
+      DATABASE_ID,
+      SAVED_EVENTS_COLLECTION_ID
+    );
+
+    return { success: true, data: response.documents };
+  } catch (error) {
+    console.error('Get all saved events error:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+export const updateApplicationStatus = async (documentId, status) => {
+  try {
+    const response = await databases.updateDocument(
+      DATABASE_ID,
+      SAVED_EVENTS_COLLECTION_ID,
+      documentId,
+      { status }
+    );
+
+    console.log('Application status updated:', response);
+    return { success: true, data: response };
+  } catch (error) {
+    console.error('Update application status error:', error);
+    return { success: false, error: error.message };
+  }
+};
+
 export const getSavedEventStatus = async ({ documentId, eventId, userId }) => {
   try {
     if (documentId) {
