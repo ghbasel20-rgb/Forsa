@@ -128,7 +128,7 @@ export default function AllOpportunities() {
                 <Text style={styles.backText}>{'< Back'}</Text>
               </TouchableOpacity>
             </View>
-            <View style={styles.logoSlot}>
+            <View style={styles.logoSlot} pointerEvents="none">
               <BrandLogo maxWidthPercent={0.75} preserveAspectRatio="xMaxYMid meet" />
             </View>
           </View>

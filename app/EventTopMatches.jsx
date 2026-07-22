@@ -45,7 +45,7 @@ export default function EventTopMatches() {
         <View style={styles.container}>
           <View style={styles.header}>
             <BackButton />
-            <View style={styles.logoSlot}>
+            <View style={styles.logoSlot} pointerEvents="none">
               <BrandLogo maxWidthPercent={0.75} preserveAspectRatio="xMaxYMid meet" />
             </View>
           </View>

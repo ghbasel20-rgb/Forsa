@@ -63,7 +63,7 @@ export default function Admin() {
             <View style={styles.leftSection}>
               <BackButton />
             </View>
-            <View style={styles.logoSlot}>
+            <View style={styles.logoSlot} pointerEvents="none">
               <BrandLogo maxWidthPercent={0.75} preserveAspectRatio="xMaxYMid meet" />
             </View>
             <TouchableOpacity onPress={() => router.push('/Homepage')}>
