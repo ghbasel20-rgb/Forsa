@@ -1,5 +1,4 @@
-import { useRouter } from 'expo-router';
-import React from 'react';
+import React, { useState } from 'react';
 import { Linking, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import InstaIcon from '../assets/images/insta.svg';
 import BrandLogo from './components/BrandLogo';
@@ -14,7 +13,11 @@ const WHATSAPP_URL = 'https://chat.whatsapp.com/EudPXkosHkY9yfcOh1fjRq';
 const INSTAGRAM_URL = 'https://www.instagram.com/forsa.meet?igsh=YWVvMTZwOWl5NTN0';
 
 export default function AboutUs() {
-  const router = useRouter();
+  const [openFaqId, setOpenFaqId] = useState(null);
+
+  const toggleFaq = (id) => {
+    setOpenFaqId((current) => (current === id ? null : id));
+  };
 
   const openLink = async (url) => {
     try {
@@ -44,16 +47,22 @@ export default function AboutUs() {
 
           <Text style={styles.sectionTitle}>FAQS</Text>
           <View style={styles.faqContainer}>
-            {FAQS.map((faq) => (
-              <TouchableOpacity
-                key={faq.id}
-                style={styles.faqRow}
-                onPress={() => router.push(`/FaqDetail?id=${faq.id}`)}
-              >
-                <Text style={styles.faqQuestion}>{faq.question}</Text>
-                <Text style={styles.faqPlus}>+</Text>
-              </TouchableOpacity>
-            ))}
+            {FAQS.map((faq) => {
+              const isOpen = openFaqId === faq.id;
+              return (
+                <View key={faq.id} style={styles.faqItem}>
+                  <TouchableOpacity style={styles.faqRow} onPress={() => toggleFaq(faq.id)}>
+                    <Text style={styles.faqQuestion}>{faq.question}</Text>
+                    <Text style={styles.faqPlus}>{isOpen ? '−' : '+'}</Text>
+                  </TouchableOpacity>
+                  {isOpen && (
+                    <View style={styles.faqAnswerContainer}>
+                      <Text style={styles.faqAnswer}>{faq.answer}</Text>
+                    </View>
+                  )}
+                </View>
+              );
+            })}
           </View>
 
           <View style={styles.contactContainer}>
@@ -125,13 +134,15 @@ const styles = StyleSheet.create({
   faqContainer: {
     marginBottom: 10,
   },
+  faqItem: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#46a3a4',
+  },
   faqRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     gap: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#46a3a4',
     paddingVertical: 16,
   },
   faqQuestion: {
@@ -144,6 +155,15 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
     color: '#0a445c',
+  },
+  faqAnswerContainer: {
+    paddingBottom: 16,
+    paddingRight: 28,
+  },
+  faqAnswer: {
+    fontSize: 14,
+    color: '#0a445c',
+    lineHeight: 20,
   },
   contactContainer: {
     marginTop: 20,
