@@ -235,7 +235,7 @@ export default function Profile() {
                         resizeMode="contain"
                       />
                     </View>
-                    <Text style={styles.opportunityTitle}>{opp.opportunityTitle}</Text>
+                    <Text style={styles.opportunityTitle} numberOfLines={1} ellipsizeMode="tail">{opp.opportunityTitle}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -255,7 +255,7 @@ export default function Profile() {
                         resizeMode="contain"
                       />
                     </View>
-                    <Text style={styles.opportunityTitle}>{application.eventTitle}</Text>
+                    <Text style={styles.opportunityTitle} numberOfLines={1} ellipsizeMode="tail">{application.eventTitle}</Text>
                     <TouchableOpacity
                       style={styles.readMoreButton}
                       onPress={() => router.push(`/Status?id=${application.$id}`)}

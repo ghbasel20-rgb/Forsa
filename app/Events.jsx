@@ -215,7 +215,11 @@ export default function Events() {
                         resizeMode="contain"
                       />
                     </View>
-                    <Text style={[styles.eventTitle, event.isClosed && styles.eventTitleClosed]}>
+                    <Text
+                      style={[styles.eventTitle, event.isClosed && styles.eventTitleClosed]}
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                    >
                       {event.title}
                     </Text>
                     <View style={styles.scoreBadge}>

@@ -194,7 +194,7 @@ export default function AllOpportunities() {
                       resizeMode="contain"
                     />
                   </View>
-                  <Text style={styles.opportunityTitle}>{opp.title}</Text>
+                  <Text style={styles.opportunityTitle} numberOfLines={1} ellipsizeMode="tail">{opp.title}</Text>
                   <View style={styles.scoreBadge}>
                     <Text style={styles.scoreText}>{opp.matchPercentage}%</Text>
                   </View>

@@ -154,7 +154,7 @@ export default function Opportunitydetail() {
                 <View style={styles.infoSection}>
                   <Text style={styles.label}>Apply/Learn More:</Text>
                   <TouchableOpacity onPress={() => handleOpenURL(opportunity.url)}>
-                    <Text style={styles.urlText}>{opportunity.url}</Text>
+                    <Text style={styles.urlText} numberOfLines={1} ellipsizeMode="middle">{opportunity.url}</Text>
                   </TouchableOpacity>
                 </View>
               )}

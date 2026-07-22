@@ -62,7 +62,7 @@ export default function TopMatches() {
                 <View style={styles.numberBadge}>
                   <Text style={styles.numberText}>#{index + 1}</Text>
                 </View>
-                <Text style={styles.matchTitle}>{match.title}</Text>
+                <Text style={styles.matchTitle} numberOfLines={1} ellipsizeMode="tail">{match.title}</Text>
                 <View style={styles.scoreBadge}>
                   <Text style={styles.scoreText}>{match.matchPercentage}% Match</Text>
                 </View>

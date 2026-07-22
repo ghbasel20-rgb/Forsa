@@ -83,8 +83,8 @@ export default function Homepage() {
             <View key={story.id} style={styles.storyRow}>
               <View style={styles.storyPhoto} />
               <View style={styles.storyInfo}>
-                <Text style={styles.storyName}>{story.name}</Text>
-                <Text style={styles.storyDetail}>{`#${story.info}`}</Text>
+                <Text style={styles.storyName} numberOfLines={1} ellipsizeMode="tail">{story.name}</Text>
+                <Text style={styles.storyDetail} numberOfLines={1} ellipsizeMode="tail">{`#${story.info}`}</Text>
               </View>
             </View>
           ))}
