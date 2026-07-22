@@ -110,7 +110,7 @@ export default function Profile() {
                 <SettingsIcon width={34} height={34} />
               </TouchableOpacity>
             </View>
-            <View style={styles.logoSlot}>
+            <View style={styles.logoSlot} pointerEvents="none">
               <BrandLogo maxWidthPercent={0.75} preserveAspectRatio="xMaxYMid meet" />
             </View>
           </View>
