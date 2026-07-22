@@ -11,6 +11,7 @@ import {
   View,
 } from 'react-native';
 import BrandLogo from './components/BrandLogo';
+import LanguageMenu from './components/LanguageMenu';
 import EditIcon from '../assets/images/edit.svg';
 import SettingsIcon from '../assets/images/settings.svg';
 import Text from './components/AppText';
@@ -110,7 +111,8 @@ export default function Profile() {
                 <SettingsIcon width={34} height={34} />
               </TouchableOpacity>
             </View>
-            <View style={styles.logoSlot} pointerEvents="none">
+            <View style={styles.logoSlot} pointerEvents="box-none">
+              <LanguageMenu />
               <BrandLogo maxWidthPercent={0.75} preserveAspectRatio="xMaxYMid meet" />
             </View>
           </View>
@@ -303,7 +305,10 @@ const styles = StyleSheet.create({
   logoSlot: {
     flex: 1,
     marginLeft: 12,
-    alignItems: 'flex-end',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    gap: 10,
   },
   menuOverlay: {
     flex: 1,

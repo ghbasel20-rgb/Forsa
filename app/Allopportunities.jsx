@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native';
 import BrandLogo from './components/BrandLogo';
+import LanguageMenu from './components/LanguageMenu';
 import BottomNav from './components/BottomNav';
 import FilterPanel from './components/FilterPanel';
 import FilterSection from './components/FilterSection';
@@ -128,7 +129,8 @@ export default function AllOpportunities() {
                 <Text style={styles.backText}>{'< Back'}</Text>
               </TouchableOpacity>
             </View>
-            <View style={styles.logoSlot} pointerEvents="none">
+            <View style={styles.logoSlot} pointerEvents="box-none">
+              <LanguageMenu />
               <BrandLogo maxWidthPercent={0.75} preserveAspectRatio="xMaxYMid meet" />
             </View>
           </View>
@@ -250,7 +252,10 @@ const styles = StyleSheet.create({
   logoSlot: {
     flex: 1,
     marginLeft: 12,
-    alignItems: 'flex-end',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    gap: 10,
   },
   title: {
     fontSize: 32,

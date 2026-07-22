@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import HomeIcon from '../assets/images/home-icon.svg';
 import BrandLogo from './components/BrandLogo';
+import LanguageMenu from './components/LanguageMenu';
 import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
 import TextInput from './components/AppTextInput';
@@ -77,7 +78,8 @@ export default function Application() {
                 <Text style={styles.backText}>{'< Back'}</Text>
               </TouchableOpacity>
             </View>
-            <View style={styles.logoSlot} pointerEvents="none">
+            <View style={styles.logoSlot} pointerEvents="box-none">
+              <LanguageMenu />
               <BrandLogo maxWidthPercent={0.75} preserveAspectRatio="xMaxYMid meet" />
             </View>
             <TouchableOpacity onPress={() => router.push('/Homepage')}>
@@ -171,7 +173,10 @@ const styles = StyleSheet.create({
   logoSlot: {
     flex: 1,
     marginHorizontal: 12,
-    alignItems: 'flex-end',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    gap: 10,
   },
   homeIcon: {
     width: 40,

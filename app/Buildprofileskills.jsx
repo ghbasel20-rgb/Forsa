@@ -8,6 +8,7 @@ import {
   View
 } from 'react-native';
 import BrandLogo from './components/BrandLogo';
+import LanguageMenu from './components/LanguageMenu';
 import { useProfile } from './ProfileContext';
 import Text from './components/AppText';
 import BackButton from './components/BackButton';
@@ -108,7 +109,8 @@ export default function BuildProfileSkills() {
         <View style={styles.container}>
           <View style={styles.header}>
             <BackButton />
-            <View style={styles.logoSlot} pointerEvents="none">
+            <View style={styles.logoSlot} pointerEvents="box-none">
+              <LanguageMenu />
               <BrandLogo maxWidthPercent={0.75} preserveAspectRatio="xMaxYMid meet" />
             </View>
           </View>
@@ -155,7 +157,10 @@ const styles = StyleSheet.create({
   logoSlot: {
     flex: 1,
     marginLeft: 12,
-    alignItems: 'flex-end',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    gap: 10,
   },
   title: {
     fontSize: 32,
