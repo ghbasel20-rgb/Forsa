@@ -13,16 +13,13 @@ import PurplePfpIcon from '../assets/images/purplePfp.svg';
 import PurpleSearchIcon from '../assets/images/purplesearch.svg';
 import Text from './components/AppText';
 import TitleText from './components/TitleText';
+import { useLanguage } from './contexts/LanguageContext';
 import { exploreEvents, exploreOpportunities } from './services/navigation-service';
-
-const successStories = [
-  { id: '1', name: 'Yamen Abdulaziz', info: 'Placed in a 3-month internship' },
-  { id: '2', name: 'Samir Ibrahim', info: 'Landed a volunteering role' },
-  { id: '3', name: 'Razi Shiek Ahmad', info: 'Completed a mentorship program' },
-];
 
 export default function Homepage() {
   const router = useRouter();
+  const { t } = useLanguage();
+  const successStories = t('homepage.stories');
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -39,7 +36,7 @@ export default function Homepage() {
                 <PurplePfpIcon width={44} height={44} viewBox="15 2 29 30" />
               </View>
               <View style={styles.labelPill}>
-                <Text style={styles.labelText}>your profile</Text>
+                <Text style={styles.labelText}>{t('homepage.yourProfile')}</Text>
               </View>
             </TouchableOpacity>
 
@@ -48,7 +45,7 @@ export default function Homepage() {
                 <PurpleSearchIcon width={44} height={44} viewBox="37.65 6.64 62.55 66.85" />
               </View>
               <View style={styles.labelPill}>
-                <Text style={styles.labelText}>Explore opportunities</Text>
+                <Text style={styles.labelText}>{t('homepage.exploreOpportunities')}</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -59,7 +56,7 @@ export default function Homepage() {
                 <EventsIcon width={44} height={44} />
               </View>
               <View style={styles.labelPill}>
-                <Text style={styles.labelText}>JOIN our events!</Text>
+                <Text style={styles.labelText}>{t('homepage.joinEvents')}</Text>
               </View>
             </TouchableOpacity>
 
@@ -68,7 +65,7 @@ export default function Homepage() {
                 <AboutIcon width={48} height={48} viewBox="324 8 794 796" />
               </View>
               <View style={styles.labelPill}>
-                <Text style={styles.labelText}>About us</Text>
+                <Text style={styles.labelText}>{t('homepage.aboutUs')}</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -76,7 +73,7 @@ export default function Homepage() {
 
         <View style={styles.divider} />
 
-        <TitleText style={styles.sectionTitle}>SUCCESS STORIES</TitleText>
+        <TitleText style={styles.sectionTitle}>{t('homepage.successStories')}</TitleText>
 
         <View style={styles.storiesContainer}>
           {successStories.map((story) => (

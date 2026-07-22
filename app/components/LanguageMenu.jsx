@@ -1,18 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Modal, Pressable, StyleSheet, TouchableOpacity, View } from 'react-native';
 import GlobeIcon from '../../assets/images/globe.svg';
 import Text from './AppText';
-import { getLanguage, LANGUAGES, setLanguage } from '../services/language-service';
+import { LANGUAGES } from '../services/language-service';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export default function LanguageMenu() {
   const buttonRef = useRef(null);
   const [visible, setVisible] = useState(false);
   const [anchor, setAnchor] = useState(null);
-  const [language, setLanguageState] = useState('en');
-
-  useEffect(() => {
-    getLanguage().then(setLanguageState);
-  }, []);
+  const { language, changeLanguage } = useLanguage();
 
   const openMenu = () => {
     buttonRef.current?.measureInWindow((x, y, width, height) => {
@@ -21,10 +18,9 @@ export default function LanguageMenu() {
     });
   };
 
-  const handleSelect = async (code) => {
-    setLanguageState(code);
+  const handleSelect = (code) => {
     setVisible(false);
-    await setLanguage(code);
+    changeLanguage(code);
   };
 
   return (

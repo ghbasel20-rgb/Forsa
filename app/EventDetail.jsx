@@ -6,6 +6,7 @@ import HeaderBrand from './components/HeaderBrand';
 import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
 import TitleText from './components/TitleText';
+import { useLanguage } from './contexts/LanguageContext';
 import { getCurrentUser } from './services/auth-service';
 import {
   formatEventDate,
@@ -17,6 +18,7 @@ import { getSavedEventStatus, unsaveEvent } from './services/saved-events-servic
 
 export default function EventDetail() {
   const router = useRouter();
+  const { t } = useLanguage();
   const { id } = useLocalSearchParams();
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -50,7 +52,7 @@ export default function EventDetail() {
     if (result.success) {
       setApplicationId(null);
     } else {
-      Alert.alert('Error', result.error);
+      Alert.alert(t('common.errorTitle'), result.error);
     }
   };
 
@@ -66,7 +68,7 @@ export default function EventDetail() {
                 style={styles.backButton}
                 onPress={() => router.back()}
               >
-                <Text style={styles.backText}>{'< Back'}</Text>
+                <Text style={styles.backText}>{t('common.back')}</Text>
               </TouchableOpacity>
             </View>
             <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
@@ -76,7 +78,7 @@ export default function EventDetail() {
           </View>
 
           <TitleText style={styles.title}>
-            {loading ? 'LOADING...' : event?.title || 'EVENT'}
+            {loading ? t('eventDetail.loading') : event?.title || t('eventDetail.defaultTitle')}
           </TitleText>
 
           {!loading && event && (
@@ -84,7 +86,7 @@ export default function EventDetail() {
               {event.eventDate && (
                 <View style={styles.deadlineBar}>
                   <Text style={styles.deadlineText}>
-                    Event date: {formatEventDate(event.eventDate)}
+                    {t('eventDetail.eventDatePrefix')}{formatEventDate(event.eventDate)}
                   </Text>
                 </View>
               )}
@@ -93,57 +95,57 @@ export default function EventDetail() {
                 <View style={[styles.deadlineBar, closed && styles.deadlineBarClosed]}>
                   <Text style={styles.deadlineText}>
                     {closed
-                      ? 'Applications closed'
-                      : `Application deadline: ${formatFullDueDate(event.dueDate)}`}
+                      ? t('eventDetail.applicationsClosed')
+                      : `${t('eventDetail.applicationDeadlinePrefix')}${formatFullDueDate(event.dueDate)}`}
                   </Text>
                 </View>
               )}
 
               {event.details && (
                 <View style={styles.infoSection}>
-                  <Text style={styles.label}>Details:</Text>
+                  <Text style={styles.label}>{t('eventDetail.detailsLabel')}</Text>
                   <Text style={styles.value}>{event.details}</Text>
                 </View>
               )}
 
               {event.location && (
                 <View style={styles.infoSection}>
-                  <Text style={styles.label}>Location:</Text>
+                  <Text style={styles.label}>{t('eventDetail.locationLabel')}</Text>
                   <Text style={styles.value}>{event.location}</Text>
                 </View>
               )}
 
               {event.ageRange && (
                 <View style={styles.infoSection}>
-                  <Text style={styles.label}>Age range:</Text>
+                  <Text style={styles.label}>{t('eventDetail.ageRangeLabel')}</Text>
                   <Text style={styles.value}>{event.ageRange}</Text>
                 </View>
               )}
 
               {event.cost && (
                 <View style={styles.infoSection}>
-                  <Text style={styles.label}>Cost:</Text>
+                  <Text style={styles.label}>{t('eventDetail.costLabel')}</Text>
                   <Text style={styles.value}>{event.cost}</Text>
                 </View>
               )}
 
               {event.content && (
                 <View style={styles.infoSection}>
-                  <Text style={styles.label}>Content:</Text>
+                  <Text style={styles.label}>{t('eventDetail.contentLabel')}</Text>
                   <Text style={styles.value}>{event.content}</Text>
                 </View>
               )}
 
               {applicationId ? (
                 <TouchableOpacity style={styles.withdrawButton} onPress={handleWithdraw}>
-                  <Text style={styles.withdrawButtonText}>Withdraw application</Text>
+                  <Text style={styles.withdrawButtonText}>{t('eventDetail.withdrawButton')}</Text>
                 </TouchableOpacity>
               ) : !closed ? (
                 <TouchableOpacity
                   style={styles.applyButton}
                   onPress={() => router.push(`/Application?eventId=${event.$id}`)}
                 >
-                  <Text style={styles.applyButtonText}>Apply</Text>
+                  <Text style={styles.applyButtonText}>{t('eventDetail.applyButton')}</Text>
                 </TouchableOpacity>
               ) : null}
             </>

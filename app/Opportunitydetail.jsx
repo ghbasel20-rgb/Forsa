@@ -13,12 +13,14 @@ import HomeIcon from '../assets/images/home-icon.svg';
 import HeaderBrand from './components/HeaderBrand';
 import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
+import { useLanguage } from './contexts/LanguageContext';
 import { getCurrentUser } from './services/auth-service';
 import { getOpportunityById } from './services/opportunities-service';
 import { checkIfSaved, saveOpportunity, unsaveOpportunity } from './services/saved-opportunities-service';
 
 export default function Opportunitydetail() {
   const router = useRouter();
+  const { t } = useLanguage();
   const { id } = useLocalSearchParams();
   const [isSaved, setIsSaved] = useState(false);
   const [savedDocumentId, setSavedDocumentId] = useState(null);
@@ -54,7 +56,7 @@ export default function Opportunitydetail() {
 
   const handleSave = async () => {
     if (!userId || !opportunity) {
-      Alert.alert('Error', 'Please log in to save opportunities');
+      Alert.alert(t('common.errorTitle'), t('opportunityDetail.loginToSave'));
       return;
     }
 
@@ -63,18 +65,18 @@ export default function Opportunitydetail() {
       if (result.success) {
         setIsSaved(false);
         setSavedDocumentId(null);
-        Alert.alert('Success', 'Opportunity removed from saved');
+        Alert.alert(t('common.successTitle'), t('opportunityDetail.removedSuccess'));
       } else {
-        Alert.alert('Error', result.error);
+        Alert.alert(t('common.errorTitle'), result.error);
       }
     } else {
       const result = await saveOpportunity(userId, opportunity.$id, opportunity.title);
       if (result.success) {
         setIsSaved(true);
         setSavedDocumentId(result.data.$id);
-        Alert.alert('Success', 'Opportunity saved!');
+        Alert.alert(t('common.successTitle'), t('opportunityDetail.savedSuccess'));
       } else {
-        Alert.alert('Error', result.error);
+        Alert.alert(t('common.errorTitle'), result.error);
       }
     }
   };
@@ -84,12 +86,12 @@ export default function Opportunitydetail() {
     if (!url.startsWith('http://') && !url.startsWith('https://')) {
       formattedUrl = 'https://' + url;
     }
-    
+
     const canOpen = await Linking.canOpenURL(formattedUrl);
     if (canOpen) {
       await Linking.openURL(formattedUrl);
     } else {
-      Alert.alert('Error', 'Cannot open this URL');
+      Alert.alert(t('common.errorTitle'), t('opportunityDetail.cannotOpenUrl'));
     }
   };
 
@@ -103,7 +105,7 @@ export default function Opportunitydetail() {
                 style={styles.backButton}
                 onPress={() => router.back()}
               >
-                <Text style={styles.backText}>{'< Back'}</Text>
+                <Text style={styles.backText}>{t('common.back')}</Text>
               </TouchableOpacity>
             </View>
             <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
@@ -120,28 +122,28 @@ export default function Opportunitydetail() {
             />
           </View>
 
-          <Text style={styles.title}>{loading ? 'LOADING...' : opportunity?.title || 'OPPORTUNITY'}</Text>
+          <Text style={styles.title}>{loading ? t('opportunityDetail.loading') : opportunity?.title || t('opportunityDetail.defaultTitle')}</Text>
 
           {!loading && opportunity && (
             <>
               <View style={styles.infoSection}>
-                <Text style={styles.label}>Location:</Text>
-                <Text style={styles.value}>{opportunity.location || 'Not specified'}</Text>
+                <Text style={styles.label}>{t('opportunityDetail.locationLabel')}</Text>
+                <Text style={styles.value}>{opportunity.location || t('opportunityDetail.notSpecified')}</Text>
               </View>
 
               <View style={styles.infoSection}>
-                <Text style={styles.label}>Category:</Text>
-                <Text style={styles.value}>{opportunity.category || 'Not specified'}</Text>
+                <Text style={styles.label}>{t('opportunityDetail.categoryLabel')}</Text>
+                <Text style={styles.value}>{opportunity.category || t('opportunityDetail.notSpecified')}</Text>
               </View>
 
               <View style={styles.infoSection}>
-                <Text style={styles.label}>Description:</Text>
-                <Text style={styles.value}>{opportunity.description || 'No description available'}</Text>
+                <Text style={styles.label}>{t('opportunityDetail.descriptionLabel')}</Text>
+                <Text style={styles.value}>{opportunity.description || t('opportunityDetail.noDescription')}</Text>
               </View>
 
               {opportunity.requirements && opportunity.requirements.length > 0 && (
                 <View style={styles.infoSection}>
-                  <Text style={styles.label}>Requirements:</Text>
+                  <Text style={styles.label}>{t('opportunityDetail.requirementsLabel')}</Text>
                   {opportunity.requirements.map((req, index) => (
                     <Text key={index} style={styles.requirementItem}>• {req}</Text>
                   ))}
@@ -150,7 +152,7 @@ export default function Opportunitydetail() {
 
               {opportunity.url && (
                 <View style={styles.infoSection}>
-                  <Text style={styles.label}>Apply/Learn More:</Text>
+                  <Text style={styles.label}>{t('opportunityDetail.applyLearnMoreLabel')}</Text>
                   <TouchableOpacity onPress={() => handleOpenURL(opportunity.url)}>
                     <Text style={styles.urlText} numberOfLines={1} ellipsizeMode="middle">{opportunity.url}</Text>
                   </TouchableOpacity>
@@ -160,7 +162,7 @@ export default function Opportunitydetail() {
           )}
 
           <TouchableOpacity style={styles.saveButton} onPress={handleSave} disabled={loading}>
-            <Text style={styles.saveButtonText}>{isSaved ? 'Unsave' : 'Save'}</Text>
+            <Text style={styles.saveButtonText}>{isSaved ? t('opportunityDetail.unsaveButton') : t('opportunityDetail.saveButton')}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

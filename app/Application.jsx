@@ -7,6 +7,7 @@ import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
 import TextInput from './components/AppTextInput';
 import TitleText from './components/TitleText';
+import { useLanguage } from './contexts/LanguageContext';
 import { getCurrentUser } from './services/auth-service';
 import { getEventById, isEventClosed } from './services/events-service';
 import { getUserProfile } from './services/profile-service';
@@ -14,6 +15,7 @@ import { applyToEvent } from './services/saved-events-service';
 
 export default function Application() {
   const router = useRouter();
+  const { t } = useLanguage();
   const { eventId } = useLocalSearchParams();
   const [event, setEvent] = useState(null);
   const [userId, setUserId] = useState(null);
@@ -74,7 +76,7 @@ export default function Application() {
                 style={styles.backButton}
                 onPress={() => router.back()}
               >
-                <Text style={styles.backText}>{'< Back'}</Text>
+                <Text style={styles.backText}>{t('common.back')}</Text>
               </TouchableOpacity>
             </View>
             <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
@@ -91,18 +93,18 @@ export default function Application() {
             />
           </View>
 
-          <TitleText style={styles.title}>APPLICATION</TitleText>
+          <TitleText style={styles.title}>{t('application.title')}</TitleText>
 
           {!loading && closed ? (
             <View style={styles.closedBar}>
-              <Text style={styles.closedBarText}>Applications closed</Text>
+              <Text style={styles.closedBarText}>{t('application.applicationsClosed')}</Text>
             </View>
           ) : (
             <>
-              <Text style={styles.label}>Name</Text>
+              <Text style={styles.label}>{t('application.nameLabel')}</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Your name"
+                placeholder={t('application.namePlaceholder')}
                 placeholderTextColor="#46a3a4"
                 value={name}
                 onChangeText={setName}
@@ -111,9 +113,9 @@ export default function Application() {
 
               {hasRequirements && (
                 <View style={styles.infoSection}>
-                  <Text style={styles.label}>Requirements</Text>
-                  {event.ageRange && <Text style={styles.value}>Age range: {event.ageRange}</Text>}
-                  {event.cost && <Text style={styles.value}>Cost: {event.cost}</Text>}
+                  <Text style={styles.label}>{t('application.requirementsLabel')}</Text>
+                  {event.ageRange && <Text style={styles.value}>{t('application.ageRangePrefix')}{event.ageRange}</Text>}
+                  {event.cost && <Text style={styles.value}>{t('application.costPrefix')}{event.cost}</Text>}
                   {event.details && <Text style={styles.value}>{event.details}</Text>}
                   {event.content && <Text style={styles.value}>{event.content}</Text>}
                 </View>
@@ -124,7 +126,7 @@ export default function Application() {
                 onPress={handleApply}
                 disabled={loading || submitting}
               >
-                <Text style={styles.applyButtonText}>Apply</Text>
+                <Text style={styles.applyButtonText}>{t('application.applyButton')}</Text>
               </TouchableOpacity>
             </>
           )}

@@ -8,6 +8,7 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
+import { LanguageProvider } from './contexts/LanguageContext';
 import { ProfileProvider } from './ProfileContext';
 import './utils/routerGuard';
 
@@ -33,8 +34,10 @@ export default function Layout() {
   }
 
   return (
-    <ProfileProvider>
-      <Stack screenOptions={{ headerShown: false }} />
-    </ProfileProvider>
+    <LanguageProvider>
+      <ProfileProvider>
+        <Stack screenOptions={{ headerShown: false }} />
+      </ProfileProvider>
+    </LanguageProvider>
   );
 }

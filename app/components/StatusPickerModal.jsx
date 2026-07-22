@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Modal, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Text from './AppText';
 import TextInput from './AppTextInput';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export const STATUS_OPTIONS = [
   'High School Student',
@@ -12,6 +13,7 @@ export const STATUS_OPTIONS = [
 ];
 
 export default function StatusPickerModal({ visible, onClose, onSubmit }) {
+  const { t } = useLanguage();
   const [showCustomInput, setShowCustomInput] = useState(false);
   const [customValue, setCustomValue] = useState('');
 
@@ -47,7 +49,7 @@ export default function StatusPickerModal({ visible, onClose, onSubmit }) {
       >
         <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={handleClose}>
           <View style={styles.modalContent} onStartShouldSetResponder={() => true}>
-            <Text style={styles.modalTitle}>Select Status</Text>
+            <Text style={styles.modalTitle}>{t('statusPickerModal.selectStatusTitle')}</Text>
             {STATUS_OPTIONS.map((option) => (
               <TouchableOpacity
                 key={option}
@@ -73,16 +75,16 @@ export default function StatusPickerModal({ visible, onClose, onSubmit }) {
           onPress={() => setShowCustomInput(false)}
         >
           <View style={styles.modalContent} onStartShouldSetResponder={() => true}>
-            <Text style={styles.modalTitle}>Enter Your Status</Text>
+            <Text style={styles.modalTitle}>{t('statusPickerModal.enterStatusTitle')}</Text>
             <TextInput
               style={styles.input}
-              placeholder="Type your status"
+              placeholder={t('statusPickerModal.statusPlaceholder')}
               placeholderTextColor="#46a3a4"
               value={customValue}
               onChangeText={setCustomValue}
             />
             <TouchableOpacity style={styles.submitButton} onPress={handleCustomSubmit}>
-              <Text style={styles.buttonText}>Submit</Text>
+              <Text style={styles.buttonText}>{t('common.submit')}</Text>
             </TouchableOpacity>
           </View>
         </TouchableOpacity>

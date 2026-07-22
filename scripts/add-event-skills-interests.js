@@ -6,9 +6,9 @@
 // something to match against (see getMatchedEvents in
 // services/events-service.js).
 //
-// "Cultural Heritage Festival" is tagged with every skill/interest, the same
-// trick seed-more-opportunities.js uses, so a Top Match always exists
-// regardless of the user's profile.
+// "مهرجان التراث الثقافي" (Cultural Heritage Festival) is tagged with every
+// skill/interest, the same trick seed-more-opportunities.js uses, so a Top
+// Match always exists regardless of the user's profile.
 //
 // Usage: APPWRITE_API_KEY=xxxxx node scripts/add-event-skills-interests.js
 
@@ -42,83 +42,83 @@ const ALL_INTERESTS = [
 
 // Keyed by the exact `title` used in seed-events.js.
 const eventTags = {
-  'Tatreez Embroidery Workshop: Preserving Palestinian Heritage': {
+  'ورشة تطريز فلسطيني: الحفاظ على التراث': {
     skills: ['Creativity'],
     interests: ['Arts', 'History'],
   },
-  'Dabke Dance Workshop': {
+  'ورشة رقص الدبكة': {
     skills: ['Teamwork'],
     interests: ['Dancing', 'Arts'],
   },
-  'Palestinian Folklore & Storytelling Night': {
+  'أمسية الفولكلور والحكايات الفلسطينية': {
     skills: ['Communication'],
     interests: ['History', 'Reading'],
   },
-  'Palestinian Cuisine Cooking Class': {
+  'صف طبخ المأكولات الفلسطينية': {
     skills: ['Cooking'],
     interests: ['Cooking', 'Food & Dining'],
   },
-  'Arabic Calligraphy & Illumination Workshop': {
+  'ورشة الخط العربي والزخرفة': {
     skills: ['Creativity', 'Design'],
     interests: ['Arts'],
   },
-  'Civic Engagement 101: Know Your Community': {
+  'مقدمة في المشاركة المدنية: تعرّف على مجتمعك': {
     skills: ['Critical Thinking', 'Communication'],
     interests: ['Politics', 'Education'],
   },
-  'Advocacy & Public Speaking Training': {
+  'تدريب على المناصرة وفن الخطابة': {
     skills: ['Public Speaking', 'Communication'],
     interests: ['Politics'],
   },
-  'Understanding Human Rights: An Introductory Seminar': {
+  'فهم حقوق الإنسان: ندوة تمهيدية': {
     skills: ['Critical Thinking', 'Research'],
     interests: ['Politics', 'Philosophy'],
   },
-  'Youth Leadership Retreat': {
+  'معسكر القيادة الشبابية': {
     skills: ['Leadership', 'Teamwork', 'Time Management'],
     interests: ['Education'],
   },
-  'Community Organizing Fundamentals': {
+  'أساسيات التنظيم المجتمعي': {
     skills: ['Leadership', 'Project Management'],
     interests: ['Volunteering', 'Politics'],
   },
-  'Neighborhood Town Hall: Community Voices': {
+  'لقاء مفتوح للحي: أصوات المجتمع': {
     skills: ['Communication', 'Public Speaking'],
     interests: ['Politics'],
   },
-  'Community Clean-Up Day': {
+  'يوم تنظيف المجتمع': {
     skills: ['Teamwork'],
     interests: ['Environment', 'Volunteering', 'Outdoor Activities'],
   },
-  'Cultural Heritage Festival': {
+  'مهرجان التراث الثقافي': {
     skills: ALL_SKILLS,
     interests: ALL_INTERESTS,
   },
-  'Community Iftar Gathering': {
+  'إفطار جماعي مجتمعي': {
     skills: ['Teamwork'],
     interests: ['Volunteering', 'Food & Dining'],
   },
-  'Field Trip: Old City Heritage Walk': {
+  'رحلة ميدانية: جولة تراثية في البلدة القديمة': {
     skills: ['Research'],
     interests: ['History', 'Outdoor Activities'],
   },
-  'Field Trip: Palestinian Museum Visit': {
+  'رحلة ميدانية: زيارة المتحف الفلسطيني': {
     skills: ['Research'],
     interests: ['History', 'Education'],
   },
-  'Field Trip: Local University Campus Tour': {
+  'رحلة ميدانية: جولة في حرم جامعي محلي': {
     skills: ['Time Management'],
     interests: ['Education'],
   },
-  'Job Fair & Employment Networking Event': {
+  'معرض توظيف وفعالية للتواصل المهني': {
     skills: ['Communication', 'Sales'],
     interests: ['Business', 'Entrepreneurship'],
   },
-  'Resume Writing & Interview Skills Workshop': {
+  'ورشة كتابة السيرة الذاتية ومهارات المقابلات': {
     skills: ['Writing', 'Communication', 'Public Speaking'],
     interests: ['Business', 'Education'],
   },
-  'Career Mentorship Mixer': {
+  'لقاء إرشاد مهني': {
     skills: ['Communication', 'Leadership'],
     interests: ['Business', 'Entrepreneurship'],
   },

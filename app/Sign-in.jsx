@@ -12,10 +12,12 @@ import Text from './components/AppText';
 import TextInput from './components/AppTextInput';
 import PasswordInput from './components/PasswordInput';
 import TitleText from './components/TitleText';
+import { useLanguage } from './contexts/LanguageContext';
 import { signIn, signOut } from './services/auth-service';
 
 export default function SignIn() {
   const router = useRouter();
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -27,7 +29,7 @@ export default function SignIn() {
     }
 
     if (!email || !password) {
-      Alert.alert('Error', 'Please fill in all fields');
+      Alert.alert(t('common.errorTitle'), t('signIn.fillAllFields'));
       return;
     }
 
@@ -45,10 +47,10 @@ export default function SignIn() {
     setLoading(false);
 
     if (result.success) {
-      Alert.alert('Success', 'Logged in successfully!');
+      Alert.alert(t('common.successTitle'), t('signIn.loggedInSuccess'));
       router.push('/Homepage');
     } else {
-      Alert.alert('Error', result.error);
+      Alert.alert(t('common.errorTitle'), result.error);
     }
   };
 
@@ -56,11 +58,11 @@ export default function SignIn() {
     <View style={styles.container}>
       <HeaderBrand style={styles.logoSlot} />
 
-      <TitleText style={styles.title}>LOG IN</TitleText>
+      <TitleText style={styles.title}>{t('signIn.title')}</TitleText>
 
       <View style={styles.formContainer}>
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Enter email:</Text>
+          <Text style={styles.label}>{t('signIn.emailLabel')}</Text>
           <TextInput
             style={styles.input}
             value={email}
@@ -71,7 +73,7 @@ export default function SignIn() {
         </View>
 
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Password:</Text>
+          <Text style={styles.label}>{t('signIn.passwordLabel')}</Text>
           <PasswordInput
             style={styles.input}
             value={password}
@@ -87,13 +89,14 @@ export default function SignIn() {
           {loading ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text style={styles.buttonText}>Submit</Text>
+            <Text style={styles.buttonText}>{t('signIn.submit')}</Text>
           )}
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => router.push('/Sign-up')}>
           <Text style={styles.linkText}>
-            Don't have an account? <Text style={styles.linkBold}>Sign up</Text>
+            {t('signIn.noAccount')}
+            <Text style={styles.linkBold}>{t('signIn.signUpLink')}</Text>
           </Text>
         </TouchableOpacity>
       </View>

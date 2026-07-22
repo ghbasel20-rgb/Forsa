@@ -15,13 +15,17 @@ import SingleChoiceRow from './components/SingleChoiceRow';
 import Text from './components/AppText';
 import TextInput from './components/AppTextInput';
 import TitleText from './components/TitleText';
+import { useLanguage } from './contexts/LanguageContext';
 import { getCurrentUser } from './services/auth-service';
 import { getAllOpportunities, scoreOpportunityMatch } from './services/opportunities-service';
 import { getUserProfile } from './services/profile-service';
-import { getDistinctValues, MATCH_THRESHOLD_OPTIONS, sortItems, SORT_OPTIONS } from './utils/filterUtils';
+import { getDistinctValues, getMatchThresholdOptions, getSortOptions, sortItems } from './utils/filterUtils';
 
 export default function AllOpportunities() {
   const router = useRouter();
+  const { t } = useLanguage();
+  const MATCH_THRESHOLD_OPTIONS = getMatchThresholdOptions(t);
+  const SORT_OPTIONS = getSortOptions(t);
   const [searchQuery, setSearchQuery] = useState('');
   const [allOpportunities, setAllOpportunities] = useState([]);
   const [profile, setProfile] = useState(null);
@@ -125,18 +129,18 @@ export default function AllOpportunities() {
                 style={styles.backButton}
                 onPress={() => router.back()}
               >
-                <Text style={styles.backText}>{'< Back'}</Text>
+                <Text style={styles.backText}>{t('common.back')}</Text>
               </TouchableOpacity>
             </View>
             <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
           </View>
 
-          <TitleText style={styles.title}>ALL{'\n'}OPPORTUNITIES</TitleText>
+          <TitleText style={styles.title}>{t('allOpportunities.title')}</TitleText>
 
           <View style={styles.searchContainer}>
             <TextInput
               style={styles.searchInput}
-              placeholder="Search opportunities..."
+              placeholder={t('allOpportunities.searchPlaceholder')}
               placeholderTextColor="#46a3a4"
               value={searchQuery}
               onChangeText={setSearchQuery}
@@ -145,39 +149,39 @@ export default function AllOpportunities() {
 
           <FilterPanel activeCount={activeFilterCount} onClear={handleClearFilters}>
             <FilterSection
-              label="Skills"
+              label={t('filterLabels.skills')}
               options={skillOptions}
               selected={selectedSkills}
               onChange={setSelectedSkills}
             />
             <FilterSection
-              label="Interests"
+              label={t('filterLabels.interests')}
               options={interestOptions}
               selected={selectedInterests}
               onChange={setSelectedInterests}
             />
             {categoryOptions.length > 0 && (
               <FilterSection
-                label="Category"
+                label={t('filterLabels.category')}
                 options={categoryOptions}
                 selected={selectedCategories}
                 onChange={setSelectedCategories}
               />
             )}
             <SingleChoiceRow
-              label="Minimum Match"
+              label={t('filterLabels.minimumMatch')}
               options={MATCH_THRESHOLD_OPTIONS}
               value={matchThreshold}
               onChange={setMatchThreshold}
             />
-            <SingleChoiceRow label="Sort By" options={SORT_OPTIONS} value={sortBy} onChange={setSortBy} />
+            <SingleChoiceRow label={t('filterLabels.sortBy')} options={SORT_OPTIONS} value={sortBy} onChange={setSortBy} />
           </FilterPanel>
 
           <View style={styles.opportunitiesContainer}>
             {loading ? (
-              <Text style={styles.loadingText}>Loading opportunities...</Text>
+              <Text style={styles.loadingText}>{t('allOpportunities.loadingText')}</Text>
             ) : filteredOpportunities.length === 0 ? (
-              <Text style={styles.loadingText}>No opportunities match your search or filters</Text>
+              <Text style={styles.loadingText}>{t('allOpportunities.emptyText')}</Text>
             ) : (
               filteredOpportunities.map((opp) => (
                 <TouchableOpacity
@@ -205,7 +209,7 @@ export default function AllOpportunities() {
             style={styles.topMatchesButton}
             onPress={() => router.push('/TopMatches')}
           >
-            <Text style={styles.topMatchesText}>View your top matches</Text>
+            <Text style={styles.topMatchesText}>{t('allOpportunities.viewTopMatches')}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

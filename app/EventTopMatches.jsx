@@ -11,12 +11,14 @@ import BackButton from './components/BackButton';
 import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
 import TitleText from './components/TitleText';
+import { useLanguage } from './contexts/LanguageContext';
 import { getCurrentUser } from './services/auth-service';
 import { getEvents, getMatchedEvents } from './services/events-service';
 import { getUserProfile } from './services/profile-service';
 
 export default function EventTopMatches() {
   const router = useRouter();
+  const { t } = useLanguage();
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
@@ -48,7 +50,7 @@ export default function EventTopMatches() {
             <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
           </View>
 
-          <TitleText style={styles.title}>YOUR TOP{'\n'}EVENT MATCHES</TitleText>
+          <TitleText style={styles.title}>{t('eventTopMatches.title')}</TitleText>
 
           <View style={styles.matchesContainer}>
             {events.map((match, index) => (
@@ -62,7 +64,7 @@ export default function EventTopMatches() {
                 </View>
                 <Text style={styles.matchTitle} numberOfLines={1} ellipsizeMode="tail">{match.title}</Text>
                 <View style={styles.scoreBadge}>
-                  <Text style={styles.scoreText}>{match.matchPercentage}% Match</Text>
+                  <Text style={styles.scoreText}>{match.matchPercentage}{t('eventTopMatches.matchSuffix')}</Text>
                 </View>
               </TouchableOpacity>
             ))}
@@ -72,7 +74,7 @@ export default function EventTopMatches() {
             style={styles.allEventsButton}
             onPress={() => router.push('/Events')}
           >
-            <Text style={styles.allEventsText}>Explore all events</Text>
+            <Text style={styles.allEventsText}>{t('eventTopMatches.exploreEvents')}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

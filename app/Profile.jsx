@@ -20,8 +20,10 @@ import SettingsIcon from '../assets/images/settings.svg';
 import Text from './components/AppText';
 import BackButton from './components/BackButton';
 import BottomNav from './components/BottomNav';
+import LanguagePickerModal from './components/LanguagePickerModal';
 import StatusPickerModal from './components/StatusPickerModal';
 import TitleText from './components/TitleText';
+import { useLanguage } from './contexts/LanguageContext';
 import { getCurrentUser, signOut } from './services/auth-service';
 import { getEventById } from './services/events-service';
 import {
@@ -43,6 +45,8 @@ export default function Profile() {
   const [settingsMenuVisible, setSettingsMenuVisible] = useState(false);
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [changingImage, setChangingImage] = useState(false);
+  const [showLanguageModal, setShowLanguageModal] = useState(false);
+  const { language, changeLanguage, t } = useLanguage();
 
   useFocusEffect(
     React.useCallback(() => {
@@ -72,7 +76,7 @@ export default function Profile() {
             const eventResult = await getEventById(application.eventId);
             return {
               ...application,
-              eventTitle: eventResult.success ? eventResult.data.title : 'Event',
+              eventTitle: eventResult.success ? eventResult.data.title : t('eventDetail.defaultTitle'),
             };
           })
         );
@@ -85,6 +89,11 @@ export default function Profile() {
     setSettingsMenuVisible(false);
     await signOut();
     router.replace('/Sign-in');
+  };
+
+  const handleSelectLanguage = (code) => {
+    changeLanguage(code);
+    setShowLanguageModal(false);
   };
 
   const saveStatus = async (newStatus) => {
@@ -115,7 +124,7 @@ export default function Profile() {
       const previousImageId = profileData.profileImageId;
       const uploadResult = await uploadProfileImage(result.assets[0]);
       if (!uploadResult.success) {
-        Alert.alert('Upload failed', uploadResult.error);
+        Alert.alert(t('profile.uploadFailedTitle'), uploadResult.error);
         return;
       }
 
@@ -123,7 +132,7 @@ export default function Profile() {
         profileImageId: uploadResult.data.$id,
       });
       if (!updateResult.success) {
-        Alert.alert('Error', updateResult.error);
+        Alert.alert(t('common.errorTitle'), updateResult.error);
         return;
       }
 
@@ -140,7 +149,7 @@ export default function Profile() {
   const handleTakePhoto = async () => {
     const permission = await ImagePicker.requestCameraPermissionsAsync();
     if (!permission.granted) {
-      Alert.alert('Permission needed', 'Allow camera access to take a profile picture.');
+      Alert.alert(t('profile.permissionNeededTitle'), t('profile.cameraPermissionMsg'));
       return;
     }
 
@@ -157,7 +166,7 @@ export default function Profile() {
   const handlePickFromLibrary = async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) {
-      Alert.alert('Permission needed', 'Allow photo library access to change your profile picture.');
+      Alert.alert(t('profile.permissionNeededTitle'), t('profile.libraryPermissionMsg'));
       return;
     }
 
@@ -174,10 +183,10 @@ export default function Profile() {
   const handleChangeAvatar = () => {
     if (changingImage || !profileData) return;
 
-    Alert.alert('Change profile picture', undefined, [
-      { text: 'Take Photo', onPress: handleTakePhoto },
-      { text: 'Choose from Library', onPress: handlePickFromLibrary },
-      { text: 'Cancel', style: 'cancel' },
+    Alert.alert(t('profile.changePhotoTitle'), undefined, [
+      { text: t('profile.takePhoto'), onPress: handleTakePhoto },
+      { text: t('profile.chooseFromLibrary'), onPress: handlePickFromLibrary },
+      { text: t('common.cancel'), style: 'cancel' },
     ]);
   };
 
@@ -196,7 +205,7 @@ export default function Profile() {
             >
               <SettingsIcon width={34} height={34} />
             </TouchableOpacity>
-            <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
+            <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" showLanguageButton={false} />
           </View>
 
           <Modal
@@ -218,15 +227,31 @@ export default function Profile() {
                       router.push('/Admin');
                     }}
                   >
-                    <Text style={styles.settingsMenuItemText}>Admin</Text>
+                    <Text style={styles.settingsMenuItemText}>{t('profile.adminMenuItem')}</Text>
                   </TouchableOpacity>
                 )}
+                <TouchableOpacity
+                  style={styles.settingsMenuItem}
+                  onPress={() => {
+                    setSettingsMenuVisible(false);
+                    setShowLanguageModal(true);
+                  }}
+                >
+                  <Text style={styles.settingsMenuItemText}>{t('profile.languageMenuItem')}</Text>
+                </TouchableOpacity>
                 <TouchableOpacity style={styles.settingsMenuItem} onPress={handleLogout}>
-                  <Text style={styles.settingsMenuItemText}>Log out</Text>
+                  <Text style={styles.settingsMenuItemText}>{t('profile.logoutMenuItem')}</Text>
                 </TouchableOpacity>
               </View>
             </Pressable>
           </Modal>
+
+          <LanguagePickerModal
+            visible={showLanguageModal}
+            language={language}
+            onClose={() => setShowLanguageModal(false)}
+            onSelect={handleSelectLanguage}
+          />
 
           <View style={styles.profileHeader}>
             <TouchableOpacity
@@ -250,36 +275,36 @@ export default function Profile() {
                 )}
               </View>
             </TouchableOpacity>
-            <TitleText style={styles.profileTitle}>MY PROFILE</TitleText>
+            <TitleText style={styles.profileTitle}>{t('profile.title')}</TitleText>
           </View>
 
           <View style={styles.infoContainer}>
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Full Name</Text>
-              <Text style={styles.infoValue}>{profileData?.fullName || userData?.name || 'Loading...'}</Text>
+              <Text style={styles.infoLabel}>{t('profile.fullNameLabel')}</Text>
+              <Text style={styles.infoValue}>{profileData?.fullName || userData?.name || t('common.loading')}</Text>
             </View>
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Email:</Text>
-              <Text style={styles.infoValue}>{userData?.email || 'Loading...'}</Text>
+              <Text style={styles.infoLabel}>{t('profile.emailLabel')}</Text>
+              <Text style={styles.infoValue}>{userData?.email || t('common.loading')}</Text>
             </View>
             <TouchableOpacity
               style={styles.infoRow}
               onPress={() => setShowStatusModal(true)}
             >
               <View style={styles.infoLabelRow}>
-                <Text style={styles.infoLabel}>Status:</Text>
+                <Text style={styles.infoLabel}>{t('profile.statusLabel')}</Text>
                 <EditIcon width={32} height={32} />
               </View>
-              <Text style={styles.infoValue}>{profileData?.educationStatus || 'Not set'}</Text>
+              <Text style={styles.infoValue}>{profileData?.educationStatus || t('profile.notSet')}</Text>
             </TouchableOpacity>
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Age:</Text>
-              <Text style={styles.infoValue}>{profileData?.dateOfBirth ? calculateAge(profileData.dateOfBirth) : 'Not set'}</Text>
+              <Text style={styles.infoLabel}>{t('profile.ageLabel')}</Text>
+              <Text style={styles.infoValue}>{profileData?.dateOfBirth ? calculateAge(profileData.dateOfBirth) : t('profile.notSet')}</Text>
             </View>
           </View>
 
           <View style={styles.sectionHeaderRow}>
-            <Text style={styles.sectionTitleInline}>SKILLS</Text>
+            <Text style={styles.sectionTitleInline}>{t('profile.skillsHeading')}</Text>
             <TouchableOpacity onPress={() => router.push('/Buildprofileskills?edit=true')}>
               <EditIcon width={38} height={38} />
             </TouchableOpacity>
@@ -292,12 +317,12 @@ export default function Profile() {
                 </View>
               ))
             ) : (
-              <Text style={styles.emptyText}>No skills added yet</Text>
+              <Text style={styles.emptyText}>{t('profile.noSkills')}</Text>
             )}
           </View>
 
           <View style={styles.sectionHeaderRow}>
-            <Text style={styles.sectionTitleInline}>INTERESTS</Text>
+            <Text style={styles.sectionTitleInline}>{t('profile.interestsHeading')}</Text>
             <TouchableOpacity onPress={() => router.push('/Buildprofileinterests?edit=true')}>
               <EditIcon width={38} height={38} />
             </TouchableOpacity>
@@ -310,7 +335,7 @@ export default function Profile() {
                 </View>
               ))
             ) : (
-              <Text style={styles.emptyText}>No interests added yet</Text>
+              <Text style={styles.emptyText}>{t('profile.noInterests')}</Text>
             )}
           </View>
 
@@ -322,7 +347,7 @@ export default function Profile() {
 
           {savedOpportunities.length > 0 && (
             <>
-              <Text style={styles.sectionTitle}>SAVED{'\n'}OPPORTUNITIES:</Text>
+              <Text style={styles.sectionTitle}>{t('profile.savedOpportunitiesHeading')}</Text>
               <View style={styles.opportunitiesContainer}>
                 {savedOpportunities.map((opp) => (
                   <TouchableOpacity
@@ -346,7 +371,7 @@ export default function Profile() {
 
           {appliedEvents.length > 0 && (
             <>
-              <Text style={styles.sectionTitle}>APPLIED{'\n'}EVENTS:</Text>
+              <Text style={styles.sectionTitle}>{t('profile.appliedEventsHeading')}</Text>
               <View style={styles.opportunitiesContainer}>
                 {appliedEvents.map((application) => (
                   <View key={application.$id} style={styles.opportunityCard}>
@@ -362,7 +387,7 @@ export default function Profile() {
                       style={styles.readMoreButton}
                       onPress={() => router.push(`/Status?id=${application.$id}`)}
                     >
-                      <Text style={styles.readMoreText}>View status</Text>
+                      <Text style={styles.readMoreText}>{t('profile.viewStatusButton')}</Text>
                     </TouchableOpacity>
                   </View>
                 ))}

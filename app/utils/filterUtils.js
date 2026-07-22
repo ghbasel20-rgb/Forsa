@@ -1,18 +1,18 @@
-export const MATCH_THRESHOLD_OPTIONS = [
-  { label: 'Any Match', value: 0 },
-  { label: '50%+ Match', value: 50 },
-  { label: '80%+ Match', value: 80 },
+export const getMatchThresholdOptions = (t) => [
+  { label: t('filterOptions.anyMatch'), value: 0 },
+  { label: t('filterOptions.match50'), value: 50 },
+  { label: t('filterOptions.match80'), value: 80 },
 ];
 
-export const SORT_OPTIONS = [
-  { label: 'Match %', value: 'match' },
-  { label: 'Most Recent', value: 'recent' },
-  { label: 'A-Z', value: 'alpha' },
+export const getSortOptions = (t) => [
+  { label: t('filterOptions.sortMatch'), value: 'match' },
+  { label: t('filterOptions.sortRecent'), value: 'recent' },
+  { label: t('filterOptions.sortAlpha'), value: 'alpha' },
 ];
 
-export const EVENT_SORT_OPTIONS = [
-  ...SORT_OPTIONS,
-  { label: 'Due Date (Soonest)', value: 'dueDate' },
+export const getEventSortOptions = (t) => [
+  ...getSortOptions(t),
+  { label: t('filterOptions.sortDueDate'), value: 'dueDate' },
 ];
 
 export const AGE_BUCKETS = [

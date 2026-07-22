@@ -7,12 +7,15 @@ import Text from './components/AppText';
 import BackButton from './components/BackButton';
 import BottomNav from './components/BottomNav';
 import TitleText from './components/TitleText';
-import { FAQS } from './data/faqs';
+import { useLanguage } from './contexts/LanguageContext';
+import { getFaqs } from './data/faqs';
 
 const WHATSAPP_URL = 'https://chat.whatsapp.com/EudPXkosHkY9yfcOh1fjRq';
 const INSTAGRAM_URL = 'https://www.instagram.com/forsa.meet?igsh=YWVvMTZwOWl5NTN0';
 
 export default function AboutUs() {
+  const { t, language } = useLanguage();
+  const FAQS = getFaqs(language);
   const [openFaqId, setOpenFaqId] = useState(null);
 
   const toggleFaq = (id) => {
@@ -36,14 +39,12 @@ export default function AboutUs() {
             <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
           </View>
 
-          <TitleText style={styles.title}>ABOUT US</TitleText>
+          <TitleText style={styles.title}>{t('aboutUs.title')}</TitleText>
 
-          <Text style={styles.sectionTitle}>Our Vision</Text>
-          <Text style={styles.visionText}>
-            Forsa envisions a world were Arab 48 Palestinians do not feel restricted when pursuing a future in the country
-          </Text>
+          <Text style={styles.sectionTitle}>{t('aboutUs.visionHeading')}</Text>
+          <Text style={styles.visionText}>{t('aboutUs.visionText')}</Text>
 
-          <Text style={styles.sectionTitle}>FAQS</Text>
+          <Text style={styles.sectionTitle}>{t('aboutUs.faqsHeading')}</Text>
           <View style={styles.faqContainer}>
             {FAQS.map((faq) => {
               const isOpen = openFaqId === faq.id;
@@ -68,14 +69,14 @@ export default function AboutUs() {
               <View style={styles.iconCircle}>
                 <WhatsIcon width={36} height={36} />
               </View>
-              <Text style={styles.contactLabel}>Join our whatspp comunity</Text>
+              <Text style={styles.contactLabel}>{t('aboutUs.whatsappLabel')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.contactRow} onPress={() => openLink(INSTAGRAM_URL)}>
               <View style={styles.iconCircle}>
                 <InstaIcon width={36} height={36} />
               </View>
-              <Text style={styles.contactLabel}>Follow us on instagram</Text>
+              <Text style={styles.contactLabel}>{t('aboutUs.instagramLabel')}</Text>
             </TouchableOpacity>
           </View>
         </View>

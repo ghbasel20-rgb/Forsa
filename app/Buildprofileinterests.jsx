@@ -12,11 +12,13 @@ import { useProfile } from './ProfileContext';
 import Text from './components/AppText';
 import BackButton from './components/BackButton';
 import ChipSelector from './components/ChipSelector';
+import { useLanguage } from './contexts/LanguageContext';
 import { getCurrentUser } from './services/auth-service';
 import { getUserProfile, updateUserProfile } from './services/profile-service';
 
 export default function Buildprofileinterests() {
   const router = useRouter();
+  const { t } = useLanguage();
   const { edit, flow } = useLocalSearchParams();
   const { profileData, clearProfile } = useProfile();
   const [selectedInterests, setSelectedInterests] = useState([]);
@@ -72,14 +74,14 @@ export default function Buildprofileinterests() {
 
   const handleNext = async () => {
     if (selectedInterests.length < 3) {
-      Alert.alert('Error', 'Please select at least three interests');
+      Alert.alert(t('common.errorTitle'), t('buildProfile.selectInterestError'));
       return;
     }
 
     try {
       const currentUserResult = await getCurrentUser();
       if (!currentUserResult.success) {
-        Alert.alert('Error', 'Could not get user information');
+        Alert.alert(t('common.errorTitle'), t('buildProfile.couldNotGetUser'));
         return;
       }
 
@@ -87,7 +89,7 @@ export default function Buildprofileinterests() {
 
       const profileResult = await getUserProfile(userId);
       if (!profileResult.success) {
-        Alert.alert('Error', 'Could not find your profile');
+        Alert.alert(t('common.errorTitle'), t('buildProfile.couldNotFindProfile'));
         return;
       }
 
@@ -103,22 +105,18 @@ export default function Buildprofileinterests() {
 
       if (result.success) {
         clearProfile();
-        Alert.alert('Success', 'Profile updated successfully!');
-        router.push(
-          edit
-            ? '/Profile'
-            : flow === 'events'
-            ? '/EventTopMatches'
-            : flow === 'signup'
-            ? '/Homepage'
-            : '/TopMatches'
-        );
+        if (edit) {
+          Alert.alert(t('common.successTitle'), t('buildProfile.profileUpdateSuccess'));
+          router.push('/Profile');
+        } else {
+          router.push({ pathname: '/Buildprofilelanguage', params: flow ? { flow } : {} });
+        }
       } else {
-        Alert.alert('Error', result.error);
+        Alert.alert(t('common.errorTitle'), result.error);
       }
     } catch (error) {
       console.error('Profile save error:', error);
-      Alert.alert('Error', 'Failed to save profile');
+      Alert.alert(t('common.errorTitle'), t('buildProfile.profileSaveError'));
     }
   };
 
@@ -131,19 +129,19 @@ export default function Buildprofileinterests() {
             <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
           </View>
 
-          <Text style={styles.title}>SELECT YOUR{'\n'}INTERESTS</Text>
+          <Text style={styles.title}>{t('buildProfile.interestsTitle')}</Text>
 
           <ChipSelector
             options={interests}
             selected={selectedInterests}
             onChange={setSelectedInterests}
-            modalTitle="Enter Your Interest"
-            placeholder="Type your interest"
-            submitLabel="Add Interest"
+            modalTitle={t('buildProfile.interestModalTitle')}
+            placeholder={t('buildProfile.interestPlaceholder')}
+            submitLabel={t('buildProfile.addInterestButton')}
           />
 
           <TouchableOpacity style={styles.button} onPress={handleNext}>
-            <Text style={styles.buttonText}>{edit ? 'Finish Editing' : 'Complete Profile'}</Text>
+            <Text style={styles.buttonText}>{edit ? t('buildProfile.finishEditingButton') : t('buildProfile.nextButton')}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

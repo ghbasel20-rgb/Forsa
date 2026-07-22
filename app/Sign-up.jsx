@@ -16,11 +16,13 @@ import TextInput from './components/AppTextInput';
 import PasswordInput from './components/PasswordInput';
 import StatusPickerModal from './components/StatusPickerModal';
 import TitleText from './components/TitleText';
+import { useLanguage } from './contexts/LanguageContext';
 import { signUp } from './services/auth-service';
 import { createUserProfile } from './services/profile-service';
 
 export default function SignUp() {
   const router = useRouter();
+  const { t } = useLanguage();
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -57,17 +59,17 @@ export default function SignUp() {
     }
 
     if (!fullName || !email || !password || !confirmPassword || !status || !dobSelected) {
-      Alert.alert('Error', 'Please fill in all fields');
+      Alert.alert(t('common.errorTitle'), t('signUp.fillAllFields'));
       return;
     }
 
     if (password !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match');
+      Alert.alert(t('common.errorTitle'), t('signUp.passwordsNoMatch'));
       return;
     }
 
     if (password.length < 8) {
-      Alert.alert('Error', 'Password must be at least 8 characters');
+      Alert.alert(t('common.errorTitle'), t('signUp.passwordTooShort'));
       return;
     }
 
@@ -78,7 +80,7 @@ export default function SignUp() {
     if (!result.success) {
       isSubmitting.current = false;
       setLoading(false);
-      Alert.alert('Error', result.error);
+      Alert.alert(t('common.errorTitle'), result.error);
       return;
     }
 
@@ -95,10 +97,10 @@ export default function SignUp() {
     setLoading(false);
 
     if (profileResult.success) {
-      Alert.alert('Success', 'Account created successfully!');
+      Alert.alert(t('common.successTitle'), t('signUp.accountCreated'));
       router.push({ pathname: '/Buildprofileskills', params: { flow: 'signup' } });
     } else {
-      Alert.alert('Error', profileResult.error);
+      Alert.alert(t('common.errorTitle'), profileResult.error);
     }
   };
 
@@ -108,12 +110,12 @@ export default function SignUp() {
         <View style={styles.container}>
           <HeaderBrand style={styles.logoSlot} />
 
-          <TitleText style={styles.title}>CREATE{'\n'}ACCOUNT</TitleText>
+          <TitleText style={styles.title}>{t('signUp.title')}</TitleText>
 
           <View style={styles.formContainer}>
             <TextInput
               style={styles.input}
-              placeholder="Full Name"
+              placeholder={t('signUp.fullNamePlaceholder')}
               placeholderTextColor="#46a3a4"
               value={fullName}
               onChangeText={setFullName}
@@ -122,7 +124,7 @@ export default function SignUp() {
 
             <TextInput
               style={styles.input}
-              placeholder="Email"
+              placeholder={t('signUp.emailPlaceholder')}
               placeholderTextColor="#46a3a4"
               value={email}
               onChangeText={setEmail}
@@ -132,7 +134,7 @@ export default function SignUp() {
 
             <PasswordInput
               style={styles.input}
-              placeholder="Password"
+              placeholder={t('signUp.passwordPlaceholder')}
               placeholderTextColor="#46a3a4"
               value={password}
               onChangeText={setPassword}
@@ -140,7 +142,7 @@ export default function SignUp() {
 
             <PasswordInput
               style={styles.input}
-              placeholder="Confirm Password"
+              placeholder={t('signUp.confirmPasswordPlaceholder')}
               placeholderTextColor="#46a3a4"
               value={confirmPassword}
               onChangeText={setConfirmPassword}
@@ -151,7 +153,7 @@ export default function SignUp() {
               onPress={() => setShowDatePicker(true)}
             >
               <Text style={[styles.dateText, !dobSelected && styles.placeholderText]}>
-                {dobSelected ? formatDate(dateOfBirth) : 'Date of Birth'}
+                {dobSelected ? formatDate(dateOfBirth) : t('signUp.dobPlaceholder')}
               </Text>
             </TouchableOpacity>
 
@@ -170,7 +172,7 @@ export default function SignUp() {
               onPress={() => setShowStatusModal(true)}
             >
               <Text style={[styles.dateText, !status && styles.placeholderText]}>
-                {status || 'Status'}
+                {status || t('signUp.statusPlaceholder')}
               </Text>
             </TouchableOpacity>
 
@@ -182,13 +184,14 @@ export default function SignUp() {
               {loading ? (
                 <ActivityIndicator color="#fff" />
               ) : (
-                <Text style={styles.buttonText}>Create Account</Text>
+                <Text style={styles.buttonText}>{t('signUp.createAccount')}</Text>
               )}
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => router.push('/Sign-in')}>
               <Text style={styles.linkText}>
-                Already have an account? <Text style={styles.linkBold}>Log in</Text>
+                {t('signUp.haveAccount')}
+                <Text style={styles.linkBold}>{t('signUp.logInLink')}</Text>
               </Text>
             </TouchableOpacity>
           </View>

@@ -18,24 +18,27 @@ import {
   isEventClosed,
   scoreEventMatch,
 } from './services/events-service';
+import { useLanguage } from './contexts/LanguageContext';
 import { getUserProfile } from './services/profile-service';
 import { getSavedEvents } from './services/saved-events-service';
 import {
   AGE_BUCKETS,
   eventMatchesAgeBuckets,
-  EVENT_SORT_OPTIONS,
   getDistinctValues,
-  MATCH_THRESHOLD_OPTIONS,
+  getEventSortOptions,
+  getMatchThresholdOptions,
   sortItems,
 } from './utils/filterUtils';
 
-const APPLIED_OPTIONS = [
-  { label: 'All Events', value: 'all' },
-  { label: 'Applied Only', value: 'applied' },
-];
-
 export default function Events() {
   const router = useRouter();
+  const { t } = useLanguage();
+  const APPLIED_OPTIONS = [
+    { label: t('filterOptions.allEvents'), value: 'all' },
+    { label: t('filterOptions.appliedOnly'), value: 'applied' },
+  ];
+  const MATCH_THRESHOLD_OPTIONS = getMatchThresholdOptions(t);
+  const EVENT_SORT_OPTIONS = getEventSortOptions(t);
   const [events, setEvents] = useState([]);
   const [profile, setProfile] = useState(null);
   const [appliedEventIds, setAppliedEventIds] = useState(new Set());
@@ -147,12 +150,12 @@ export default function Events() {
             <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
           </View>
 
-          <TitleText style={styles.title}>OUR EVENTS</TitleText>
+          <TitleText style={styles.title}>{t('events.title')}</TitleText>
 
           <View style={styles.searchContainer}>
             <TextInput
               style={styles.searchInput}
-              placeholder="Search events..."
+              placeholder={t('events.searchPlaceholder')}
               placeholderTextColor="#46a3a4"
               value={searchQuery}
               onChangeText={setSearchQuery}
@@ -161,43 +164,43 @@ export default function Events() {
 
           <FilterPanel activeCount={activeFilterCount} onClear={handleClearFilters}>
             <FilterSection
-              label="Skills"
+              label={t('filterLabels.skills')}
               options={skillOptions}
               selected={selectedSkills}
               onChange={setSelectedSkills}
             />
             <FilterSection
-              label="Interests"
+              label={t('filterLabels.interests')}
               options={interestOptions}
               selected={selectedInterests}
               onChange={setSelectedInterests}
             />
             <FilterSection
-              label="Age Range"
+              label={t('filterLabels.ageRange')}
               options={ageBucketOptions}
               selected={selectedAgeBuckets}
               onChange={setSelectedAgeBuckets}
             />
             <SingleChoiceRow
-              label="Status"
+              label={t('filterLabels.status')}
               options={APPLIED_OPTIONS}
               value={appliedFilter}
               onChange={setAppliedFilter}
             />
             <SingleChoiceRow
-              label="Minimum Match"
+              label={t('filterLabels.minimumMatch')}
               options={MATCH_THRESHOLD_OPTIONS}
               value={matchThreshold}
               onChange={setMatchThreshold}
             />
-            <SingleChoiceRow label="Sort By" options={EVENT_SORT_OPTIONS} value={sortBy} onChange={setSortBy} />
+            <SingleChoiceRow label={t('filterLabels.sortBy')} options={EVENT_SORT_OPTIONS} value={sortBy} onChange={setSortBy} />
           </FilterPanel>
 
           <View style={styles.eventsContainer}>
             {loading ? (
-              <Text style={styles.loadingText}>Loading events...</Text>
+              <Text style={styles.loadingText}>{t('events.loadingText')}</Text>
             ) : filteredEvents.length === 0 ? (
-              <Text style={styles.loadingText}>No events match your search or filters</Text>
+              <Text style={styles.loadingText}>{t('events.emptyText')}</Text>
             ) : (
               filteredEvents.map((event) => (
                 <TouchableOpacity
@@ -234,7 +237,7 @@ export default function Events() {
                       </Text>
                       {event.isClosed && (
                         <View style={styles.closedBadge}>
-                          <Text style={styles.closedBadgeText}>Closed</Text>
+                          <Text style={styles.closedBadgeText}>{t('events.closedBadge')}</Text>
                         </View>
                       )}
                     </View>

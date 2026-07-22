@@ -6,11 +6,13 @@ import HeaderBrand from './components/HeaderBrand';
 import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
 import TitleText from './components/TitleText';
+import { useLanguage } from './contexts/LanguageContext';
 import { getEventById } from './services/events-service';
 import { getSavedEventStatus, unsaveEvent } from './services/saved-events-service';
 
 export default function Status() {
   const router = useRouter();
+  const { t } = useLanguage();
   const { id } = useLocalSearchParams();
   const [application, setApplication] = useState(null);
   const [event, setEvent] = useState(null);
@@ -41,7 +43,7 @@ export default function Status() {
     if (result.success) {
       router.push('/Profile');
     } else {
-      Alert.alert('Error', result.error);
+      Alert.alert(t('common.errorTitle'), result.error);
     }
   };
 
@@ -57,7 +59,7 @@ export default function Status() {
                 style={styles.backButton}
                 onPress={() => router.back()}
               >
-                <Text style={styles.backText}>{'< Back'}</Text>
+                <Text style={styles.backText}>{t('common.back')}</Text>
               </TouchableOpacity>
             </View>
             <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
@@ -74,41 +76,41 @@ export default function Status() {
             />
           </View>
 
-          <TitleText style={styles.title}>STATUS</TitleText>
+          <TitleText style={styles.title}>{t('status.title')}</TitleText>
 
           {!loading && application && (
             <>
               <View style={styles.statusBar}>
-                <Text style={styles.statusText}>{application.status}</Text>
+                <Text style={styles.statusText}>{t(`admin.tabs.${application.status}`)}</Text>
               </View>
 
               {event?.title && (
                 <View style={styles.infoSection}>
-                  <Text style={styles.label}>Event:</Text>
+                  <Text style={styles.label}>{t('status.eventLabel')}</Text>
                   <Text style={styles.value}>{event.title}</Text>
                 </View>
               )}
 
               {application.name && (
                 <View style={styles.infoSection}>
-                  <Text style={styles.label}>Applied as:</Text>
+                  <Text style={styles.label}>{t('status.appliedAsLabel')}</Text>
                   <Text style={styles.value}>{application.name}</Text>
                 </View>
               )}
 
               {hasDetails && (
                 <View style={styles.infoSection}>
-                  <Text style={styles.label}>Details:</Text>
-                  {event.location && <Text style={styles.value}>Location: {event.location}</Text>}
-                  {event.ageRange && <Text style={styles.value}>Age range: {event.ageRange}</Text>}
-                  {event.cost && <Text style={styles.value}>Cost: {event.cost}</Text>}
+                  <Text style={styles.label}>{t('status.detailsLabel')}</Text>
+                  {event.location && <Text style={styles.value}>{t('status.locationPrefix')}{event.location}</Text>}
+                  {event.ageRange && <Text style={styles.value}>{t('status.ageRangePrefix')}{event.ageRange}</Text>}
+                  {event.cost && <Text style={styles.value}>{t('status.costPrefix')}{event.cost}</Text>}
                   {event.details && <Text style={styles.value}>{event.details}</Text>}
                   {event.content && <Text style={styles.value}>{event.content}</Text>}
                 </View>
               )}
 
               <TouchableOpacity style={styles.withdrawButton} onPress={handleWithdraw}>
-                <Text style={styles.withdrawButtonText}>Withdraw application</Text>
+                <Text style={styles.withdrawButtonText}>{t('status.withdrawButton')}</Text>
               </TouchableOpacity>
             </>
           )}

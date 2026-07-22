@@ -7,6 +7,7 @@ import BackButton from './components/BackButton';
 import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
 import TitleText from './components/TitleText';
+import { useLanguage } from './contexts/LanguageContext';
 import { getEventById } from './services/events-service';
 import { getAllSavedEvents, updateApplicationStatus } from './services/saved-events-service';
 
@@ -14,6 +15,7 @@ const TABS = ['Pending', 'Approved', 'Denied'];
 
 export default function Admin() {
   const router = useRouter();
+  const { t } = useLanguage();
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('Pending');
@@ -49,11 +51,12 @@ export default function Admin() {
         )
       );
     } else {
-      Alert.alert('Error', result.error);
+      Alert.alert(t('common.errorTitle'), result.error);
     }
   };
 
   const visibleApplications = applications.filter((application) => application.status === activeTab);
+  const translatedActiveTab = t(`admin.tabs.${activeTab}`).toLowerCase();
 
   return (
     <View style={styles.screen}>
@@ -69,7 +72,7 @@ export default function Admin() {
             </TouchableOpacity>
           </View>
 
-          <TitleText style={styles.title}>ADMIN</TitleText>
+          <TitleText style={styles.title}>{t('admin.title')}</TitleText>
 
           <View style={styles.tabRow}>
             {TABS.map((tab) => (
@@ -79,25 +82,25 @@ export default function Admin() {
                 onPress={() => setActiveTab(tab)}
               >
                 <Text style={[styles.tabText, activeTab === tab && styles.tabTextActive]}>
-                  {tab}
+                  {t(`admin.tabs.${tab}`)}
                 </Text>
               </TouchableOpacity>
             ))}
           </View>
 
           {!loading && visibleApplications.length === 0 && (
-            <Text style={styles.emptyText}>No {activeTab.toLowerCase()} applications.</Text>
+            <Text style={styles.emptyText}>{t('admin.noApplications', { tab: translatedActiveTab })}</Text>
           )}
 
           {visibleApplications.map((application) => (
             <View key={application.$id} style={styles.card}>
               <Text style={styles.eventTitle}>{application.eventTitle}</Text>
               <Text style={styles.label}>
-                Applicant: <Text style={styles.value}>{application.name || application.userId}</Text>
+                {t('admin.applicantLabel')} <Text style={styles.value}>{application.name || application.userId}</Text>
               </Text>
               {application.appliedAt && (
                 <Text style={styles.label}>
-                  Applied:{' '}
+                  {t('admin.appliedLabel')}{' '}
                   <Text style={styles.value}>
                     {new Date(application.appliedAt).toLocaleDateString()}
                   </Text>
@@ -110,13 +113,13 @@ export default function Admin() {
                     style={styles.approveButton}
                     onPress={() => handleDecision(application.$id, 'Approved')}
                   >
-                    <Text style={styles.approveButtonText}>Approve</Text>
+                    <Text style={styles.approveButtonText}>{t('admin.approveButton')}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.denyButton}
                     onPress={() => handleDecision(application.$id, 'Denied')}
                   >
-                    <Text style={styles.denyButtonText}>Deny</Text>
+                    <Text style={styles.denyButtonText}>{t('admin.denyButton')}</Text>
                   </TouchableOpacity>
                 </View>
               )}
