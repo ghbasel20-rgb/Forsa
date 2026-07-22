@@ -109,7 +109,14 @@ export default function Buildprofileinterests() {
           Alert.alert(t('common.successTitle'), t('buildProfile.profileUpdateSuccess'));
           router.push('/Profile');
         } else {
-          router.push({ pathname: '/Buildprofilelanguage', params: flow ? { flow } : {} });
+          // Preferred language page is temporarily skipped after skills/interests.
+          router.push(
+            flow === 'events'
+              ? '/EventTopMatches'
+              : flow === 'signup'
+              ? '/Homepage'
+              : '/TopMatches'
+          );
         }
       } else {
         Alert.alert(t('common.errorTitle'), result.error);

@@ -1,10 +1,8 @@
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { useRouter } from 'expo-router';
 import React, { useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
-  Platform,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -14,7 +12,6 @@ import HeaderBrand from './components/HeaderBrand';
 import Text from './components/AppText';
 import TextInput from './components/AppTextInput';
 import PasswordInput from './components/PasswordInput';
-import StatusPickerModal from './components/StatusPickerModal';
 import TitleText from './components/TitleText';
 import { useLanguage } from './contexts/LanguageContext';
 import { signUp } from './services/auth-service';
@@ -26,50 +23,16 @@ export default function SignUp() {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [dateOfBirth, setDateOfBirth] = useState(new Date());
-  const [dobSelected, setDobSelected] = useState(false);
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [status, setStatus] = useState('');
-  const [showStatusModal, setShowStatusModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const isSubmitting = useRef(false);
-
-  const onDateChange = (event, selectedDate) => {
-    if (Platform.OS === 'android') {
-      setShowDatePicker(false);
-    }
-    if (selectedDate) {
-      setDateOfBirth(selectedDate);
-      setDobSelected(true);
-    }
-  };
-
-  const formatDate = (date) => {
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  };
 
   const handleSignUp = async () => {
     if (isSubmitting.current) {
       return;
     }
 
-    if (!fullName || !email || !password || !confirmPassword || !status || !dobSelected) {
+    if (!fullName || !email || !password) {
       Alert.alert(t('common.errorTitle'), t('signUp.fillAllFields'));
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      Alert.alert(t('common.errorTitle'), t('signUp.passwordsNoMatch'));
-      return;
-    }
-
-    if (password.length < 8) {
-      Alert.alert(t('common.errorTitle'), t('signUp.passwordTooShort'));
       return;
     }
 
@@ -87,8 +50,6 @@ export default function SignUp() {
     const profileResult = await createUserProfile(result.data.$id, {
       fullName,
       email: result.data.email,
-      dateOfBirth: dateOfBirth.toISOString(),
-      educationStatus: status,
       skills: [],
       interests: [],
       hasCompletedSkillsInterests: false,
@@ -140,42 +101,6 @@ export default function SignUp() {
               onChangeText={setPassword}
             />
 
-            <PasswordInput
-              style={styles.input}
-              placeholder={t('signUp.confirmPasswordPlaceholder')}
-              placeholderTextColor="#46a3a4"
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-            />
-
-            <TouchableOpacity
-              style={styles.input}
-              onPress={() => setShowDatePicker(true)}
-            >
-              <Text style={[styles.dateText, !dobSelected && styles.placeholderText]}>
-                {dobSelected ? formatDate(dateOfBirth) : t('signUp.dobPlaceholder')}
-              </Text>
-            </TouchableOpacity>
-
-            {showDatePicker && (
-              <DateTimePicker
-                value={dateOfBirth}
-                mode="date"
-                display="default"
-                onChange={onDateChange}
-                maximumDate={new Date()}
-              />
-            )}
-
-            <TouchableOpacity
-              style={styles.input}
-              onPress={() => setShowStatusModal(true)}
-            >
-              <Text style={[styles.dateText, !status && styles.placeholderText]}>
-                {status || t('signUp.statusPlaceholder')}
-              </Text>
-            </TouchableOpacity>
-
             <TouchableOpacity
               style={styles.button}
               onPress={handleSignUp}
@@ -195,15 +120,6 @@ export default function SignUp() {
               </Text>
             </TouchableOpacity>
           </View>
-
-          <StatusPickerModal
-            visible={showStatusModal}
-            onClose={() => setShowStatusModal(false)}
-            onSubmit={(value) => {
-              setStatus(value);
-              setShowStatusModal(false);
-            }}
-          />
         </View>
       </ScrollView>
     </View>
@@ -249,13 +165,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     fontSize: 16,
     color: '#0a445c',
-  },
-  dateText: {
-    fontSize: 16,
-    color: '#0a445c',
-  },
-  placeholderText: {
-    color: '#46a3a4',
   },
   button: {
     backgroundColor: '#c6a2ba',

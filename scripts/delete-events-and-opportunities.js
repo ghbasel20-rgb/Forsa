@@ -1,8 +1,7 @@
 // One-off cleanup: deletes ALL documents in the "events" and "opportunities"
 // collections. Intended to be run immediately before re-seeding those
-// collections with the Arabic content in seed-events.js, seed-opportunities.js,
-// and seed-more-opportunities.js, so the re-seed doesn't create duplicates
-// alongside the old English documents.
+// collections with seed-events.js, seed-opportunities.js, and
+// seed-more-opportunities.js, so the re-seed doesn't create duplicates.
 //
 // DESTRUCTIVE: this permanently deletes every event and opportunity document.
 // Run only when you intend to immediately re-seed.
