@@ -5,7 +5,7 @@ import LanguageMenu from './LanguageMenu';
 
 const GLOBE_RESERVED_WIDTH = 36; // globe button width + row gap
 
-export default function HeaderBrand({ style, pointerEvents, showLanguageButton = true }) {
+export default function HeaderBrand({ style, pointerEvents, showLanguageButton = false }) {
   const [rowWidth, setRowWidth] = useState(null);
 
   const handleLayout = (event) => {
