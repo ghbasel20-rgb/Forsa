@@ -76,9 +76,14 @@ export default function Homepage() {
         <TitleText style={styles.sectionTitle}>{t('homepage.successStories')}</TitleText>
 
         <View style={styles.storiesContainer}>
-          {successStories.map((story) => (
-            <View key={story.id} style={styles.storyRow}>
-              <View style={styles.storyPhoto} />
+          {successStories.map((story, index) => (
+            <View
+              key={story.id}
+              style={[
+                styles.storyRow,
+                index === successStories.length - 1 && styles.storyRowLast,
+              ]}
+            >
               <View style={styles.storyInfo}>
                 <Text style={styles.storyName} numberOfLines={1} ellipsizeMode="tail">{story.name}</Text>
                 <Text style={styles.storyDetail} numberOfLines={1} ellipsizeMode="tail">{`#${story.info}`}</Text>
@@ -163,30 +168,30 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   storiesContainer: {
-    gap: 16,
+    gap: 4,
   },
   storyRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#d3dcdc',
   },
-  storyPhoto: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#c7dedf',
+  storyRowLast: {
+    borderBottomWidth: 0,
   },
   storyInfo: {
     flex: 1,
   },
   storyName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#0a445c',
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#254952',
   },
   storyDetail: {
     fontSize: 13,
-    color: '#46a3a4',
+    color: '#6b8788',
     marginTop: 2,
   },
 });

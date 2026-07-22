@@ -53,6 +53,7 @@ export const translations = {
         { id: '1', name: 'Yamen Abdulaziz', info: 'Placed in a 3-month internship' },
         { id: '2', name: 'Samir Ibrahim', info: 'Landed a volunteering role' },
         { id: '3', name: 'Razi Shiek Ahmad', info: 'Completed a mentorship program' },
+        { id: '4', name: 'Lour Dahlah', info: 'Got into Columbia University' },
       ],
     },
     filterPanel: {
@@ -278,6 +279,7 @@ export const translations = {
         { id: '1', name: 'يامن عبدالعزيز', info: 'حصل على تدريب لمدة 3 أشهر' },
         { id: '2', name: 'سمير إبراهيم', info: 'حصل على فرصة تطوع' },
         { id: '3', name: 'رازي شيخ أحمد', info: 'أكمل برنامج إرشاد مهني' },
+        { id: '4', name: 'لور دلة', info: 'حصلت على قبول في جامعة كولومبيا' },
       ],
     },
     filterPanel: {
