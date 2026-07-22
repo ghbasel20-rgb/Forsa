@@ -176,8 +176,8 @@ const styles = StyleSheet.create({
   storyPhoto: {
     width: 56,
     height: 56,
-    borderRadius: 12,
-    backgroundColor: '#46a3a4',
+    borderRadius: 28,
+    backgroundColor: '#c7dedf',
   },
   storyInfo: {
     flex: 1,

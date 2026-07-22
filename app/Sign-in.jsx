@@ -7,8 +7,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import BrandLogo from './components/BrandLogo';
-import LanguageMenu from './components/LanguageMenu';
+import HeaderBrand from './components/HeaderBrand';
 import Text from './components/AppText';
 import TextInput from './components/AppTextInput';
 import PasswordInput from './components/PasswordInput';
@@ -55,10 +54,7 @@ export default function SignIn() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.logoSlot}>
-        <LanguageMenu />
-        <BrandLogo maxWidthPercent={0.75} preserveAspectRatio="xMaxYMid meet" />
-      </View>
+      <HeaderBrand style={styles.logoSlot} />
 
       <TitleText style={styles.title}>LOG IN</TitleText>
 

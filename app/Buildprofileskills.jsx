@@ -7,8 +7,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import BrandLogo from './components/BrandLogo';
-import LanguageMenu from './components/LanguageMenu';
+import HeaderBrand from './components/HeaderBrand';
 import { useProfile } from './ProfileContext';
 import Text from './components/AppText';
 import BackButton from './components/BackButton';
@@ -109,10 +108,7 @@ export default function BuildProfileSkills() {
         <View style={styles.container}>
           <View style={styles.header}>
             <BackButton />
-            <View style={styles.logoSlot} pointerEvents="box-none">
-              <LanguageMenu />
-              <BrandLogo maxWidthPercent={0.75} preserveAspectRatio="xMaxYMid meet" />
-            </View>
+            <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
           </View>
 
           <Text style={styles.title}>SELECT YOUR{'\n'}SKILLS</Text>

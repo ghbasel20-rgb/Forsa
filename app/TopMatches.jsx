@@ -6,8 +6,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import BrandLogo from './components/BrandLogo';
-import LanguageMenu from './components/LanguageMenu';
+import HeaderBrand from './components/HeaderBrand';
 import BackButton from './components/BackButton';
 import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
@@ -46,10 +45,7 @@ export default function TopMatches() {
         <View style={styles.container}>
           <View style={styles.header}>
             <BackButton />
-            <View style={styles.logoSlot} pointerEvents="box-none">
-              <LanguageMenu />
-              <BrandLogo maxWidthPercent={0.75} preserveAspectRatio="xMaxYMid meet" />
-            </View>
+            <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
           </View>
 
           <TitleText style={styles.title}>YOUR TOP{'\n'}MATCHES</TitleText>

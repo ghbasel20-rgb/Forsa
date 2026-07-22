@@ -1,4 +1,4 @@
-import { databases, ID, Query } from '../config/appwrite-config';
+import { databases, ID, PROFILE_IMAGES_BUCKET_ID, Query, storage } from '../config/appwrite-config';
 
 const DATABASE_ID = '69b6e464000e1c479de5';
 const PROFILES_COLLECTION_ID = 'profiles';
@@ -56,11 +56,43 @@ export const updateUserProfile = async (documentId, profileData) => {
       documentId,
       profileData
     );
-    
+
     console.log('Profile updated:', response);
     return { success: true, data: response };
   } catch (error) {
     console.error('Update profile error:', error);
     return { success: false, error: error.message };
   }
+};
+
+export const uploadProfileImage = async (asset) => {
+  try {
+    const fileId = ID.unique();
+    const response = await storage.createFile(PROFILE_IMAGES_BUCKET_ID, fileId, {
+      uri: asset.uri,
+      name: asset.fileName || `${fileId}.jpg`,
+      type: asset.mimeType || 'image/jpeg',
+      size: asset.fileSize || 0,
+    });
+
+    return { success: true, data: response };
+  } catch (error) {
+    console.error('Upload profile image error:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+export const deleteProfileImage = async (fileId) => {
+  try {
+    await storage.deleteFile(PROFILE_IMAGES_BUCKET_ID, fileId);
+    return { success: true };
+  } catch (error) {
+    console.error('Delete profile image error:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+export const getProfileImageUrl = (fileId) => {
+  if (!fileId) return null;
+  return storage.getFileViewURL(PROFILE_IMAGES_BUCKET_ID, fileId).toString();
 };

@@ -2,8 +2,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Alert, Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import HomeIcon from '../assets/images/home-icon.svg';
-import BrandLogo from './components/BrandLogo';
-import LanguageMenu from './components/LanguageMenu';
+import HeaderBrand from './components/HeaderBrand';
 import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
 import TitleText from './components/TitleText';
@@ -61,10 +60,7 @@ export default function Status() {
                 <Text style={styles.backText}>{'< Back'}</Text>
               </TouchableOpacity>
             </View>
-            <View style={styles.logoSlot} pointerEvents="box-none">
-              <LanguageMenu />
-              <BrandLogo maxWidthPercent={0.75} preserveAspectRatio="xMaxYMid meet" />
-            </View>
+            <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
             <TouchableOpacity onPress={() => router.push('/Homepage')}>
               <HomeIcon width={40} height={40} style={styles.homeIcon} />
             </TouchableOpacity>

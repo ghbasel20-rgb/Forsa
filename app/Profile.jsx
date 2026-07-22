@@ -1,7 +1,10 @@
 import { useFocusEffect } from '@react-navigation/native';
+import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
+  ActivityIndicator,
+  Alert,
   Image,
   Modal,
   Pressable,
@@ -10,9 +13,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import BrandLogo from './components/BrandLogo';
-import LanguageMenu from './components/LanguageMenu';
+import HeaderBrand from './components/HeaderBrand';
 import EditIcon from '../assets/images/edit.svg';
+import ProfilePlaceholder from '../assets/images/Profile.svg';
 import SettingsIcon from '../assets/images/settings.svg';
 import Text from './components/AppText';
 import BackButton from './components/BackButton';
@@ -21,7 +24,13 @@ import StatusPickerModal from './components/StatusPickerModal';
 import TitleText from './components/TitleText';
 import { getCurrentUser, signOut } from './services/auth-service';
 import { getEventById } from './services/events-service';
-import { getUserProfile, updateUserProfile } from './services/profile-service';
+import {
+  deleteProfileImage,
+  getProfileImageUrl,
+  getUserProfile,
+  updateUserProfile,
+  uploadProfileImage,
+} from './services/profile-service';
 import { getSavedEvents } from './services/saved-events-service';
 import { getSavedOpportunities } from './services/saved-opportunities-service';
 
@@ -33,6 +42,7 @@ export default function Profile() {
   const [appliedEvents, setAppliedEvents] = useState([]);
   const [settingsMenuVisible, setSettingsMenuVisible] = useState(false);
   const [showStatusModal, setShowStatusModal] = useState(false);
+  const [changingImage, setChangingImage] = useState(false);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -97,6 +107,80 @@ export default function Profile() {
     return age;
   };
 
+  const applyPickedImage = async (result) => {
+    if (result.canceled) return;
+
+    setChangingImage(true);
+    try {
+      const previousImageId = profileData.profileImageId;
+      const uploadResult = await uploadProfileImage(result.assets[0]);
+      if (!uploadResult.success) {
+        Alert.alert('Upload failed', uploadResult.error);
+        return;
+      }
+
+      const updateResult = await updateUserProfile(profileData.$id, {
+        profileImageId: uploadResult.data.$id,
+      });
+      if (!updateResult.success) {
+        Alert.alert('Error', updateResult.error);
+        return;
+      }
+
+      setProfileData(updateResult.data);
+
+      if (previousImageId) {
+        deleteProfileImage(previousImageId);
+      }
+    } finally {
+      setChangingImage(false);
+    }
+  };
+
+  const handleTakePhoto = async () => {
+    const permission = await ImagePicker.requestCameraPermissionsAsync();
+    if (!permission.granted) {
+      Alert.alert('Permission needed', 'Allow camera access to take a profile picture.');
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    });
+
+    await applyPickedImage(result);
+  };
+
+  const handlePickFromLibrary = async () => {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) {
+      Alert.alert('Permission needed', 'Allow photo library access to change your profile picture.');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    });
+
+    await applyPickedImage(result);
+  };
+
+  const handleChangeAvatar = () => {
+    if (changingImage || !profileData) return;
+
+    Alert.alert('Change profile picture', undefined, [
+      { text: 'Take Photo', onPress: handleTakePhoto },
+      { text: 'Choose from Library', onPress: handlePickFromLibrary },
+      { text: 'Cancel', style: 'cancel' },
+    ]);
+  };
+
   return (
     <View style={styles.screen}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -104,17 +188,15 @@ export default function Profile() {
           <View style={styles.header}>
             <View style={styles.headerLeft}>
               <BackButton />
-              <TouchableOpacity
-                style={styles.settingsButton}
-                onPress={() => setSettingsMenuVisible(true)}
-              >
-                <SettingsIcon width={34} height={34} />
-              </TouchableOpacity>
+              <View style={styles.settingsButtonSpacer} />
             </View>
-            <View style={styles.logoSlot} pointerEvents="box-none">
-              <LanguageMenu />
-              <BrandLogo maxWidthPercent={0.75} preserveAspectRatio="xMaxYMid meet" />
-            </View>
+            <TouchableOpacity
+              style={styles.settingsButton}
+              onPress={() => setSettingsMenuVisible(true)}
+            >
+              <SettingsIcon width={34} height={34} />
+            </TouchableOpacity>
+            <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
           </View>
 
           <Modal
@@ -147,9 +229,27 @@ export default function Profile() {
           </Modal>
 
           <View style={styles.profileHeader}>
-            <View style={styles.avatarContainer}>
-              <Text style={styles.avatarIcon}>👤</Text>
-            </View>
+            <TouchableOpacity
+              style={styles.avatarContainer}
+              onPress={handleChangeAvatar}
+              disabled={changingImage}
+            >
+              {profileData?.profileImageId ? (
+                <Image
+                  source={{ uri: getProfileImageUrl(profileData.profileImageId) }}
+                  style={styles.avatarImage}
+                />
+              ) : (
+                <ProfilePlaceholder width={80} height={80} />
+              )}
+              <View style={styles.avatarEditBadge}>
+                {changingImage ? (
+                  <ActivityIndicator size="small" color="#46a3a4" />
+                ) : (
+                  <EditIcon width={18} height={18} />
+                )}
+              </View>
+            </TouchableOpacity>
             <TitleText style={styles.profileTitle}>MY PROFILE</TitleText>
           </View>
 
@@ -299,8 +399,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  settingsButtonSpacer: {
+    width: 55,
+  },
   settingsButton: {
-    padding: 8,
+    position: 'absolute',
+    left: 70,
+    top: 0,
+    bottom: 0,
+    paddingHorizontal: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   logoSlot: {
     flex: 1,
@@ -344,14 +453,28 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#46a3a4',
+    backgroundColor: '#ffffff',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
+    overflow: 'hidden',
   },
-  avatarIcon: {
-    fontSize: 40,
-    color: '#ffffff',
+  avatarImage: {
+    width: 80,
+    height: 80,
+  },
+  avatarEditBadge: {
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#ffffff',
+    borderWidth: 2,
+    borderColor: '#46a3a4',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   profileTitle: {
     fontSize: 28,
