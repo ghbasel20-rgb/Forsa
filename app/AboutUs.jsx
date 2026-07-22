@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import React from 'react';
 import { Linking, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import InstaIcon from '../assets/images/insta.svg';
@@ -7,12 +8,14 @@ import Text from './components/AppText';
 import BackButton from './components/BackButton';
 import BottomNav from './components/BottomNav';
 import TitleText from './components/TitleText';
+import { FAQS } from './data/faqs';
 
 const WHATSAPP_URL = 'https://chat.whatsapp.com/EudPXkosHkY9yfcOh1fjRq';
 const INSTAGRAM_URL = 'https://www.instagram.com/forsa.meet?igsh=YWVvMTZwOWl5NTN0';
-const FAQ_PLACEHOLDER_COUNT = 5;
 
 export default function AboutUs() {
+  const router = useRouter();
+
   const openLink = async (url) => {
     try {
       await Linking.openURL(url);
@@ -41,8 +44,13 @@ export default function AboutUs() {
 
           <Text style={styles.sectionTitle}>FAQS</Text>
           <View style={styles.faqContainer}>
-            {Array.from({ length: FAQ_PLACEHOLDER_COUNT }).map((_, index) => (
-              <TouchableOpacity key={index} style={styles.faqRow}>
+            {FAQS.map((faq) => (
+              <TouchableOpacity
+                key={faq.id}
+                style={styles.faqRow}
+                onPress={() => router.push(`/FaqDetail?id=${faq.id}`)}
+              >
+                <Text style={styles.faqQuestion}>{faq.question}</Text>
                 <Text style={styles.faqPlus}>+</Text>
               </TouchableOpacity>
             ))}
@@ -119,11 +127,18 @@ const styles = StyleSheet.create({
   },
   faqRow: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    gap: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#46a3a4',
     paddingVertical: 16,
+  },
+  faqQuestion: {
+    flex: 1,
+    fontSize: 15,
+    color: '#0a445c',
+    lineHeight: 20,
   },
   faqPlus: {
     fontSize: 20,
