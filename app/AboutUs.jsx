@@ -3,6 +3,7 @@ import { Linking, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-n
 import InstaIcon from '../assets/images/insta.svg';
 import HeaderBrand from './components/HeaderBrand';
 import WhatsIcon from '../assets/images/whats.svg';
+import BackButton from './components/BackButton';
 import Text from './components/AppText';
 import BottomNav from './components/BottomNav';
 import TitleText from './components/TitleText';
@@ -38,6 +39,8 @@ export default function AboutUs() {
           </View>
 
           <TitleText style={styles.title}>{t('aboutUs.title')}</TitleText>
+
+          <BackButton style={styles.backButton} />
 
           <Text style={styles.sectionTitle}>{t('aboutUs.visionHeading')}</Text>
           <Text style={styles.visionText}>{t('aboutUs.visionText')}</Text>
@@ -121,6 +124,10 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     flexShrink: 1,
     flexWrap: 'wrap',
+  },
+  backButton: {
+    alignSelf: 'flex-start',
+    marginBottom: 12,
   },
   sectionTitle: {
     fontSize: 20,

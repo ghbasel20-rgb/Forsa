@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Linking, Modal, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Animated, Dimensions, Linking, Modal, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import InstaIcon from '../../assets/images/insta.svg';
 import WhatsIcon from '../../assets/images/whats.svg';
 import Text from './AppText';
@@ -9,9 +9,8 @@ import { getFaqs } from '../data/faqs';
 
 const WHATSAPP_URL = 'https://chat.whatsapp.com/EudPXkosHkY9yfcOh1fjRq';
 const INSTAGRAM_URL = 'https://www.instagram.com/forsa.meet?igsh=YWVvMTZwOWl5NTN0';
-const PANEL_OFFSCREEN_X = 400;
+const PANEL_OFFSCREEN_X = Dimensions.get('window').width;
 const PANEL_DURATION = 250;
-const BACKDROP_DURATION = 150;
 
 export default function AboutUsModal({ visible, onClose }) {
   const { t, language } = useLanguage();
@@ -19,36 +18,21 @@ export default function AboutUsModal({ visible, onClose }) {
   const [openFaqId, setOpenFaqId] = useState(null);
   const [modalVisible, setModalVisible] = useState(visible);
   const translateX = useRef(new Animated.Value(PANEL_OFFSCREEN_X)).current;
-  const backdropOpacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     if (visible) {
       setModalVisible(true);
-      Animated.sequence([
-        Animated.timing(translateX, {
-          toValue: 0,
-          duration: PANEL_DURATION,
-          useNativeDriver: true,
-        }),
-        Animated.timing(backdropOpacity, {
-          toValue: 1,
-          duration: BACKDROP_DURATION,
-          useNativeDriver: true,
-        }),
-      ]).start();
+      Animated.timing(translateX, {
+        toValue: 0,
+        duration: PANEL_DURATION,
+        useNativeDriver: true,
+      }).start();
     } else if (modalVisible) {
-      Animated.parallel([
-        Animated.timing(translateX, {
-          toValue: PANEL_OFFSCREEN_X,
-          duration: PANEL_DURATION,
-          useNativeDriver: true,
-        }),
-        Animated.timing(backdropOpacity, {
-          toValue: 0,
-          duration: BACKDROP_DURATION,
-          useNativeDriver: true,
-        }),
-      ]).start(() => setModalVisible(false));
+      Animated.timing(translateX, {
+        toValue: PANEL_OFFSCREEN_X,
+        duration: PANEL_DURATION,
+        useNativeDriver: true,
+      }).start(() => setModalVisible(false));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
@@ -68,10 +52,6 @@ export default function AboutUsModal({ visible, onClose }) {
   return (
     <Modal visible={modalVisible} transparent animationType="none" onRequestClose={onClose}>
       <View style={styles.overlay}>
-        <Animated.View style={[styles.backdrop, { opacity: backdropOpacity }]}>
-          <TouchableOpacity style={styles.backdropTouchable} activeOpacity={1} onPress={onClose} />
-        </Animated.View>
-
         <Animated.View style={[styles.panel, { transform: [{ translateX }] }]}>
           <ScrollView contentContainerStyle={styles.scrollContainer}>
             <View style={styles.headerRow}>
@@ -81,7 +61,11 @@ export default function AboutUsModal({ visible, onClose }) {
               </TouchableOpacity>
             </View>
 
-            <Text style={styles.sectionTitle}>{t('aboutUs.visionHeading')}</Text>
+            <TouchableOpacity style={styles.backButton} onPress={onClose}>
+              <Text style={styles.backButtonText}>{t('common.back')}</Text>
+            </TouchableOpacity>
+
+            <Text style={[styles.sectionTitle, styles.visionHeading]}>{t('aboutUs.visionHeading')}</Text>
             <Text style={styles.visionText}>{t('aboutUs.visionText')}</Text>
 
             <Text style={styles.sectionTitle}>{t('aboutUs.faqsHeading')}</Text>
@@ -129,24 +113,10 @@ export default function AboutUsModal({ visible, onClose }) {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    flexDirection: 'row',
-  },
-  backdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(10, 68, 92, 0.4)',
-  },
-  backdropTouchable: {
-    flex: 1,
   },
   panel: {
-    width: '82%',
-    maxWidth: 360,
+    flex: 1,
     backgroundColor: '#e1e4e4',
-    shadowColor: '#000',
-    shadowOffset: { width: -2, height: 0 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 10,
   },
   scrollContainer: {
     padding: 20,
@@ -163,6 +133,7 @@ const styles = StyleSheet.create({
     color: '#0a445c',
     flexShrink: 1,
     flexWrap: 'wrap',
+    marginTop: 2,
   },
   closeButton: {
     width: 32,
@@ -180,12 +151,23 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#0a445c',
   },
+  backButton: {
+    alignSelf: 'flex-start',
+    marginBottom: 6,
+  },
+  backButtonText: {
+    fontSize: 16,
+    color: '#0a445c',
+  },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#0a445c',
     marginBottom: 12,
     marginTop: 16,
+  },
+  visionHeading: {
+    marginTop: 8,
   },
   visionText: {
     fontSize: 14,
