@@ -4,7 +4,6 @@ import InstaIcon from '../assets/images/insta.svg';
 import HeaderBrand from './components/HeaderBrand';
 import WhatsIcon from '../assets/images/whats.svg';
 import Text from './components/AppText';
-import BackButton from './components/BackButton';
 import BottomNav from './components/BottomNav';
 import TitleText from './components/TitleText';
 import { useLanguage } from './contexts/LanguageContext';
@@ -35,7 +34,6 @@ export default function AboutUs() {
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <BackButton />
             <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
           </View>
 

@@ -18,7 +18,6 @@ import EditIcon from '../assets/images/edit.svg';
 import ProfilePlaceholder from '../assets/images/Profile.svg';
 import SettingsIcon from '../assets/images/settings.svg';
 import Text from './components/AppText';
-import BackButton from './components/BackButton';
 import BottomNav from './components/BottomNav';
 import LanguagePickerModal from './components/LanguagePickerModal';
 import StatusPickerModal from './components/StatusPickerModal';
@@ -196,7 +195,6 @@ export default function Profile() {
         <View style={styles.container}>
           <View style={styles.header}>
             <View style={styles.headerLeft}>
-              <BackButton />
               <View style={styles.settingsButtonSpacer} />
             </View>
             <TouchableOpacity

@@ -7,7 +7,6 @@ import {
   View
 } from 'react-native';
 import HeaderBrand from './components/HeaderBrand';
-import BackButton from './components/BackButton';
 import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
 import TitleText from './components/TitleText';
@@ -46,7 +45,6 @@ export default function TopMatches() {
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <BackButton />
             <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
           </View>
 

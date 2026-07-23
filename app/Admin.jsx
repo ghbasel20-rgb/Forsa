@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import HomeIcon from '../assets/images/home-icon.svg';
 import HeaderBrand from './components/HeaderBrand';
-import BackButton from './components/BackButton';
 import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
 import TitleText from './components/TitleText';
@@ -63,9 +62,6 @@ export default function Admin() {
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <View style={styles.leftSection}>
-              <BackButton />
-            </View>
             <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
             <TouchableOpacity onPress={() => router.push('/Homepage')}>
               <HomeIcon width={40} height={40} style={styles.homeIcon} />
@@ -153,11 +149,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 30,
-  },
-  leftSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
   },
   logoSlot: {
     flex: 1,

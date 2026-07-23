@@ -71,14 +71,6 @@ export default function Application() {
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <View style={styles.leftSection}>
-              <TouchableOpacity
-                style={styles.backButton}
-                onPress={() => router.back()}
-              >
-                <Text style={styles.backText}>{t('common.back')}</Text>
-              </TouchableOpacity>
-            </View>
             <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
             <TouchableOpacity onPress={() => router.push('/Homepage')}>
               <HomeIcon width={40} height={40} style={styles.homeIcon} />
@@ -158,18 +150,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 30,
-  },
-  leftSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  backButton: {
-    marginRight: 8,
-  },
-  backText: {
-    fontSize: 16,
-    color: '#0a445c',
   },
   logoSlot: {
     flex: 1,

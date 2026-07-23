@@ -2,7 +2,6 @@ import { useRouter } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import HeaderBrand from './components/HeaderBrand';
-import BackButton from './components/BackButton';
 import BottomNav from './components/BottomNav';
 import FilterPanel from './components/FilterPanel';
 import FilterSection from './components/FilterSection';
@@ -146,7 +145,6 @@ export default function Events() {
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <BackButton />
             <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
           </View>
 
