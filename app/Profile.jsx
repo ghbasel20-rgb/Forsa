@@ -192,7 +192,7 @@ export default function Profile() {
 
   return (
     <View style={styles.screen}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.header}>
             <View style={styles.headerLeft}>
@@ -403,6 +403,9 @@ export default function Profile() {
 
 const styles = StyleSheet.create({
   screen: {
+    flex: 1,
+  },
+  scroll: {
     flex: 1,
   },
   scrollContainer: {

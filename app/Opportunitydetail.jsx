@@ -9,7 +9,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import HomeIcon from '../assets/images/home-icon.svg';
 import HeaderBrand from './components/HeaderBrand';
 import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
@@ -97,7 +96,7 @@ export default function Opportunitydetail() {
 
   return (
     <View style={styles.screen}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.header}>
             <View style={styles.leftSection}>
@@ -109,9 +108,6 @@ export default function Opportunitydetail() {
               </TouchableOpacity>
             </View>
             <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
-            <TouchableOpacity onPress={() => router.push('/Homepage')}>
-              <HomeIcon width={40} height={40} style={styles.homeIcon} />
-            </TouchableOpacity>
           </View>
 
           <View style={styles.iconContainer}>
@@ -175,6 +171,9 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
   },
+  scroll: {
+    flex: 1,
+  },
   scrollContainer: {
     flexGrow: 1,
   },
@@ -209,10 +208,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-end',
     gap: 10,
-  },
-  homeIcon: {
-    width: 40,
-    height: 40,
   },
   iconContainer: {
     width: '100%',
