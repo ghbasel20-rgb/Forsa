@@ -194,9 +194,6 @@ export default function Profile() {
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <View style={styles.headerLeft}>
-              <View style={styles.settingsButtonSpacer} />
-            </View>
             <TouchableOpacity
               style={styles.settingsButton}
               onPress={() => setSettingsMenuVisible(true)}
@@ -421,21 +418,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 30,
   },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  settingsButtonSpacer: {
-    width: 55,
-  },
   settingsButton: {
-    position: 'absolute',
-    left: 70,
-    top: 0,
-    bottom: 0,
-    paddingHorizontal: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
+    marginRight: 8,
   },
   logoSlot: {
     flex: 1,
