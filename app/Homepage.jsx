@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   ScrollView,
   StyleSheet,
+  TouchableOpacity,
   View
 } from 'react-native';
+import AboutIcon from '../assets/images/aboutus.svg';
 import Logo from '../assets/images/logowname.svg';
+import AboutUsModal from './components/AboutUsModal';
 import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
 import TitleText from './components/TitleText';
@@ -13,6 +16,7 @@ import { useLanguage } from './contexts/LanguageContext';
 export default function Homepage() {
   const { t } = useLanguage();
   const successStories = t('homepage.stories');
+  const [aboutModalVisible, setAboutModalVisible] = useState(false);
 
   return (
     <View style={styles.screen}>
@@ -45,7 +49,20 @@ export default function Homepage() {
           </View>
         </View>
       </ScrollView>
+
+      <TouchableOpacity
+        style={styles.aboutButton}
+        onPress={() => setAboutModalVisible(true)}
+      >
+        <AboutIcon width={26} height={26} viewBox="324 8 794 796" />
+      </TouchableOpacity>
+
       <BottomNav />
+
+      <AboutUsModal
+        visible={aboutModalVisible}
+        onClose={() => setAboutModalVisible(false)}
+      />
     </View>
   );
 }
@@ -59,6 +76,23 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     flexGrow: 1,
+  },
+  aboutButton: {
+    position: 'absolute',
+    right: 12,
+    bottom: 90,
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: '#ffffff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 6,
+    zIndex: 10,
   },
   container: {
     flex: 1,

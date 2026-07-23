@@ -249,19 +249,21 @@ export default function Profile() {
           />
 
           <View style={styles.profileHeader}>
-            <TouchableOpacity
-              style={styles.avatarContainer}
-              onPress={handleChangeAvatar}
-              disabled={changingImage}
-            >
-              {profileData?.profileImageId ? (
-                <Image
-                  source={{ uri: getProfileImageUrl(profileData.profileImageId) }}
-                  style={styles.avatarImage}
-                />
-              ) : (
-                <ProfilePlaceholder width={80} height={80} />
-              )}
+            <View style={styles.avatarWrapper}>
+              <TouchableOpacity
+                style={styles.avatarContainer}
+                onPress={handleChangeAvatar}
+                disabled={changingImage}
+              >
+                {profileData?.profileImageId ? (
+                  <Image
+                    source={{ uri: getProfileImageUrl(profileData.profileImageId) }}
+                    style={styles.avatarImage}
+                  />
+                ) : (
+                  <ProfilePlaceholder width={80} height={80} />
+                )}
+              </TouchableOpacity>
               <View style={styles.avatarEditBadge}>
                 {changingImage ? (
                   <ActivityIndicator size="small" color="#46a3a4" />
@@ -269,7 +271,7 @@ export default function Profile() {
                   <EditIcon width={18} height={18} />
                 )}
               </View>
-            </TouchableOpacity>
+            </View>
             <TitleText style={styles.profileTitle}>{t('profile.title')}</TitleText>
           </View>
 
@@ -459,6 +461,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 30,
   },
+  avatarWrapper: {
+    width: 80,
+    height: 80,
+    marginBottom: 12,
+  },
   avatarContainer: {
     width: 80,
     height: 80,
@@ -466,7 +473,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 12,
     overflow: 'hidden',
   },
   avatarImage: {
@@ -475,8 +481,8 @@ const styles = StyleSheet.create({
   },
   avatarEditBadge: {
     position: 'absolute',
-    right: 0,
-    bottom: 0,
+    top: -6,
+    right: -6,
     width: 28,
     height: 28,
     borderRadius: 14,
