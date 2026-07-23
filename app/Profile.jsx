@@ -1,6 +1,6 @@
 import { useFocusEffect } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import { default as React, useMemo, useRef, useState } from 'react';
 import {
   Image,
   Modal,
@@ -10,8 +10,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import Logo from '../assets/images/logowname.svg';
+import { Calendar } from 'react-native-calendars';
 import EditIcon from '../assets/images/edit.svg';
+import Logo from '../assets/images/logowname.svg';
 import SettingsIcon from '../assets/images/settings.svg';
 import Text from './components/AppText';
 import BackButton from './components/BackButton';
@@ -23,6 +24,7 @@ import { getEventById } from './services/events-service';
 import { getUserProfile, updateUserProfile } from './services/profile-service';
 import { getSavedEvents } from './services/saved-events-service';
 import { getSavedOpportunities } from './services/saved-opportunities-service';
+import { buildMarkedDates, toDateKey } from './utils/calendarUtils';
 
 export default function Profile() {
   const router = useRouter();
@@ -62,6 +64,7 @@ export default function Profile() {
             return {
               ...application,
               eventTitle: eventResult.success ? eventResult.data.title : 'Event',
+              eventDate: eventResult.success ? eventResult.data.eventDate : null, // new
             };
           })
         );
@@ -69,6 +72,33 @@ export default function Profile() {
       }
     }
   };
+
+  const markedAppliedDates = useMemo(() => buildMarkedDates(appliedEvents), [appliedEvents]);
+  const scrollRef = useRef(null);
+const appliedContainerY = useRef(0);
+const appliedPositions = useRef({});
+const highlightTimeoutRef = useRef(null);
+const [highlightedApplicationId, setHighlightedApplicationId] = useState(null);
+
+
+const scrollToApplication = (applicationId) => {
+  const relativeY = appliedPositions.current[applicationId];
+  if (relativeY === undefined || !scrollRef.current) return;
+  scrollRef.current.scrollTo({ y: Math.max(appliedContainerY.current + relativeY - 20, 0), animated: true });
+};
+
+const handleAppliedDayPress = (day) => {
+  const matches = appliedEvents.filter(
+    (application) => application.eventDate && toDateKey(application.eventDate) === day.dateString
+  );
+  if (matches.length === 0) return;
+
+  const target = matches[0];
+  if (highlightTimeoutRef.current) clearTimeout(highlightTimeoutRef.current);
+  setHighlightedApplicationId(target.$id);
+  scrollToApplication(target.$id);
+  highlightTimeoutRef.current = setTimeout(() => setHighlightedApplicationId(null), 2500);
+};
 
   const handleLogout = async () => {
     setSettingsMenuVisible(false);
@@ -98,7 +128,7 @@ export default function Profile() {
 
   return (
     <View style={styles.screen}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <ScrollView ref={scrollRef} contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.header}>
             <View style={styles.headerLeft}>
@@ -241,13 +271,33 @@ export default function Profile() {
               </View>
             </>
           )}
-
-          {appliedEvents.length > 0 && (
+{appliedEvents.length > 0 && (
             <>
               <Text style={styles.sectionTitle}>APPLIED{'\n'}EVENTS:</Text>
-              <View style={styles.opportunitiesContainer}>
+              <Calendar
+                markingType="custom"
+                markedDates={markedAppliedDates}
+                onDayPress={handleAppliedDayPress}
+                theme={{
+                  todayTextColor: '#46a3a4',
+                  arrowColor: '#0a445c',
+                  textMonthFontWeight: '600',
+                }}
+                style={styles.calendar}
+              />
+              <View
+                style={styles.opportunitiesContainer}
+                onLayout={(e) => { appliedContainerY.current = e.nativeEvent.layout.y; }}
+              >
                 {appliedEvents.map((application) => (
-                  <View key={application.$id} style={styles.opportunityCard}>
+                  <View
+                    key={application.$id}
+                    onLayout={(e) => { appliedPositions.current[application.$id] = e.nativeEvent.layout.y; }}
+                    style={[
+                      styles.opportunityCard,
+                      highlightedApplicationId === application.$id && styles.opportunityCardHighlighted,
+                    ]}
+                  >
                     <View style={styles.opportunityIcon}>
                       <Image
                         source={require('../assets/images/icon.png')}
@@ -273,7 +323,6 @@ export default function Profile() {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
@@ -463,4 +512,16 @@ const styles = StyleSheet.create({
     color: '#0a445c',
     fontSize: 12,
   },
+  calendar: {
+  borderRadius: 15,
+  borderWidth: 2,
+  borderColor: '#46a3a4',
+  marginBottom: 20,
+},
+
+opportunityCardHighlighted: {
+  borderWidth: 3,
+  borderColor: '#0a445c',
+  backgroundColor: '#eef7f7',
+},
 });
