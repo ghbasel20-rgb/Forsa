@@ -1,23 +1,15 @@
-import {
-  addDoc,
-  collection,
-  db,
-  deleteObject,
-  doc,
-  getDoc,
-  getDocs,
-  getDownloadURL,
-  PROFILE_IMAGES_PATH,
-  query,
-  ref,
-  serverTimestamp,
-  storage,
-  updateDoc,
-  uploadBytes,
-  where,
-} from '../config/firebase-config';
+import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
+import { addDoc, collection, db, doc, getDoc, getDocs, query, serverTimestamp, updateDoc, where } from '../config/firebase-config';
 
 const PROFILES_COLLECTION_ID = 'profiles';
+
+// Firebase Storage requires the paid Blaze plan, so profile pictures are
+// stored as a base64 data URI directly on the profile document instead.
+// Firestore caps documents at 1MiB, so the image is downscaled/compressed
+// to comfortably fit well under that before being embedded.
+const MAX_IMAGE_WIDTH = 480;
+const IMAGE_COMPRESSION = 0.5;
+const MAX_DATA_URI_LENGTH = 700_000;
 
 const toIso = (value) => {
   if (!value) return null;
@@ -84,38 +76,41 @@ export const updateUserProfile = async (documentId, profileData) => {
   }
 };
 
-// Stores the full download URL as the "file id" (returned as data.$id, same
-// shape callers already read from the Appwrite version) so
-// getProfileImageUrl can stay synchronous instead of every caller needing to
-// await a URL lookup on render.
+// Returns the data URI as the "file id" (data.$id, same shape callers
+// already read from the Appwrite/Storage versions) so getProfileImageUrl
+// can stay synchronous instead of every caller needing to await a URL
+// lookup on render.
 export const uploadProfileImage = async (asset) => {
   try {
-    const fileId = doc(collection(db, PROFILE_IMAGES_PATH)).id;
-    const path = `${PROFILE_IMAGES_PATH}/${fileId}-${asset.fileName || 'photo.jpg'}`;
-    const storageRef = ref(storage, path);
+    const rendered = await ImageManipulator.manipulate(asset.uri)
+      .resize({ width: MAX_IMAGE_WIDTH })
+      .renderAsync();
+    const result = await rendered.saveAsync({
+      base64: true,
+      compress: IMAGE_COMPRESSION,
+      format: SaveFormat.JPEG,
+    });
 
-    const blob = await (await fetch(asset.uri)).blob();
-    await uploadBytes(storageRef, blob, { contentType: asset.mimeType || 'image/jpeg' });
-    const downloadURL = await getDownloadURL(storageRef);
+    const dataUri = `data:image/jpeg;base64,${result.base64}`;
+    if (dataUri.length > MAX_DATA_URI_LENGTH) {
+      return { success: false, error: 'Image is too large to save even after compression' };
+    }
 
-    return { success: true, data: { $id: downloadURL } };
+    return { success: true, data: { $id: dataUri } };
   } catch (error) {
     console.error('Upload profile image error:', error);
     return { success: false, error: error.message };
   }
 };
 
-export const deleteProfileImage = async (fileUrl) => {
-  try {
-    await deleteObject(ref(storage, fileUrl));
-    return { success: true };
-  } catch (error) {
-    console.error('Delete profile image error:', error);
-    return { success: false, error: error.message };
-  }
-};
+// No-op: the image lives inline on the profile document (see
+// uploadProfileImage above), so there's nothing external to clean up —
+// updateUserProfile overwriting profileImageId already discards the old
+// value. Kept as a function so Profile.jsx's existing call site doesn't
+// need to change.
+export const deleteProfileImage = async () => ({ success: true });
 
-export const getProfileImageUrl = (fileUrl) => {
-  if (!fileUrl) return null;
-  return fileUrl;
+export const getProfileImageUrl = (dataUri) => {
+  if (!dataUri) return null;
+  return dataUri;
 };

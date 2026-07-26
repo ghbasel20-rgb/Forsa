@@ -25,14 +25,6 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import {
-  deleteObject,
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadBytes,
-} from 'firebase/storage';
-
 const firebaseConfig = {
   apiKey: 'AIzaSyCcqgciD-7JtfRFY_RUzNMPvV5pZNDWyws',
   authDomain: 'forsa-a5848.firebaseapp.com',
@@ -53,9 +45,6 @@ const auth = Platform.OS === 'web'
   : initializeAuth(app, { persistence: getReactNativePersistence(AsyncStorage) });
 
 const db = getFirestore(app);
-const storage = getStorage(app);
-
-export const PROFILE_IMAGES_PATH = 'profile_images';
 
 export {
   addDoc,
@@ -65,21 +54,16 @@ export {
   createUserWithEmailAndPassword,
   db,
   deleteDoc,
-  deleteObject,
   doc,
   firebaseSignOut,
   getDoc,
   getDocs,
-  getDownloadURL,
   onAuthStateChanged,
   query,
-  ref,
   serverTimestamp,
   signInWithEmailAndPassword,
-  storage,
   Timestamp,
   updateDoc,
   updateProfile,
-  uploadBytes,
   where,
 };

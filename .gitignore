@@ -11,6 +11,8 @@ npm-debug.*
 *.orig.*
 serviceAccount*.json
 firebase-service-account*.json
+.env
+.env.*
 web-build/
 .DS_Store
 *.log

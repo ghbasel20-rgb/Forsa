@@ -13,7 +13,8 @@
 //   APPWRITE_API_KEY=xxxxx FIREBASE_SERVICE_ACCOUNT=./service-account.json node scripts/migrate-appwrite-to-firestore.mjs
 
 import { readFileSync } from 'node:fs';
-import admin from 'firebase-admin';
+import { cert, initializeApp } from 'firebase-admin/app';
+import { FieldValue, getFirestore, Timestamp } from 'firebase-admin/firestore';
 
 const ENDPOINT = 'https://cloud.appwrite.io/v1';
 const PROJECT_ID = '699194ee000ccfb4ae0b';
@@ -33,8 +34,8 @@ if (!serviceAccountPath) {
 }
 
 const serviceAccount = JSON.parse(readFileSync(serviceAccountPath, 'utf8'));
-admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
-const db = admin.firestore();
+initializeApp({ credential: cert(serviceAccount) });
+const db = getFirestore();
 
 const headers = {
   'X-Appwrite-Project': PROJECT_ID,
@@ -46,8 +47,8 @@ async function fetchAllDocuments(collectionId) {
   let cursor = null;
 
   for (;;) {
-    const queries = ['limit(100)'];
-    if (cursor) queries.push(`cursorAfter("${cursor}")`);
+    const queries = [JSON.stringify({ method: 'limit', values: [100] })];
+    if (cursor) queries.push(JSON.stringify({ method: 'cursorAfter', values: [cursor] }));
     const qs = queries.map((q) => `queries[]=${encodeURIComponent(q)}`).join('&');
 
     const res = await fetch(
@@ -82,7 +83,7 @@ function toFirestoreDoc(appwriteDoc) {
     id: $id,
     data: {
       ...fields,
-      createdAt: $createdAt ? admin.firestore.Timestamp.fromDate(new Date($createdAt)) : admin.firestore.FieldValue.serverTimestamp(),
+      createdAt: $createdAt ? Timestamp.fromDate(new Date($createdAt)) : FieldValue.serverTimestamp(),
     },
   };
 }
