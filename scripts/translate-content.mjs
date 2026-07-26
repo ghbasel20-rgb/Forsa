@@ -31,7 +31,8 @@ const headers = {
   'X-Appwrite-Key': apiKey,
 };
 
-const isUsableTranslation = (text) => Boolean(text) && !/MYMEMORY WARNING/i.test(text);
+const isUsableTranslation = (text) =>
+  Boolean(text) && !/MYMEMORY WARNING/i.test(text) && !/%[0-9A-Fa-f]{2}/.test(text);
 
 async function listAllDocuments(collectionId) {
   const documents = [];

@@ -28,6 +28,11 @@ const splitIntoChunks = (text) => {
   return chunks;
 };
 
+// Catches responses that are just the untranslated/URL-encoded request
+// echoed back (seen from misbehaving proxies and broken providers), which
+// would otherwise get cached as if it were a real translation.
+const looksLikeGarbage = (text) => /%[0-9A-Fa-f]{2}/.test(text);
+
 const translateChunkWithMyMemory = async (chunk, sourceLang, targetLang) => {
   const langpair = `${sourceLang}|${targetLang}`;
   const url = `${MYMEMORY_ENDPOINT}?q=${encodeURIComponent(chunk)}&langpair=${langpair}`;
@@ -35,7 +40,7 @@ const translateChunkWithMyMemory = async (chunk, sourceLang, targetLang) => {
   const body = await response.json();
   const translated = body?.responseData?.translatedText;
 
-  if (!translated || /MYMEMORY WARNING/i.test(translated) || body?.responseStatus !== 200) {
+  if (!translated || /MYMEMORY WARNING/i.test(translated) || looksLikeGarbage(translated) || body?.responseStatus !== 200) {
     throw new Error(body?.responseDetails || 'MyMemory translation failed');
   }
 
@@ -50,7 +55,7 @@ const translateChunkWithLibreTranslate = async (chunk, sourceLang, targetLang) =
   });
   const body = await response.json();
 
-  if (!body?.translatedText) {
+  if (!body?.translatedText || looksLikeGarbage(body.translatedText)) {
     throw new Error(body?.error || 'LibreTranslate translation failed');
   }
 
