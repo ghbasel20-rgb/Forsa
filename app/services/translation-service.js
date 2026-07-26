@@ -33,16 +33,18 @@ const translateChunk = async (chunk, langpair) => {
   const body = await response.json();
   const translated = body?.responseData?.translatedText;
 
-  if (!translated) {
-    throw new Error('MyMemory returned no translation');
+  if (!translated || /MYMEMORY WARNING/i.test(translated) || body?.responseStatus !== 200) {
+    throw new Error(body?.responseDetails || 'MyMemory returned no translation');
   }
 
   return translated;
 };
 
+// Returns null (never the original text) on failure, so callers can tell a
+// real translation apart from a fallback and avoid caching the fallback.
 export const translateText = async (text, targetLang = 'ar') => {
   if (!text) {
-    return text;
+    return null;
   }
 
   try {
@@ -57,6 +59,6 @@ export const translateText = async (text, targetLang = 'ar') => {
     return translatedChunks.join(' ');
   } catch (error) {
     console.error('Translate text error:', error);
-    return text;
+    return null;
   }
 };

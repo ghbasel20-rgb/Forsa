@@ -49,6 +49,11 @@ export const updateOpportunity = async (documentId, data) => {
   }
 };
 
+const isUsableTranslation = (text) => Boolean(text) && !/MYMEMORY WARNING/i.test(text);
+
+const resolveTranslation = (needsTranslation, translated, cached) =>
+  needsTranslation ? (isUsableTranslation(translated) ? translated : null) : cached;
+
 export const getOpportunityWithTranslation = async (opportunityId, language) => {
   const result = await getOpportunityById(opportunityId);
   if (!result.success || language !== 'ar') {
@@ -56,8 +61,8 @@ export const getOpportunityWithTranslation = async (opportunityId, language) => 
   }
 
   const opportunity = result.data;
-  const needsTitle = !opportunity.titleAr && !!opportunity.title;
-  const needsDescription = !opportunity.descriptionAr && !!opportunity.description;
+  const needsTitle = !isUsableTranslation(opportunity.titleAr) && !!opportunity.title;
+  const needsDescription = !isUsableTranslation(opportunity.descriptionAr) && !!opportunity.description;
 
   if (!needsTitle && !needsDescription) {
     return result;
@@ -68,9 +73,21 @@ export const getOpportunityWithTranslation = async (opportunityId, language) => 
     needsDescription ? translateText(opportunity.description, 'ar') : opportunity.descriptionAr,
   ]);
 
-  await updateOpportunity(opportunity.$id, { titleAr, descriptionAr });
+  const finalTitleAr = resolveTranslation(needsTitle, titleAr, opportunity.titleAr);
+  const finalDescriptionAr = resolveTranslation(needsDescription, descriptionAr, opportunity.descriptionAr);
 
-  return { success: true, data: { ...opportunity, titleAr, descriptionAr } };
+  const updates = {};
+  if (needsTitle && finalTitleAr) updates.titleAr = finalTitleAr;
+  if (needsDescription && finalDescriptionAr) updates.descriptionAr = finalDescriptionAr;
+
+  if (Object.keys(updates).length > 0) {
+    await updateOpportunity(opportunity.$id, updates);
+  }
+
+  return {
+    success: true,
+    data: { ...opportunity, titleAr: finalTitleAr, descriptionAr: finalDescriptionAr },
+  };
 };
 
 export const getOpportunitiesByLocation = async (location) => {

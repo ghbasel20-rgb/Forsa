@@ -49,6 +49,11 @@ export const updateEvent = async (documentId, data) => {
   }
 };
 
+const isUsableTranslation = (text) => Boolean(text) && !/MYMEMORY WARNING/i.test(text);
+
+const resolveTranslation = (needsTranslation, translated, cached) =>
+  needsTranslation ? (isUsableTranslation(translated) ? translated : null) : cached;
+
 export const getEventWithTranslation = async (eventId, language) => {
   const result = await getEventById(eventId);
   if (!result.success || language !== 'ar') {
@@ -56,9 +61,9 @@ export const getEventWithTranslation = async (eventId, language) => {
   }
 
   const event = result.data;
-  const needsTitle = !event.titleAr && !!event.title;
-  const needsDetails = !event.detailsAr && !!event.details;
-  const needsContent = !event.contentAr && !!event.content;
+  const needsTitle = !isUsableTranslation(event.titleAr) && !!event.title;
+  const needsDetails = !isUsableTranslation(event.detailsAr) && !!event.details;
+  const needsContent = !isUsableTranslation(event.contentAr) && !!event.content;
 
   if (!needsTitle && !needsDetails && !needsContent) {
     return result;
@@ -70,9 +75,23 @@ export const getEventWithTranslation = async (eventId, language) => {
     needsContent ? translateText(event.content, 'ar') : event.contentAr,
   ]);
 
-  await updateEvent(event.$id, { titleAr, detailsAr, contentAr });
+  const finalTitleAr = resolveTranslation(needsTitle, titleAr, event.titleAr);
+  const finalDetailsAr = resolveTranslation(needsDetails, detailsAr, event.detailsAr);
+  const finalContentAr = resolveTranslation(needsContent, contentAr, event.contentAr);
 
-  return { success: true, data: { ...event, titleAr, detailsAr, contentAr } };
+  const updates = {};
+  if (needsTitle && finalTitleAr) updates.titleAr = finalTitleAr;
+  if (needsDetails && finalDetailsAr) updates.detailsAr = finalDetailsAr;
+  if (needsContent && finalContentAr) updates.contentAr = finalContentAr;
+
+  if (Object.keys(updates).length > 0) {
+    await updateEvent(event.$id, updates);
+  }
+
+  return {
+    success: true,
+    data: { ...event, titleAr: finalTitleAr, detailsAr: finalDetailsAr, contentAr: finalContentAr },
+  };
 };
 
 const isPast = (date) => (date ? new Date(date).getTime() < Date.now() : false);
