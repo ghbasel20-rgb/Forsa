@@ -1,17 +1,25 @@
-import { databases, Query } from '../config/appwrite-config';
+import { collection, db, doc, getDoc, getDocs, query, updateDoc, where } from '../config/firebase-config';
 import { translateText } from './translation-service';
 
-const DATABASE_ID = '69b6e464000e1c479de5';
 const OPPORTUNITIES_COLLECTION_ID = 'opportunities';
+
+const toIso = (value) => {
+  if (!value) return null;
+  if (typeof value.toDate === 'function') return value.toDate().toISOString();
+  return value;
+};
+
+const mapOpportunity = (docSnap) => ({
+  ...docSnap.data(),
+  $id: docSnap.id,
+  $createdAt: toIso(docSnap.data().createdAt),
+});
 
 export const getAllOpportunities = async () => {
   try {
-    const response = await databases.listDocuments(
-      DATABASE_ID,
-      OPPORTUNITIES_COLLECTION_ID
-    );
-    
-    return { success: true, data: response.documents };
+    const snapshot = await getDocs(collection(db, OPPORTUNITIES_COLLECTION_ID));
+
+    return { success: true, data: snapshot.docs.map(mapOpportunity) };
   } catch (error) {
     console.error('Get opportunities error:', error);
     return { success: false, error: error.message };
@@ -20,13 +28,13 @@ export const getAllOpportunities = async () => {
 
 export const getOpportunityById = async (opportunityId) => {
   try {
-    const response = await databases.getDocument(
-      DATABASE_ID,
-      OPPORTUNITIES_COLLECTION_ID,
-      opportunityId
-    );
-    
-    return { success: true, data: response };
+    const docSnap = await getDoc(doc(db, OPPORTUNITIES_COLLECTION_ID, opportunityId));
+
+    if (!docSnap.exists()) {
+      return { success: false, error: 'Opportunity not found' };
+    }
+
+    return { success: true, data: mapOpportunity(docSnap) };
   } catch (error) {
     console.error('Get opportunity error:', error);
     return { success: false, error: error.message };
@@ -35,14 +43,11 @@ export const getOpportunityById = async (opportunityId) => {
 
 export const updateOpportunity = async (documentId, data) => {
   try {
-    const response = await databases.updateDocument(
-      DATABASE_ID,
-      OPPORTUNITIES_COLLECTION_ID,
-      documentId,
-      data
-    );
+    const docRef = doc(db, OPPORTUNITIES_COLLECTION_ID, documentId);
+    await updateDoc(docRef, data);
+    const docSnap = await getDoc(docRef);
 
-    return { success: true, data: response };
+    return { success: true, data: mapOpportunity(docSnap) };
   } catch (error) {
     console.error('Update opportunity error:', error);
     return { success: false, error: error.message };
@@ -127,13 +132,10 @@ export const getOpportunityWithTranslation = async (opportunityId, language) => 
 
 export const getOpportunitiesByLocation = async (location) => {
   try {
-    const response = await databases.listDocuments(
-      DATABASE_ID,
-      OPPORTUNITIES_COLLECTION_ID,
-      [Query.equal('location', location)]
-    );
-    
-    return { success: true, data: response.documents };
+    const q = query(collection(db, OPPORTUNITIES_COLLECTION_ID), where('location', '==', location));
+    const snapshot = await getDocs(q);
+
+    return { success: true, data: snapshot.docs.map(mapOpportunity) };
   } catch (error) {
     console.error('Get opportunities by location error:', error);
     return { success: false, error: error.message };
@@ -142,28 +144,27 @@ export const getOpportunitiesByLocation = async (location) => {
 
 export const getOpportunitiesByCategory = async (category) => {
   try {
-    const response = await databases.listDocuments(
-      DATABASE_ID,
-      OPPORTUNITIES_COLLECTION_ID,
-      [Query.equal('category', category)]
-    );
-    
-    return { success: true, data: response.documents };
+    const q = query(collection(db, OPPORTUNITIES_COLLECTION_ID), where('category', '==', category));
+    const snapshot = await getDocs(q);
+
+    return { success: true, data: snapshot.docs.map(mapOpportunity) };
   } catch (error) {
     console.error('Get opportunities by category error:', error);
     return { success: false, error: error.message };
   }
 };
 
+// Firestore has no full-text search, unlike Appwrite's Query.search. This
+// filters client-side on the (small) opportunities collection instead.
 export const searchOpportunities = async (searchQuery) => {
   try {
-    const response = await databases.listDocuments(
-      DATABASE_ID,
-      OPPORTUNITIES_COLLECTION_ID,
-      [Query.search('title', searchQuery)]
-    );
+    const snapshot = await getDocs(collection(db, OPPORTUNITIES_COLLECTION_ID));
+    const needle = searchQuery.toLowerCase();
+    const matches = snapshot.docs
+      .map(mapOpportunity)
+      .filter((opportunity) => (opportunity.title || '').toLowerCase().includes(needle));
 
-    return { success: true, data: response.documents };
+    return { success: true, data: matches };
   } catch (error) {
     console.error('Search opportunities error:', error);
     return { success: false, error: error.message };

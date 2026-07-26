@@ -1,25 +1,36 @@
-import { databases, ID, Query } from '../config/appwrite-config';
+import {
+  addDoc,
+  collection,
+  db,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from '../config/firebase-config';
 
-const DATABASE_ID = '69b6e464000e1c479de5';
 const SAVED_EVENTS_COLLECTION_ID = 'savedEvents';
+
+const mapSavedEvent = (docSnap) => ({
+  ...docSnap.data(),
+  $id: docSnap.id,
+});
 
 export const applyToEvent = async (userId, eventId, name) => {
   try {
-    const response = await databases.createDocument(
-      DATABASE_ID,
-      SAVED_EVENTS_COLLECTION_ID,
-      ID.unique(),
-      {
-        userId,
-        eventId,
-        name,
-        status: 'Pending',
-        appliedAt: new Date().toISOString(),
-      }
-    );
+    const docRef = await addDoc(collection(db, SAVED_EVENTS_COLLECTION_ID), {
+      userId,
+      eventId,
+      name,
+      status: 'Pending',
+      appliedAt: new Date().toISOString(),
+    });
+    const docSnap = await getDoc(docRef);
 
-    console.log('Applied to event:', response);
-    return { success: true, data: response };
+    console.log('Applied to event:', docRef.id);
+    return { success: true, data: mapSavedEvent(docSnap) };
   } catch (error) {
     console.error('Apply to event error:', error);
     return { success: false, error: error.message };
@@ -28,11 +39,7 @@ export const applyToEvent = async (userId, eventId, name) => {
 
 export const unsaveEvent = async (documentId) => {
   try {
-    await databases.deleteDocument(
-      DATABASE_ID,
-      SAVED_EVENTS_COLLECTION_ID,
-      documentId
-    );
+    await deleteDoc(doc(db, SAVED_EVENTS_COLLECTION_ID, documentId));
 
     console.log('Event application removed');
     return { success: true };
@@ -44,13 +51,10 @@ export const unsaveEvent = async (documentId) => {
 
 export const getSavedEvents = async (userId) => {
   try {
-    const response = await databases.listDocuments(
-      DATABASE_ID,
-      SAVED_EVENTS_COLLECTION_ID,
-      [Query.equal('userId', userId)]
-    );
+    const q = query(collection(db, SAVED_EVENTS_COLLECTION_ID), where('userId', '==', userId));
+    const snapshot = await getDocs(q);
 
-    return { success: true, data: response.documents };
+    return { success: true, data: snapshot.docs.map(mapSavedEvent) };
   } catch (error) {
     console.error('Get saved events error:', error);
     return { success: false, error: error.message };
@@ -59,12 +63,9 @@ export const getSavedEvents = async (userId) => {
 
 export const getAllSavedEvents = async () => {
   try {
-    const response = await databases.listDocuments(
-      DATABASE_ID,
-      SAVED_EVENTS_COLLECTION_ID
-    );
+    const snapshot = await getDocs(collection(db, SAVED_EVENTS_COLLECTION_ID));
 
-    return { success: true, data: response.documents };
+    return { success: true, data: snapshot.docs.map(mapSavedEvent) };
   } catch (error) {
     console.error('Get all saved events error:', error);
     return { success: false, error: error.message };
@@ -73,15 +74,12 @@ export const getAllSavedEvents = async () => {
 
 export const updateApplicationStatus = async (documentId, status) => {
   try {
-    const response = await databases.updateDocument(
-      DATABASE_ID,
-      SAVED_EVENTS_COLLECTION_ID,
-      documentId,
-      { status }
-    );
+    const docRef = doc(db, SAVED_EVENTS_COLLECTION_ID, documentId);
+    await updateDoc(docRef, { status });
+    const docSnap = await getDoc(docRef);
 
-    console.log('Application status updated:', response);
-    return { success: true, data: response };
+    console.log('Application status updated:', documentId);
+    return { success: true, data: mapSavedEvent(docSnap) };
   } catch (error) {
     console.error('Update application status error:', error);
     return { success: false, error: error.message };
@@ -91,31 +89,29 @@ export const updateApplicationStatus = async (documentId, status) => {
 export const getSavedEventStatus = async ({ documentId, eventId, userId }) => {
   try {
     if (documentId) {
-      const response = await databases.getDocument(
-        DATABASE_ID,
-        SAVED_EVENTS_COLLECTION_ID,
-        documentId
-      );
+      const docSnap = await getDoc(doc(db, SAVED_EVENTS_COLLECTION_ID, documentId));
 
-      return { success: true, isApplied: true, documentId: response.$id, data: response };
+      if (!docSnap.exists()) {
+        return { success: true, isApplied: false, documentId: null, data: null };
+      }
+
+      return { success: true, isApplied: true, documentId: docSnap.id, data: mapSavedEvent(docSnap) };
     }
 
-    const response = await databases.listDocuments(
-      DATABASE_ID,
-      SAVED_EVENTS_COLLECTION_ID,
-      [
-        Query.equal('userId', userId),
-        Query.equal('eventId', eventId)
-      ]
+    const q = query(
+      collection(db, SAVED_EVENTS_COLLECTION_ID),
+      where('userId', '==', userId),
+      where('eventId', '==', eventId)
     );
+    const snapshot = await getDocs(q);
 
-    const found = response.documents.length > 0;
+    const found = snapshot.docs.length > 0;
 
     return {
       success: true,
       isApplied: found,
-      documentId: found ? response.documents[0].$id : null,
-      data: found ? response.documents[0] : null,
+      documentId: found ? snapshot.docs[0].id : null,
+      data: found ? mapSavedEvent(snapshot.docs[0]) : null,
     };
   } catch (error) {
     console.error('Get saved event status error:', error);

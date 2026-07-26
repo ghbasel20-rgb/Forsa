@@ -1,28 +1,53 @@
-import { databases, ID, PROFILE_IMAGES_BUCKET_ID, Query, storage } from '../config/appwrite-config';
+import {
+  addDoc,
+  collection,
+  db,
+  deleteObject,
+  doc,
+  getDoc,
+  getDocs,
+  getDownloadURL,
+  PROFILE_IMAGES_PATH,
+  query,
+  ref,
+  serverTimestamp,
+  storage,
+  updateDoc,
+  uploadBytes,
+  where,
+} from '../config/firebase-config';
 
-const DATABASE_ID = '69b6e464000e1c479de5';
 const PROFILES_COLLECTION_ID = 'profiles';
+
+const toIso = (value) => {
+  if (!value) return null;
+  if (typeof value.toDate === 'function') return value.toDate().toISOString();
+  return value;
+};
+
+const mapProfile = (docSnap) => ({
+  ...docSnap.data(),
+  $id: docSnap.id,
+  $createdAt: toIso(docSnap.data().createdAt),
+});
 
 export const createUserProfile = async (userId, profileData) => {
   try {
-    const response = await databases.createDocument(
-      DATABASE_ID,
-      PROFILES_COLLECTION_ID,
-      ID.unique(),
-      {
-        userId: userId,
-        fullName: profileData.fullName,
-        email: profileData.email,
-        dateOfBirth: profileData.dateOfBirth,
-        educationStatus: profileData.educationStatus,
-        skills: profileData.skills,
-        interests: profileData.interests,
-        hasCompletedSkillsInterests: profileData.hasCompletedSkillsInterests ?? false,
-      }
-    );
-    
-    console.log('Profile created:', response);
-    return { success: true, data: response };
+    const docRef = await addDoc(collection(db, PROFILES_COLLECTION_ID), {
+      userId: userId,
+      fullName: profileData.fullName,
+      email: profileData.email,
+      dateOfBirth: profileData.dateOfBirth,
+      educationStatus: profileData.educationStatus,
+      skills: profileData.skills,
+      interests: profileData.interests,
+      hasCompletedSkillsInterests: profileData.hasCompletedSkillsInterests ?? false,
+      createdAt: serverTimestamp(),
+    });
+    const docSnap = await getDoc(docRef);
+
+    console.log('Profile created:', docRef.id);
+    return { success: true, data: mapProfile(docSnap) };
   } catch (error) {
     console.error('Create profile error:', error);
     return { success: false, error: error.message };
@@ -31,14 +56,11 @@ export const createUserProfile = async (userId, profileData) => {
 
 export const getUserProfile = async (userId) => {
   try {
-    const response = await databases.listDocuments(
-      DATABASE_ID,
-      PROFILES_COLLECTION_ID,
-      [Query.equal('userId', userId)]
-    );
-    
-    if (response.documents.length > 0) {
-      return { success: true, data: response.documents[0] };
+    const q = query(collection(db, PROFILES_COLLECTION_ID), where('userId', '==', userId));
+    const snapshot = await getDocs(q);
+
+    if (snapshot.docs.length > 0) {
+      return { success: true, data: mapProfile(snapshot.docs[0]) };
     } else {
       return { success: false, error: 'Profile not found' };
     }
@@ -50,41 +72,42 @@ export const getUserProfile = async (userId) => {
 
 export const updateUserProfile = async (documentId, profileData) => {
   try {
-    const response = await databases.updateDocument(
-      DATABASE_ID,
-      PROFILES_COLLECTION_ID,
-      documentId,
-      profileData
-    );
+    const docRef = doc(db, PROFILES_COLLECTION_ID, documentId);
+    await updateDoc(docRef, profileData);
+    const docSnap = await getDoc(docRef);
 
-    console.log('Profile updated:', response);
-    return { success: true, data: response };
+    console.log('Profile updated:', documentId);
+    return { success: true, data: mapProfile(docSnap) };
   } catch (error) {
     console.error('Update profile error:', error);
     return { success: false, error: error.message };
   }
 };
 
+// Stores the full download URL as the "file id" (returned as data.$id, same
+// shape callers already read from the Appwrite version) so
+// getProfileImageUrl can stay synchronous instead of every caller needing to
+// await a URL lookup on render.
 export const uploadProfileImage = async (asset) => {
   try {
-    const fileId = ID.unique();
-    const response = await storage.createFile(PROFILE_IMAGES_BUCKET_ID, fileId, {
-      uri: asset.uri,
-      name: asset.fileName || `${fileId}.jpg`,
-      type: asset.mimeType || 'image/jpeg',
-      size: asset.fileSize || 0,
-    });
+    const fileId = doc(collection(db, PROFILE_IMAGES_PATH)).id;
+    const path = `${PROFILE_IMAGES_PATH}/${fileId}-${asset.fileName || 'photo.jpg'}`;
+    const storageRef = ref(storage, path);
 
-    return { success: true, data: response };
+    const blob = await (await fetch(asset.uri)).blob();
+    await uploadBytes(storageRef, blob, { contentType: asset.mimeType || 'image/jpeg' });
+    const downloadURL = await getDownloadURL(storageRef);
+
+    return { success: true, data: { $id: downloadURL } };
   } catch (error) {
     console.error('Upload profile image error:', error);
     return { success: false, error: error.message };
   }
 };
 
-export const deleteProfileImage = async (fileId) => {
+export const deleteProfileImage = async (fileUrl) => {
   try {
-    await storage.deleteFile(PROFILE_IMAGES_BUCKET_ID, fileId);
+    await deleteObject(ref(storage, fileUrl));
     return { success: true };
   } catch (error) {
     console.error('Delete profile image error:', error);
@@ -92,7 +115,7 @@ export const deleteProfileImage = async (fileId) => {
   }
 };
 
-export const getProfileImageUrl = (fileId) => {
-  if (!fileId) return null;
-  return storage.getFileViewURL(PROFILE_IMAGES_BUCKET_ID, fileId).toString();
+export const getProfileImageUrl = (fileUrl) => {
+  if (!fileUrl) return null;
+  return fileUrl;
 };

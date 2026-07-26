@@ -9,6 +9,8 @@ npm-debug.*
 *.key
 *.mobileprovision
 *.orig.*
+serviceAccount*.json
+firebase-service-account*.json
 web-build/
 .DS_Store
 *.log

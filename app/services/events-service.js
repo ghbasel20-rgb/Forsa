@@ -1,17 +1,25 @@
-import { databases } from '../config/appwrite-config';
+import { collection, db, doc, getDoc, getDocs, updateDoc } from '../config/firebase-config';
 import { translateText } from './translation-service';
 
-const DATABASE_ID = '69b6e464000e1c479de5';
 const EVENTS_COLLECTION_ID = 'events';
+
+const toIso = (value) => {
+  if (!value) return null;
+  if (typeof value.toDate === 'function') return value.toDate().toISOString();
+  return value;
+};
+
+const mapEvent = (docSnap) => ({
+  ...docSnap.data(),
+  $id: docSnap.id,
+  $createdAt: toIso(docSnap.data().createdAt),
+});
 
 export const getEvents = async () => {
   try {
-    const response = await databases.listDocuments(
-      DATABASE_ID,
-      EVENTS_COLLECTION_ID
-    );
+    const snapshot = await getDocs(collection(db, EVENTS_COLLECTION_ID));
 
-    return { success: true, data: response.documents };
+    return { success: true, data: snapshot.docs.map(mapEvent) };
   } catch (error) {
     console.error('Get events error:', error);
     return { success: false, error: error.message };
@@ -20,13 +28,13 @@ export const getEvents = async () => {
 
 export const getEventById = async (eventId) => {
   try {
-    const response = await databases.getDocument(
-      DATABASE_ID,
-      EVENTS_COLLECTION_ID,
-      eventId
-    );
+    const docSnap = await getDoc(doc(db, EVENTS_COLLECTION_ID, eventId));
 
-    return { success: true, data: response };
+    if (!docSnap.exists()) {
+      return { success: false, error: 'Event not found' };
+    }
+
+    return { success: true, data: mapEvent(docSnap) };
   } catch (error) {
     console.error('Get event error:', error);
     return { success: false, error: error.message };
@@ -35,14 +43,11 @@ export const getEventById = async (eventId) => {
 
 export const updateEvent = async (documentId, data) => {
   try {
-    const response = await databases.updateDocument(
-      DATABASE_ID,
-      EVENTS_COLLECTION_ID,
-      documentId,
-      data
-    );
+    const docRef = doc(db, EVENTS_COLLECTION_ID, documentId);
+    await updateDoc(docRef, data);
+    const docSnap = await getDoc(docRef);
 
-    return { success: true, data: response };
+    return { success: true, data: mapEvent(docSnap) };
   } catch (error) {
     console.error('Update event error:', error);
     return { success: false, error: error.message };
