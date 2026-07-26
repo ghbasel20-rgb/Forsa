@@ -108,7 +108,7 @@ export default function SignUp() {
     <View style={styles.screen}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
-          <HeaderBrand style={styles.logoSlot} />
+          <HeaderBrand style={styles.logoSlot} logoLinksHome={false} />
 
           <TitleText style={styles.title}>{t('signUp.title')}</TitleText>
 

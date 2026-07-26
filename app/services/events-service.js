@@ -1,4 +1,5 @@
 import { databases } from '../config/appwrite-config';
+import { translateText } from './translation-service';
 
 const DATABASE_ID = '69b6e464000e1c479de5';
 const EVENTS_COLLECTION_ID = 'events';
@@ -30,6 +31,48 @@ export const getEventById = async (eventId) => {
     console.error('Get event error:', error);
     return { success: false, error: error.message };
   }
+};
+
+export const updateEvent = async (documentId, data) => {
+  try {
+    const response = await databases.updateDocument(
+      DATABASE_ID,
+      EVENTS_COLLECTION_ID,
+      documentId,
+      data
+    );
+
+    return { success: true, data: response };
+  } catch (error) {
+    console.error('Update event error:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+export const getEventWithTranslation = async (eventId, language) => {
+  const result = await getEventById(eventId);
+  if (!result.success || language !== 'ar') {
+    return result;
+  }
+
+  const event = result.data;
+  const needsTitle = !event.titleAr && !!event.title;
+  const needsDetails = !event.detailsAr && !!event.details;
+  const needsContent = !event.contentAr && !!event.content;
+
+  if (!needsTitle && !needsDetails && !needsContent) {
+    return result;
+  }
+
+  const [titleAr, detailsAr, contentAr] = await Promise.all([
+    needsTitle ? translateText(event.title, 'ar') : event.titleAr,
+    needsDetails ? translateText(event.details, 'ar') : event.detailsAr,
+    needsContent ? translateText(event.content, 'ar') : event.contentAr,
+  ]);
+
+  await updateEvent(event.$id, { titleAr, detailsAr, contentAr });
+
+  return { success: true, data: { ...event, titleAr, detailsAr, contentAr } };
 };
 
 const isPast = (date) => (date ? new Date(date).getTime() < Date.now() : false);

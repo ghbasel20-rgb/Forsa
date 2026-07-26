@@ -1,4 +1,5 @@
 import { databases, Query } from '../config/appwrite-config';
+import { translateText } from './translation-service';
 
 const DATABASE_ID = '69b6e464000e1c479de5';
 const OPPORTUNITIES_COLLECTION_ID = 'opportunities';
@@ -30,6 +31,46 @@ export const getOpportunityById = async (opportunityId) => {
     console.error('Get opportunity error:', error);
     return { success: false, error: error.message };
   }
+};
+
+export const updateOpportunity = async (documentId, data) => {
+  try {
+    const response = await databases.updateDocument(
+      DATABASE_ID,
+      OPPORTUNITIES_COLLECTION_ID,
+      documentId,
+      data
+    );
+
+    return { success: true, data: response };
+  } catch (error) {
+    console.error('Update opportunity error:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+export const getOpportunityWithTranslation = async (opportunityId, language) => {
+  const result = await getOpportunityById(opportunityId);
+  if (!result.success || language !== 'ar') {
+    return result;
+  }
+
+  const opportunity = result.data;
+  const needsTitle = !opportunity.titleAr && !!opportunity.title;
+  const needsDescription = !opportunity.descriptionAr && !!opportunity.description;
+
+  if (!needsTitle && !needsDescription) {
+    return result;
+  }
+
+  const [titleAr, descriptionAr] = await Promise.all([
+    needsTitle ? translateText(opportunity.title, 'ar') : opportunity.titleAr,
+    needsDescription ? translateText(opportunity.description, 'ar') : opportunity.descriptionAr,
+  ]);
+
+  await updateOpportunity(opportunity.$id, { titleAr, descriptionAr });
+
+  return { success: true, data: { ...opportunity, titleAr, descriptionAr } };
 };
 
 export const getOpportunitiesByLocation = async (location) => {

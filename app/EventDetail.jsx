@@ -10,14 +10,14 @@ import { getCurrentUser } from './services/auth-service';
 import {
   formatEventDate,
   formatFullDueDate,
-  getEventById,
+  getEventWithTranslation,
   isEventClosed,
 } from './services/events-service';
 import { getSavedEventStatus, unsaveEvent } from './services/saved-events-service';
 
 export default function EventDetail() {
   const router = useRouter();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { id } = useLocalSearchParams();
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -25,12 +25,12 @@ export default function EventDetail() {
 
   useEffect(() => {
     loadEvent();
-  }, [id]);
+  }, [id, language]);
 
   const loadEvent = async () => {
     if (!id) return;
 
-    const result = await getEventById(id);
+    const result = await getEventWithTranslation(id, language);
     if (result.success) {
       setEvent(result.data);
     }
@@ -56,6 +56,9 @@ export default function EventDetail() {
   };
 
   const closed = event ? isEventClosed(event) : false;
+  const displayTitle = (language === 'ar' && event?.titleAr) || event?.title;
+  const displayDetails = (language === 'ar' && event?.detailsAr) || event?.details;
+  const displayContent = (language === 'ar' && event?.contentAr) || event?.content;
 
   return (
     <View style={styles.screen}>
@@ -74,7 +77,7 @@ export default function EventDetail() {
           </View>
 
           <TitleText style={styles.title}>
-            {loading ? t('eventDetail.loading') : event?.title || t('eventDetail.defaultTitle')}
+            {loading ? t('eventDetail.loading') : displayTitle || t('eventDetail.defaultTitle')}
           </TitleText>
 
           {!loading && event && (
@@ -97,10 +100,10 @@ export default function EventDetail() {
                 </View>
               )}
 
-              {event.details && (
+              {displayDetails && (
                 <View style={styles.infoSection}>
                   <Text style={styles.label}>{t('eventDetail.detailsLabel')}</Text>
-                  <Text style={styles.value}>{event.details}</Text>
+                  <Text style={styles.value}>{displayDetails}</Text>
                 </View>
               )}
 
@@ -125,10 +128,10 @@ export default function EventDetail() {
                 </View>
               )}
 
-              {event.content && (
+              {displayContent && (
                 <View style={styles.infoSection}>
                   <Text style={styles.label}>{t('eventDetail.contentLabel')}</Text>
-                  <Text style={styles.value}>{event.content}</Text>
+                  <Text style={styles.value}>{displayContent}</Text>
                 </View>
               )}
 

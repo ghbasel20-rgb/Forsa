@@ -14,12 +14,12 @@ import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
 import { useLanguage } from './contexts/LanguageContext';
 import { getCurrentUser } from './services/auth-service';
-import { getOpportunityById } from './services/opportunities-service';
+import { getOpportunityWithTranslation } from './services/opportunities-service';
 import { checkIfSaved, saveOpportunity, unsaveOpportunity } from './services/saved-opportunities-service';
 
 export default function Opportunitydetail() {
   const router = useRouter();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { id } = useLocalSearchParams();
   const [isSaved, setIsSaved] = useState(false);
   const [savedDocumentId, setSavedDocumentId] = useState(null);
@@ -29,12 +29,12 @@ export default function Opportunitydetail() {
 
   useEffect(() => {
     loadOpportunityData();
-  }, [id]);
+  }, [id, language]);
 
   const loadOpportunityData = async () => {
     if (!id) return;
     
-    const oppResult = await getOpportunityById(id);
+    const oppResult = await getOpportunityWithTranslation(id, language);
     if (oppResult.success) {
       setOpportunity(oppResult.data);
     }
@@ -94,6 +94,9 @@ export default function Opportunitydetail() {
     }
   };
 
+  const displayTitle = (language === 'ar' && opportunity?.titleAr) || opportunity?.title;
+  const displayDescription = (language === 'ar' && opportunity?.descriptionAr) || opportunity?.description;
+
   return (
     <View style={styles.screen}>
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
@@ -118,7 +121,7 @@ export default function Opportunitydetail() {
             />
           </View>
 
-          <Text style={styles.title}>{loading ? t('opportunityDetail.loading') : opportunity?.title || t('opportunityDetail.defaultTitle')}</Text>
+          <Text style={styles.title}>{loading ? t('opportunityDetail.loading') : displayTitle || t('opportunityDetail.defaultTitle')}</Text>
 
           {!loading && opportunity && (
             <>
@@ -134,7 +137,7 @@ export default function Opportunitydetail() {
 
               <View style={styles.infoSection}>
                 <Text style={styles.label}>{t('opportunityDetail.descriptionLabel')}</Text>
-                <Text style={styles.value}>{opportunity.description || t('opportunityDetail.noDescription')}</Text>
+                <Text style={styles.value}>{displayDescription || t('opportunityDetail.noDescription')}</Text>
               </View>
 
               {opportunity.requirements && opportunity.requirements.length > 0 && (

@@ -56,7 +56,7 @@ export default function SignIn() {
 
   return (
     <View style={styles.container}>
-      <HeaderBrand style={styles.logoSlot} />
+      <HeaderBrand style={styles.logoSlot} logoLinksHome={false} />
 
       <TitleText style={styles.title}>{t('signIn.title')}</TitleText>
 
