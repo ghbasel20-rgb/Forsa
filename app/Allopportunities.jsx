@@ -7,19 +7,20 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import Badge from '../assets/images/badge.svg';
 import HomeIcon from '../assets/images/home-icon.svg';
 import Logo from '../assets/images/logowname.svg';
+import Text from './components/AppText';
+import TextInput from './components/AppTextInput';
 import BottomNav from './components/BottomNav';
 import FilterPanel from './components/FilterPanel';
 import FilterSection from './components/FilterSection';
 import SingleChoiceRow from './components/SingleChoiceRow';
-import Text from './components/AppText';
-import TextInput from './components/AppTextInput';
 import TitleText from './components/TitleText';
 import { getCurrentUser } from './services/auth-service';
 import { getAllOpportunities, scoreOpportunityMatch } from './services/opportunities-service';
 import { getUserProfile } from './services/profile-service';
-import { getDistinctValues, MATCH_THRESHOLD_OPTIONS, sortItems, SORT_OPTIONS } from './utils/filterUtils';
+import { getDistinctValues, MATCH_THRESHOLD_OPTIONS, SORT_OPTIONS, sortItems } from './utils/filterUtils';
 
 export default function AllOpportunities() {
   const router = useRouter();
@@ -33,12 +34,14 @@ export default function AllOpportunities() {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [matchThreshold, setMatchThreshold] = useState(0);
   const [sortBy, setSortBy] = useState('match');
+  const [badgeAssignments, setBadgeAssignments] = useState({});
 
   useEffect(() => {
     loadOpportunities();
   }, []);
 
   const loadOpportunities = async () => {
+  try {
     const [opportunitiesResult, userResult] = await Promise.all([
       getAllOpportunities(),
       getCurrentUser(),
@@ -46,17 +49,24 @@ export default function AllOpportunities() {
 
     if (opportunitiesResult.success) {
       setAllOpportunities(opportunitiesResult.data);
+
+      const badges = {};
+      opportunitiesResult.data.forEach((opp) => {
+        badges[opp.$id] = Math.random() < 0.5;
+      });
+      setBadgeAssignments(badges);
     }
 
     if (userResult.success) {
       const profileResult = await getUserProfile(userResult.data.$id);
-      if (profileResult.success) {
-        setProfile(profileResult.data);
-      }
+      if (profileResult.success) setProfile(profileResult.data);
     }
-
+  } finally {
     setLoading(false);
-  };
+  }
+};
+
+  
 
   const opportunitiesWithMatch = useMemo(
     () =>
@@ -187,22 +197,25 @@ export default function AllOpportunities() {
             ) : (
               filteredOpportunities.map((opp) => (
                 <TouchableOpacity
-                  key={opp.$id}
-                  style={styles.opportunityCard}
-                  onPress={() => router.push(`/Opportunitydetail?id=${opp.$id}`)}
-                >
-                  <View style={styles.iconContainer}>
-                    <Image
-                      source={require('../assets/images/icon.png')}
-                      style={styles.opportunityIcon}
-                      resizeMode="contain"
-                    />
-                  </View>
-                  <Text style={styles.opportunityTitle}>{opp.title}</Text>
-                  <View style={styles.scoreBadge}>
-                    <Text style={styles.scoreText}>{opp.matchPercentage}%</Text>
-                  </View>
-                </TouchableOpacity>
+  key={opp.$id}
+  style={styles.opportunityCard}
+  onPress={() => router.push(`/Opportunitydetail?id=${opp.$id}`)}
+>
+  <View style={styles.iconContainer}>
+    <Image
+      source={require('../assets/images/icon.png')}
+      style={styles.opportunityIcon}
+      resizeMode="contain"
+    />
+  </View>
+  <Text style={styles.opportunityTitle}>{opp.title}</Text>
+  <View style={styles.scoreBadge}>
+    <Text style={styles.scoreText}>{opp.matchPercentage}%</Text>
+  </View>
+  {badgeAssignments[opp.$id] && (
+    <Badge width={28} height={28} style={styles.badgeIcon} />
+  )}
+</TouchableOpacity>
               ))
             )}
           </View>
@@ -342,4 +355,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textDecorationLine: 'underline',
   },
+  badgeIcon: {
+  width: 28,
+  height: 28,
+},
 });
