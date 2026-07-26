@@ -65,25 +65,33 @@ export const getEventWithTranslation = async (eventId, language) => {
   const needsTitle = !isUsableTranslation(event.titleAr) && !!event.title;
   const needsDetails = !isUsableTranslation(event.detailsAr) && !!event.details;
   const needsContent = !isUsableTranslation(event.contentAr) && !!event.content;
+  const needsLocation = !isUsableTranslation(event.locationAr) && !!event.location;
+  const needsCost = !isUsableTranslation(event.costAr) && !!event.cost;
 
-  if (!needsTitle && !needsDetails && !needsContent) {
+  if (!needsTitle && !needsDetails && !needsContent && !needsLocation && !needsCost) {
     return result;
   }
 
-  const [titleAr, detailsAr, contentAr] = await Promise.all([
+  const [titleAr, detailsAr, contentAr, locationAr, costAr] = await Promise.all([
     needsTitle ? translateText(event.title, 'ar') : event.titleAr,
     needsDetails ? translateText(event.details, 'ar') : event.detailsAr,
     needsContent ? translateText(event.content, 'ar') : event.contentAr,
+    needsLocation ? translateText(event.location, 'ar') : event.locationAr,
+    needsCost ? translateText(event.cost, 'ar') : event.costAr,
   ]);
 
   const finalTitleAr = resolveTranslation(needsTitle, titleAr, event.titleAr);
   const finalDetailsAr = resolveTranslation(needsDetails, detailsAr, event.detailsAr);
   const finalContentAr = resolveTranslation(needsContent, contentAr, event.contentAr);
+  const finalLocationAr = resolveTranslation(needsLocation, locationAr, event.locationAr);
+  const finalCostAr = resolveTranslation(needsCost, costAr, event.costAr);
 
   const updates = {};
   if (needsTitle && finalTitleAr) updates.titleAr = finalTitleAr;
   if (needsDetails && finalDetailsAr) updates.detailsAr = finalDetailsAr;
   if (needsContent && finalContentAr) updates.contentAr = finalContentAr;
+  if (needsLocation && finalLocationAr) updates.locationAr = finalLocationAr;
+  if (needsCost && finalCostAr) updates.costAr = finalCostAr;
 
   if (Object.keys(updates).length > 0) {
     await updateEvent(event.$id, updates);
@@ -91,7 +99,14 @@ export const getEventWithTranslation = async (eventId, language) => {
 
   return {
     success: true,
-    data: { ...event, titleAr: finalTitleAr, detailsAr: finalDetailsAr, contentAr: finalContentAr },
+    data: {
+      ...event,
+      titleAr: finalTitleAr,
+      detailsAr: finalDetailsAr,
+      contentAr: finalContentAr,
+      locationAr: finalLocationAr,
+      costAr: finalCostAr,
+    },
   };
 };
 

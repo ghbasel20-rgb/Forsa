@@ -74,7 +74,7 @@ async function updateDocument(collectionId, documentId, data) {
   return body;
 }
 
-async function translateFields(doc, fields) {
+async function translateFields(doc, fields, arrayFields = []) {
   const updates = {};
 
   for (const field of fields) {
@@ -89,10 +89,34 @@ async function translateFields(doc, fields) {
     }
   }
 
+  for (const field of arrayFields) {
+    const arField = `${field}Ar`;
+    const values = doc[field] || [];
+    if (values.length === 0) {
+      continue;
+    }
+
+    const cached = doc[arField];
+    const cachedUsable =
+      Array.isArray(cached) && cached.length === values.length && cached.every(isUsableTranslation);
+    if (cachedUsable) {
+      continue;
+    }
+
+    const translated = [];
+    for (const value of values) {
+      translated.push(await translateText(value, 'ar'));
+    }
+
+    if (translated.every(isUsableTranslation)) {
+      updates[arField] = translated;
+    }
+  }
+
   return updates;
 }
 
-async function migrateCollection(collectionId, fields) {
+async function migrateCollection(collectionId, fields, arrayFields = []) {
   const documents = await listAllDocuments(collectionId);
   let updated = 0;
   let skipped = 0;
@@ -100,7 +124,7 @@ async function migrateCollection(collectionId, fields) {
 
   for (const doc of documents) {
     const label = doc.title || doc.$id;
-    const updates = await translateFields(doc, fields);
+    const updates = await translateFields(doc, fields, arrayFields);
 
     if (Object.keys(updates).length === 0) {
       console.log(`Skipped (already translated): ${collectionId}/${doc.$id} - ${label}`);
@@ -122,8 +146,8 @@ async function migrateCollection(collectionId, fields) {
 }
 
 async function run() {
-  await migrateCollection('opportunities', ['title', 'description']);
-  await migrateCollection('events', ['title', 'details', 'content']);
+  await migrateCollection('opportunities', ['title', 'description', 'location', 'category'], ['requirements']);
+  await migrateCollection('events', ['title', 'details', 'content', 'location', 'cost']);
   console.log('Done.');
 }
 

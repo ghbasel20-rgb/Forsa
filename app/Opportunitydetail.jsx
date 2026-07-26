@@ -96,6 +96,9 @@ export default function Opportunitydetail() {
 
   const displayTitle = (language === 'ar' && opportunity?.titleAr) || opportunity?.title;
   const displayDescription = (language === 'ar' && opportunity?.descriptionAr) || opportunity?.description;
+  const displayLocation = (language === 'ar' && opportunity?.locationAr) || opportunity?.location;
+  const displayCategory = (language === 'ar' && opportunity?.categoryAr) || opportunity?.category;
+  const displayRequirements = (language === 'ar' && opportunity?.requirementsAr) || opportunity?.requirements;
 
   return (
     <View style={styles.screen}>
@@ -127,12 +130,12 @@ export default function Opportunitydetail() {
             <>
               <View style={styles.infoSection}>
                 <Text style={styles.label}>{t('opportunityDetail.locationLabel')}</Text>
-                <Text style={styles.value}>{opportunity.location || t('opportunityDetail.notSpecified')}</Text>
+                <Text style={styles.value}>{displayLocation || t('opportunityDetail.notSpecified')}</Text>
               </View>
 
               <View style={styles.infoSection}>
                 <Text style={styles.label}>{t('opportunityDetail.categoryLabel')}</Text>
-                <Text style={styles.value}>{opportunity.category || t('opportunityDetail.notSpecified')}</Text>
+                <Text style={styles.value}>{displayCategory || t('opportunityDetail.notSpecified')}</Text>
               </View>
 
               <View style={styles.infoSection}>
@@ -143,7 +146,7 @@ export default function Opportunitydetail() {
               {opportunity.requirements && opportunity.requirements.length > 0 && (
                 <View style={styles.infoSection}>
                   <Text style={styles.label}>{t('opportunityDetail.requirementsLabel')}</Text>
-                  {opportunity.requirements.map((req, index) => (
+                  {displayRequirements.map((req, index) => (
                     <Text key={index} style={styles.requirementItem}>• {req}</Text>
                   ))}
                 </View>

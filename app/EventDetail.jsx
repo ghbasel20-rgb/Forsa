@@ -59,6 +59,8 @@ export default function EventDetail() {
   const displayTitle = (language === 'ar' && event?.titleAr) || event?.title;
   const displayDetails = (language === 'ar' && event?.detailsAr) || event?.details;
   const displayContent = (language === 'ar' && event?.contentAr) || event?.content;
+  const displayLocation = (language === 'ar' && event?.locationAr) || event?.location;
+  const displayCost = (language === 'ar' && event?.costAr) || event?.cost;
 
   return (
     <View style={styles.screen}>
@@ -110,7 +112,7 @@ export default function EventDetail() {
               {event.location && (
                 <View style={styles.infoSection}>
                   <Text style={styles.label}>{t('eventDetail.locationLabel')}</Text>
-                  <Text style={styles.value}>{event.location}</Text>
+                  <Text style={styles.value}>{displayLocation}</Text>
                 </View>
               )}
 
@@ -124,7 +126,7 @@ export default function EventDetail() {
               {event.cost && (
                 <View style={styles.infoSection}>
                   <Text style={styles.label}>{t('eventDetail.costLabel')}</Text>
-                  <Text style={styles.value}>{event.cost}</Text>
+                  <Text style={styles.value}>{displayCost}</Text>
                 </View>
               )}
 
