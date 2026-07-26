@@ -31,7 +31,7 @@ import {
 
 export default function Events() {
   const router = useRouter();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const APPLIED_OPTIONS = [
     { label: t('filterOptions.allEvents'), value: 'all' },
     { label: t('filterOptions.appliedOnly'), value: 'applied' },
@@ -219,7 +219,7 @@ export default function Events() {
                       numberOfLines={1}
                       ellipsizeMode="tail"
                     >
-                      {event.title}
+                      {(language === 'ar' && event.titleAr) || event.title}
                     </Text>
                     <View style={styles.scoreBadge}>
                       <Text style={styles.scoreText}>{event.matchPercentage}%</Text>

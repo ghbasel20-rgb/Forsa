@@ -23,7 +23,7 @@ import { getDistinctValues, getMatchThresholdOptions, getSortOptions, sortItems 
 
 export default function AllOpportunities() {
   const router = useRouter();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const MATCH_THRESHOLD_OPTIONS = getMatchThresholdOptions(t);
   const SORT_OPTIONS = getSortOptions(t);
   const [searchQuery, setSearchQuery] = useState('');
@@ -188,7 +188,7 @@ export default function AllOpportunities() {
                       resizeMode="contain"
                     />
                   </View>
-                  <Text style={styles.opportunityTitle} numberOfLines={1} ellipsizeMode="tail">{opp.title}</Text>
+                  <Text style={styles.opportunityTitle} numberOfLines={1} ellipsizeMode="tail">{(language === 'ar' && opp.titleAr) || opp.title}</Text>
                   <View style={styles.scoreBadge}>
                     <Text style={styles.scoreText}>{opp.matchPercentage}%</Text>
                   </View>

@@ -17,7 +17,7 @@ import { getUserProfile } from './services/profile-service';
 
 export default function TopMatches() {
   const router = useRouter();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [opportunities, setOpportunities] = useState([]);
 
   useEffect(() => {
@@ -60,7 +60,7 @@ export default function TopMatches() {
                 <View style={styles.numberBadge}>
                   <Text style={styles.numberText}>#{index + 1}</Text>
                 </View>
-                <Text style={styles.matchTitle} numberOfLines={1} ellipsizeMode="tail">{match.title}</Text>
+                <Text style={styles.matchTitle} numberOfLines={1} ellipsizeMode="tail">{(language === 'ar' && match.titleAr) || match.title}</Text>
                 <View style={styles.scoreBadge}>
                   <Text style={styles.scoreText}>{match.matchPercentage}{t('topMatches.matchSuffix')}</Text>
                 </View>
