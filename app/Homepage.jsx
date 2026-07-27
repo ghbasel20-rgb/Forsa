@@ -1,11 +1,14 @@
+import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
+  Image,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
   View
 } from 'react-native';
 import AboutIcon from '../assets/images/aboutus.svg';
+import CalendarIcon from '../assets/images/calender.svg';
 import Logo from '../assets/images/logowname.svg';
 import AboutUsModal from './components/AboutUsModal';
 import BottomNav from './components/BottomNav';
@@ -13,13 +16,26 @@ import Text from './components/AppText';
 import TitleText from './components/TitleText';
 import TutorialModal from './components/TutorialModal';
 import { useLanguage } from './contexts/LanguageContext';
+import { getCurrentUser } from './services/auth-service';
+import { getEvents } from './services/events-service';
+import { getAllOpportunities, getMatchedOpportunities } from './services/opportunities-service';
+import { getUserProfile } from './services/profile-service';
 import { hasSeenTutorial, markTutorialSeen } from './services/tutorial-service';
 
+const formatEventDay = (eventDate) => {
+  const date = new Date(eventDate);
+  return `${date.getDate()}/${date.getMonth() + 1}`;
+};
+
 export default function Homepage() {
-  const { t } = useLanguage();
+  const router = useRouter();
+  const { t, language } = useLanguage();
   const successStories = t('homepage.stories');
   const [aboutModalVisible, setAboutModalVisible] = useState(false);
   const [tutorialVisible, setTutorialVisible] = useState(false);
+  const [displayName, setDisplayName] = useState('');
+  const [recommendedOpportunities, setRecommendedOpportunities] = useState([]);
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
 
   useEffect(() => {
     hasSeenTutorial().then((seen) => {
@@ -28,6 +44,43 @@ export default function Homepage() {
       }
     });
   }, []);
+
+  useEffect(() => {
+    loadHomeData();
+  }, []);
+
+  const loadHomeData = async () => {
+    const userResult = await getCurrentUser();
+    let profile = null;
+    if (userResult.success) {
+      setDisplayName(userResult.data.name || '');
+
+      const profileResult = await getUserProfile(userResult.data.$id);
+      if (profileResult.success) {
+        profile = profileResult.data;
+        setDisplayName(profileResult.data.fullName || userResult.data.name || '');
+      }
+    }
+
+    const [opportunitiesResult, eventsResult] = await Promise.all([
+      getAllOpportunities(),
+      getEvents(),
+    ]);
+
+    if (opportunitiesResult.success) {
+      const { topMatches } = getMatchedOpportunities(opportunitiesResult.data, profile);
+      setRecommendedOpportunities(topMatches.slice(0, 2));
+    }
+
+    if (eventsResult.success) {
+      const now = new Date();
+      const upcoming = eventsResult.data
+        .filter((event) => event.eventDate && new Date(event.eventDate) >= now)
+        .sort((a, b) => new Date(a.eventDate) - new Date(b.eventDate))
+        .slice(0, 3);
+      setUpcomingEvents(upcoming);
+    }
+  };
 
   const finishTutorial = () => {
     setTutorialVisible(false);
@@ -42,6 +95,61 @@ export default function Homepage() {
             <Logo width={760} height={168} />
           </View>
           <View style={styles.headerUnderline} />
+
+          {displayName ? (
+            <Text style={styles.greeting}>{t('homepage.greeting', { name: displayName })}</Text>
+          ) : null}
+
+          <Text style={styles.sectionTitleInline}>{t('homepage.recommendedForYou')}</Text>
+          <View style={styles.recommendedRow}>
+            {recommendedOpportunities.length > 0 ? (
+              recommendedOpportunities.map((opp) => (
+                <View key={opp.$id} style={styles.recommendedCard}>
+                  <View style={styles.recommendedImage}>
+                    <Image
+                      source={require('../assets/images/icon.png')}
+                      style={styles.recommendedIcon}
+                      resizeMode="contain"
+                    />
+                  </View>
+                  <Text style={styles.recommendedTitle} numberOfLines={1} ellipsizeMode="tail">
+                    {(language === 'ar' && opp.titleAr) || opp.title}
+                  </Text>
+                  <TouchableOpacity
+                    style={styles.readMoreButton}
+                    onPress={() => router.push(`/Opportunitydetail?id=${opp.$id}`)}
+                  >
+                    <Text style={styles.readMoreText}>{t('homepage.readMore')}</Text>
+                  </TouchableOpacity>
+                </View>
+              ))
+            ) : (
+              <Text style={styles.emptyText}>{t('homepage.noRecommendations')}</Text>
+            )}
+          </View>
+
+          <Text style={styles.sectionTitleInline}>{t('homepage.upcomingEvents')}</Text>
+          <View style={styles.upcomingRow}>
+            {upcomingEvents.length > 0 ? (
+              upcomingEvents.map((event) => (
+                <TouchableOpacity
+                  key={event.$id}
+                  style={styles.upcomingCard}
+                  onPress={() => router.push(`/EventDetail?id=${event.$id}`)}
+                >
+                  <View style={styles.calendarIconWrapper}>
+                    <CalendarIcon width={56} height={57} />
+                    <Text style={styles.calendarDateText}>{formatEventDay(event.eventDate)}</Text>
+                  </View>
+                  <Text style={styles.upcomingEventTitle} numberOfLines={1} ellipsizeMode="tail">
+                    {(language === 'ar' && event.titleAr) || event.title}
+                  </Text>
+                </TouchableOpacity>
+              ))
+            ) : (
+              <Text style={styles.emptyText}>{t('homepage.noUpcomingEvents')}</Text>
+            )}
+          </View>
 
           <View style={styles.divider} />
 
@@ -129,6 +237,98 @@ const styles = StyleSheet.create({
     height: 2,
     backgroundColor: '#46a3a4',
     marginBottom: 30,
+  },
+  greeting: {
+    fontSize: 20,
+    color: '#46a3a4',
+    fontWeight: '600',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  sectionTitleInline: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#0a445c',
+    marginBottom: 12,
+  },
+  emptyText: {
+    fontSize: 14,
+    color: '#46a3a4',
+    fontStyle: 'italic',
+    marginBottom: 20,
+  },
+  recommendedRow: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 24,
+  },
+  recommendedCard: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+    borderRadius: 15,
+    padding: 12,
+    alignItems: 'center',
+  },
+  recommendedImage: {
+    width: '100%',
+    height: 70,
+    backgroundColor: '#46a3a4',
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  recommendedIcon: {
+    width: 40,
+    height: 40,
+    tintColor: '#ffffff',
+  },
+  recommendedTitle: {
+    fontSize: 14,
+    color: '#46a3a4',
+    fontWeight: '600',
+    marginBottom: 10,
+    alignSelf: 'flex-start',
+  },
+  readMoreButton: {
+    backgroundColor: '#e1e4e4',
+    paddingVertical: 6,
+    paddingHorizontal: 14,
+    borderRadius: 15,
+    alignSelf: 'flex-start',
+  },
+  readMoreText: {
+    color: '#0a445c',
+    fontSize: 12,
+  },
+  upcomingRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 24,
+  },
+  upcomingCard: {
+    alignItems: 'center',
+    width: 84,
+  },
+  calendarIconWrapper: {
+    width: 56,
+    height: 57,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  calendarDateText: {
+    position: 'absolute',
+    top: 22,
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#c6a2ba',
+  },
+  upcomingEventTitle: {
+    fontSize: 13,
+    color: '#46a3a4',
+    fontWeight: '500',
+    textAlign: 'center',
   },
   logoSmall: {
     width: 760,
