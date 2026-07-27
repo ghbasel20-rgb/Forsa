@@ -1,4 +1,7 @@
 const MYMEMORY_ENDPOINT = 'https://api.mymemory.translated.net/get';
+// Passing a contact email doubles MyMemory's free anonymous daily quota
+// (5,000 -> 10,000 words); no signup or verification needed.
+const MYMEMORY_CONTACT_EMAIL = 'gh.basel20@gmail.com';
 const MAX_CHUNK_LENGTH = 500;
 
 const splitIntoChunks = (text) => {
@@ -34,7 +37,7 @@ const looksLikeGarbage = (text) => /%\s{0,3}[0-9A-Fa-f]{2}/.test(text);
 
 const translateChunkWithMyMemory = async (chunk, sourceLang, targetLang) => {
   const langpair = `${sourceLang}|${targetLang}`;
-  const url = `${MYMEMORY_ENDPOINT}?q=${encodeURIComponent(chunk)}&langpair=${langpair}`;
+  const url = `${MYMEMORY_ENDPOINT}?q=${encodeURIComponent(chunk)}&langpair=${langpair}&de=${encodeURIComponent(MYMEMORY_CONTACT_EMAIL)}`;
   const response = await fetch(url);
   const body = await response.json();
   const translated = body?.responseData?.translatedText;
