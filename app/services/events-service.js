@@ -169,7 +169,7 @@ export const scoreEventMatch = (event, profile) => {
   ]);
 
   if (eventSelections.size === 0) {
-    return { matchPercentage: 100, hasRequirements: false };
+    return { matchPercentage: 0, hasRequirements: false };
   }
 
   let overlap = 0;
