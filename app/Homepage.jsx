@@ -17,7 +17,7 @@ import TitleText from './components/TitleText';
 import TutorialModal from './components/TutorialModal';
 import { useLanguage } from './contexts/LanguageContext';
 import { getCurrentUser } from './services/auth-service';
-import { getEvents } from './services/events-service';
+import { getEvents, scoreEventMatch } from './services/events-service';
 import { getAllOpportunities, getMatchedOpportunities } from './services/opportunities-service';
 import { getUserProfile } from './services/profile-service';
 import { hasSeenTutorial, markTutorialSeen } from './services/tutorial-service';
@@ -76,7 +76,14 @@ export default function Homepage() {
       const now = new Date();
       const upcoming = eventsResult.data
         .filter((event) => event.eventDate && new Date(event.eventDate) >= now)
-        .sort((a, b) => new Date(a.eventDate) - new Date(b.eventDate))
+        .map((event) => {
+          const { matchPercentage, hasRequirements } = scoreEventMatch(event, profile);
+          return { ...event, isMatch: hasRequirements && matchPercentage > 0 };
+        })
+        .sort((a, b) => {
+          if (a.isMatch !== b.isMatch) return a.isMatch ? -1 : 1;
+          return new Date(a.eventDate) - new Date(b.eventDate);
+        })
         .slice(0, 3);
       setUpcomingEvents(upcoming);
     }
