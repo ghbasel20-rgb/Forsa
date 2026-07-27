@@ -10,6 +10,7 @@ import {
 import HeaderBrand from './components/HeaderBrand';
 import { useProfile } from './ProfileContext';
 import Text from './components/AppText';
+import TitleText from './components/TitleText';
 import BackButton from './components/BackButton';
 import ChipSelector from './components/ChipSelector';
 import { useLanguage } from './contexts/LanguageContext';
@@ -137,7 +138,7 @@ export default function Buildprofileinterests() {
             <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
           </View>
 
-          <Text style={styles.title}>{t('buildProfile.interestsTitle')}</Text>
+          <TitleText style={styles.title}>{t('buildProfile.interestsTitle')}</TitleText>
 
           <ChipSelector
             options={interests}
