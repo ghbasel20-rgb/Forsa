@@ -1,5 +1,4 @@
 const MYMEMORY_ENDPOINT = 'https://api.mymemory.translated.net/get';
-const LIBRETRANSLATE_ENDPOINT = 'https://translate.argosopentech.com/translate';
 const MAX_CHUNK_LENGTH = 500;
 
 const splitIntoChunks = (text) => {
@@ -31,7 +30,7 @@ const splitIntoChunks = (text) => {
 // Catches responses that are just the untranslated/URL-encoded request
 // echoed back (seen from misbehaving proxies and broken providers), which
 // would otherwise get cached as if it were a real translation.
-const looksLikeGarbage = (text) => /%[0-9A-Fa-f]{2}/.test(text);
+const looksLikeGarbage = (text) => /%\s{0,3}[0-9A-Fa-f]{2}/.test(text);
 
 const translateChunkWithMyMemory = async (chunk, sourceLang, targetLang) => {
   const langpair = `${sourceLang}|${targetLang}`;
@@ -47,28 +46,8 @@ const translateChunkWithMyMemory = async (chunk, sourceLang, targetLang) => {
   return translated;
 };
 
-const translateChunkWithLibreTranslate = async (chunk, sourceLang, targetLang) => {
-  const response = await fetch(LIBRETRANSLATE_ENDPOINT, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ q: chunk, source: sourceLang, target: targetLang, format: 'text' }),
-  });
-  const body = await response.json();
-
-  if (!body?.translatedText || looksLikeGarbage(body.translatedText)) {
-    throw new Error(body?.error || 'LibreTranslate translation failed');
-  }
-
-  return body.translatedText;
-};
-
-const translateChunk = async (chunk, sourceLang, targetLang) => {
-  try {
-    return await translateChunkWithMyMemory(chunk, sourceLang, targetLang);
-  } catch (error) {
-    return await translateChunkWithLibreTranslate(chunk, sourceLang, targetLang);
-  }
-};
+const translateChunk = (chunk, sourceLang, targetLang) =>
+  translateChunkWithMyMemory(chunk, sourceLang, targetLang);
 
 // Returns null (never the original text) on failure, so callers can tell a
 // real translation apart from a fallback and avoid caching the fallback.
