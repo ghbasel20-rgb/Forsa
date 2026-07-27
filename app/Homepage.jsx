@@ -1,5 +1,4 @@
-import { useRouter } from 'expo-router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -7,117 +6,124 @@ import {
   View
 } from 'react-native';
 import AboutIcon from '../assets/images/aboutus.svg';
-import ContactIcon from '../assets/images/contact.svg';
-import EventsIcon from '../assets/images/events.svg';
 import Logo from '../assets/images/logowname.svg';
-import PurplePfpIcon from '../assets/images/purplePfp.svg';
-import PurpleSearchIcon from '../assets/images/purplesearch.svg';
+import AboutUsModal from './components/AboutUsModal';
+import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
 import TitleText from './components/TitleText';
-import { exploreEvents, exploreOpportunities } from './services/navigation-service';
-
-const successStories = [
-  { id: '1', name: 'Yamen Abdulaziz', info: 'Placed in a 3-month internship' },
-  { id: '2', name: 'Samir Ibrahim', info: 'Landed a volunteering role' },
-  { id: '3', name: 'Razi Shiek Ahmad', info: 'Completed a mentorship program' },
-];
+import TutorialModal from './components/TutorialModal';
+import { useLanguage } from './contexts/LanguageContext';
+import { hasSeenTutorial, markTutorialSeen } from './services/tutorial-service';
 
 export default function Homepage() {
-  const router = useRouter();
+  const { t } = useLanguage();
+  const successStories = t('homepage.stories');
+  const [aboutModalVisible, setAboutModalVisible] = useState(false);
+  const [tutorialVisible, setTutorialVisible] = useState(false);
+
+  useEffect(() => {
+    hasSeenTutorial().then((seen) => {
+      if (!seen) {
+        setTutorialVisible(true);
+      }
+    });
+  }, []);
+
+  const finishTutorial = () => {
+    setTutorialVisible(false);
+    markTutorialSeen();
+  };
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Logo width={291} height={64} />
-        </View>
-        <View style={styles.headerUnderline} />
-
-        <View style={styles.grid}>
-          <View style={styles.gridRow}>
-            <TouchableOpacity style={styles.gridItem} onPress={() => router.push('/Profile')}>
-              <View style={styles.iconCircle}>
-                <PurplePfpIcon width={44} height={44} viewBox="15 2 29 30" />
-              </View>
-              <View style={styles.labelPill}>
-                <Text style={styles.labelText}>your profile</Text>
-              </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.gridItem} onPress={() => exploreOpportunities(router)}>
-              <View style={styles.iconCircle}>
-                <PurpleSearchIcon width={44} height={44} viewBox="37.65 6.64 62.55 66.85" />
-              </View>
-              <View style={styles.labelPill}>
-                <Text style={styles.labelText}>Explore opportunities</Text>
-              </View>
-            </TouchableOpacity>
+    <View style={styles.screen}>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <Logo width={760} height={168} />
           </View>
+          <View style={styles.headerUnderline} />
 
-          <View style={styles.gridRow}>
-            <TouchableOpacity style={styles.gridItem} onPress={() => exploreEvents(router)}>
-              <View style={styles.iconCircle}>
-                <EventsIcon width={44} height={44} />
-              </View>
-              <View style={styles.labelPill}>
-                <Text style={styles.labelText}>JOIN our events!</Text>
-              </View>
-            </TouchableOpacity>
+          <View style={styles.divider} />
 
-            <TouchableOpacity style={styles.gridItem} onPress={() => {}}>
-              <View style={styles.iconCircle}>
-                <AboutIcon width={48} height={48} viewBox="324 8 794 796" />
+          <TitleText style={styles.sectionTitle}>{t('homepage.successStories')}</TitleText>
+
+          <View style={styles.storiesContainer}>
+            {successStories.map((story, index) => (
+              <View
+                key={story.id}
+                style={[
+                  styles.storyRow,
+                  index === successStories.length - 1 && styles.storyRowLast,
+                ]}
+              >
+                <View style={styles.storyInfo}>
+                  <Text style={styles.storyName} numberOfLines={1} ellipsizeMode="tail">{story.name}</Text>
+                  <Text style={styles.storyDetail} numberOfLines={1} ellipsizeMode="tail">{`#${story.info}`}</Text>
+                </View>
               </View>
-              <View style={styles.labelPill}>
-                <Text style={styles.labelText}>About us</Text>
-              </View>
-            </TouchableOpacity>
+            ))}
           </View>
         </View>
+      </ScrollView>
 
-        <View style={styles.divider} />
+      <TouchableOpacity
+        style={styles.aboutButton}
+        onPress={() => setAboutModalVisible(true)}
+      >
+        <AboutIcon width={26} height={26} viewBox="324 8 794 796" />
+      </TouchableOpacity>
 
-        <TitleText style={styles.sectionTitle}>SUCCESS STORIES</TitleText>
+      <BottomNav />
 
-        <View style={styles.storiesContainer}>
-          {successStories.map((story) => (
-            <View key={story.id} style={styles.storyRow}>
-              <View style={styles.storyPhoto} />
-              <View style={styles.storyInfo}>
-                <Text style={styles.storyName}>{story.name}</Text>
-                <Text style={styles.storyDetail}>{`#${story.info}`}</Text>
-              </View>
-            </View>
-          ))}
-        </View>
+      <AboutUsModal
+        visible={aboutModalVisible}
+        onClose={() => setAboutModalVisible(false)}
+      />
 
-        <TouchableOpacity style={styles.contactButton} onPress={() => router.push('/Contact')}>
-          <View style={styles.contactIconCircle}>
-            <ContactIcon width={20} height={20} viewBox="17.4 0 80.2 80.2" />
-          </View>
-          <Text style={styles.contactButtonText}>Contact Us</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+      <TutorialModal visible={tutorialVisible} onFinish={finishTutorial} />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+  },
+  scroll: {
+    flex: 1,
+  },
   scrollContainer: {
     flexGrow: 1,
+  },
+  aboutButton: {
+    position: 'absolute',
+    right: 12,
+    bottom: 90,
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: '#ffffff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 6,
+    zIndex: 10,
   },
   container: {
     flex: 1,
     backgroundColor: '#e1e4e4',
     padding: 20,
-    paddingTop: 60,
+    paddingTop: 20,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 10,
-    marginBottom: 12,
+    marginBottom: -8,
   },
   headerUnderline: {
     height: 2,
@@ -125,41 +131,8 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   logoSmall: {
-    width: 291,
-    height: 64,
-  },
-  grid: {
-    gap: 20,
-    marginBottom: 30,
-  },
-  gridRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  gridItem: {
-    width: '47%',
-    alignItems: 'center',
-  },
-  iconCircle: {
-    width: 90,
-    height: 90,
-    borderRadius: 45,
-    backgroundColor: '#ffffff',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  labelPill: {
-    backgroundColor: '#ffffff',
-    borderRadius: 20,
-    paddingVertical: 6,
-    paddingHorizontal: 14,
-    marginTop: 10,
-  },
-  labelText: {
-    fontSize: 12,
-    color: '#0a445c',
-    fontWeight: '600',
-    textAlign: 'center',
+    width: 760,
+    height: 168,
   },
   divider: {
     height: 1,
@@ -174,54 +147,30 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   storiesContainer: {
-    gap: 16,
+    gap: 4,
   },
   storyRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#d3dcdc',
   },
-  storyPhoto: {
-    width: 56,
-    height: 56,
-    borderRadius: 12,
-    backgroundColor: '#46a3a4',
+  storyRowLast: {
+    borderBottomWidth: 0,
   },
   storyInfo: {
     flex: 1,
   },
   storyName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#0a445c',
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#254952',
   },
   storyDetail: {
     fontSize: 13,
-    color: '#46a3a4',
+    color: '#6b8788',
     marginTop: 2,
-  },
-  contactButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'center',
-    backgroundColor: '#ffffff',
-    borderRadius: 30,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    marginTop: 28,
-    gap: 10,
-  },
-  contactIconCircle: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: '#c6a2ba',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  contactButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#46a3a4',
   },
 });

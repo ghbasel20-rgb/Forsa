@@ -1,22 +1,26 @@
 import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import Text from './AppText';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export default function FilterPanel({ activeCount = 0, onClear, children }) {
   const [expanded, setExpanded] = useState(false);
+  const { t } = useLanguage();
 
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
         <TouchableOpacity style={styles.toggle} onPress={() => setExpanded((prev) => !prev)}>
           <Text style={styles.toggleText}>
-            {expanded ? 'Hide Filters ▲' : `Filters${activeCount > 0 ? ` (${activeCount})` : ''} ▼`}
+            {expanded
+              ? t('filterPanel.hideFilters')
+              : `${t('filterPanel.filters')}${activeCount > 0 ? ` (${activeCount})` : ''} ▼`}
           </Text>
         </TouchableOpacity>
 
         {activeCount > 0 && (
           <TouchableOpacity onPress={onClear}>
-            <Text style={styles.clearText}>Clear filters</Text>
+            <Text style={styles.clearText}>{t('filterPanel.clearFilters')}</Text>
           </TouchableOpacity>
         )}
       </View>

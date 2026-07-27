@@ -7,15 +7,17 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import Logo from '../assets/images/logowname.svg';
+import HeaderBrand from './components/HeaderBrand';
 import Text from './components/AppText';
 import TextInput from './components/AppTextInput';
 import PasswordInput from './components/PasswordInput';
 import TitleText from './components/TitleText';
+import { useLanguage } from './contexts/LanguageContext';
 import { signIn, signOut } from './services/auth-service';
 
 export default function SignIn() {
   const router = useRouter();
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -27,7 +29,7 @@ export default function SignIn() {
     }
 
     if (!email || !password) {
-      Alert.alert('Error', 'Please fill in all fields');
+      Alert.alert(t('common.errorTitle'), t('signIn.fillAllFields'));
       return;
     }
 
@@ -45,24 +47,22 @@ export default function SignIn() {
     setLoading(false);
 
     if (result.success) {
-      Alert.alert('Success', 'Logged in successfully!');
+      Alert.alert(t('common.successTitle'), t('signIn.loggedInSuccess'));
       router.push('/Homepage');
     } else {
-      Alert.alert('Error', result.error);
+      Alert.alert(t('common.errorTitle'), result.error);
     }
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Logo width={173} height={38} />
-      </View>
+      <HeaderBrand style={styles.logoSlot} logoLinksHome={false} />
 
-      <TitleText style={styles.title}>LOG IN</TitleText>
+      <TitleText style={styles.title}>{t('signIn.title')}</TitleText>
 
       <View style={styles.formContainer}>
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Enter email:</Text>
+          <Text style={styles.label}>{t('signIn.emailLabel')}</Text>
           <TextInput
             style={styles.input}
             value={email}
@@ -73,7 +73,7 @@ export default function SignIn() {
         </View>
 
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Password:</Text>
+          <Text style={styles.label}>{t('signIn.passwordLabel')}</Text>
           <PasswordInput
             style={styles.input}
             value={password}
@@ -89,13 +89,14 @@ export default function SignIn() {
           {loading ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text style={styles.buttonText}>Submit</Text>
+            <Text style={styles.buttonText}>{t('signIn.submit')}</Text>
           )}
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => router.push('/Sign-up')}>
           <Text style={styles.linkText}>
-            Don't have an account? <Text style={styles.linkBold}>Sign up</Text>
+            {t('signIn.noAccount')}
+            <Text style={styles.linkBold}>{t('signIn.signUpLink')}</Text>
           </Text>
         </TouchableOpacity>
       </View>
@@ -108,18 +109,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#e1e4e4',
     padding: 20,
-    paddingTop: 60,
+    paddingTop: 80,
   },
-  header: {
+  logoSlot: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    marginBottom: 60,
-    gap: 8,
-  },
-  logoSmall: {
-    width: 173,
-    height: 38,
+    gap: 10,
+    marginBottom: 12,
   },
   title: {
     fontSize: 36,

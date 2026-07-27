@@ -1,7 +1,10 @@
 import { useFocusEffect } from '@react-navigation/native';
+import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import { default as React, useMemo, useRef, useState } from 'react';
 import {
+  ActivityIndicator,
+  Alert,
   Image,
   Modal,
   Pressable,
@@ -11,17 +14,27 @@ import {
   View,
 } from 'react-native';
 import { Calendar } from 'react-native-calendars';
+import HeaderBrand from './components/HeaderBrand';
 import EditIcon from '../assets/images/edit.svg';
-import Logo from '../assets/images/logowname.svg';
+import ProfilePlaceholder from '../assets/images/Profile.svg';
 import SettingsIcon from '../assets/images/settings.svg';
 import Text from './components/AppText';
-import BackButton from './components/BackButton';
 import BottomNav from './components/BottomNav';
+import LanguagePickerModal from './components/LanguagePickerModal';
 import StatusPickerModal from './components/StatusPickerModal';
 import TitleText from './components/TitleText';
+import { useLanguage } from './contexts/LanguageContext';
+import { interestLabelsAr, skillLabelsAr, statusLabelsAr, translateOption } from './i18n/optionLabels';
 import { getCurrentUser, signOut } from './services/auth-service';
-import { getEventById } from './services/events-service';
-import { getUserProfile, updateUserProfile } from './services/profile-service';
+import { getEventWithTranslation } from './services/events-service';
+import { getOpportunityWithTranslation } from './services/opportunities-service';
+import {
+  deleteProfileImage,
+  getProfileImageUrl,
+  getUserProfile,
+  updateUserProfile,
+  uploadProfileImage,
+} from './services/profile-service';
 import { getSavedEvents } from './services/saved-events-service';
 import { getSavedOpportunities } from './services/saved-opportunities-service';
 import { buildMarkedDates, toDateKey } from './utils/calendarUtils';
@@ -34,18 +47,22 @@ export default function Profile() {
   const [appliedEvents, setAppliedEvents] = useState([]);
   const [settingsMenuVisible, setSettingsMenuVisible] = useState(false);
   const [showStatusModal, setShowStatusModal] = useState(false);
+  const [changingImage, setChangingImage] = useState(false);
+  const [showLanguageModal, setShowLanguageModal] = useState(false);
+  const { language, changeLanguage, t } = useLanguage();
 
   useFocusEffect(
     React.useCallback(() => {
       loadUserData();
-    }, [])
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [language])
   );
 
   const loadUserData = async () => {
     const userResult = await getCurrentUser();
     if (userResult.success) {
       setUserData(userResult.data);
-      
+
       const profileResult = await getUserProfile(userResult.data.$id);
       if (profileResult.success) {
         setProfileData(profileResult.data);
@@ -53,18 +70,29 @@ export default function Profile() {
 
       const savedResult = await getSavedOpportunities(userResult.data.$id);
       if (savedResult.success) {
-        setSavedOpportunities(savedResult.data);
+        const withTitles = await Promise.all(
+          savedResult.data.map(async (saved) => {
+            const oppResult = await getOpportunityWithTranslation(saved.opportunityId, language);
+            const translatedTitle = (language === 'ar' && oppResult.data?.titleAr) || oppResult.data?.title;
+            return {
+              ...saved,
+              opportunityTitle: oppResult.success ? translatedTitle : saved.opportunityTitle,
+            };
+          })
+        );
+        setSavedOpportunities(withTitles);
       }
 
       const appliedResult = await getSavedEvents(userResult.data.$id);
       if (appliedResult.success) {
         const withTitles = await Promise.all(
           appliedResult.data.map(async (application) => {
-            const eventResult = await getEventById(application.eventId);
+            const eventResult = await getEventWithTranslation(application.eventId, language);
+            const translatedTitle = (language === 'ar' && eventResult.data?.titleAr) || eventResult.data?.title;
             return {
               ...application,
-              eventTitle: eventResult.success ? eventResult.data.title : 'Event',
-              eventDate: eventResult.success ? eventResult.data.eventDate : null, // new
+              eventTitle: eventResult.success ? translatedTitle : t('eventDetail.defaultTitle'),
+              eventDate: eventResult.success ? eventResult.data.eventDate : null,
             };
           })
         );
@@ -106,6 +134,11 @@ const handleAppliedDayPress = (day) => {
     router.replace('/Sign-in');
   };
 
+  const handleSelectLanguage = (code) => {
+    changeLanguage(code);
+    setShowLanguageModal(false);
+  };
+
   const saveStatus = async (newStatus) => {
     setShowStatusModal(false);
     const result = await updateUserProfile(profileData.$id, { educationStatus: newStatus });
@@ -126,23 +159,92 @@ const handleAppliedDayPress = (day) => {
     return age;
   };
 
+  const applyPickedImage = async (result) => {
+    if (result.canceled) return;
+
+    setChangingImage(true);
+    try {
+      const previousImageId = profileData.profileImageId;
+      const uploadResult = await uploadProfileImage(result.assets[0]);
+      if (!uploadResult.success) {
+        Alert.alert(t('profile.uploadFailedTitle'), uploadResult.error);
+        return;
+      }
+
+      const updateResult = await updateUserProfile(profileData.$id, {
+        profileImageId: uploadResult.data.$id,
+      });
+      if (!updateResult.success) {
+        Alert.alert(t('common.errorTitle'), updateResult.error);
+        return;
+      }
+
+      setProfileData(updateResult.data);
+
+      if (previousImageId) {
+        deleteProfileImage(previousImageId);
+      }
+    } finally {
+      setChangingImage(false);
+    }
+  };
+
+  const handleTakePhoto = async () => {
+    const permission = await ImagePicker.requestCameraPermissionsAsync();
+    if (!permission.granted) {
+      Alert.alert(t('profile.permissionNeededTitle'), t('profile.cameraPermissionMsg'));
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    });
+
+    await applyPickedImage(result);
+  };
+
+  const handlePickFromLibrary = async () => {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) {
+      Alert.alert(t('profile.permissionNeededTitle'), t('profile.libraryPermissionMsg'));
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    });
+
+    await applyPickedImage(result);
+  };
+
+  const handleChangeAvatar = () => {
+    if (changingImage || !profileData) return;
+
+    Alert.alert(t('profile.changePhotoTitle'), undefined, [
+      { text: t('profile.takePhoto'), onPress: handleTakePhoto },
+      { text: t('profile.chooseFromLibrary'), onPress: handlePickFromLibrary },
+      { text: t('common.cancel'), style: 'cancel' },
+    ]);
+  };
+
   return (
     <View style={styles.screen}>
-      <ScrollView ref={scrollRef} contentContainerStyle={styles.scrollContainer}>
+      <ScrollView ref={scrollRef} style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <View style={styles.headerLeft}>
-              <BackButton />
-              <TouchableOpacity
-                style={styles.settingsButton}
-                onPress={() => setSettingsMenuVisible(true)}
-              >
-                <SettingsIcon width={34} height={34} />
-              </TouchableOpacity>
-            </View>
-            <View style={styles.headerBrand}>
-              <Logo width={173} height={38} />
-            </View>
+            <TouchableOpacity
+              style={styles.settingsButton}
+              onPress={() => setSettingsMenuVisible(true)}
+            >
+              <SettingsIcon width={34} height={34} />
+            </TouchableOpacity>
+            <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" showLanguageButton={false} />
           </View>
 
           <Modal
@@ -164,50 +266,90 @@ const handleAppliedDayPress = (day) => {
                       router.push('/Admin');
                     }}
                   >
-                    <Text style={styles.settingsMenuItemText}>Admin</Text>
+                    <Text style={styles.settingsMenuItemText}>{t('profile.adminMenuItem')}</Text>
                   </TouchableOpacity>
                 )}
+                <TouchableOpacity
+                  style={styles.settingsMenuItem}
+                  onPress={() => {
+                    setSettingsMenuVisible(false);
+                    setShowLanguageModal(true);
+                  }}
+                >
+                  <Text style={styles.settingsMenuItemText}>{t('profile.languageMenuItem')}</Text>
+                </TouchableOpacity>
                 <TouchableOpacity style={styles.settingsMenuItem} onPress={handleLogout}>
-                  <Text style={styles.settingsMenuItemText}>Log out</Text>
+                  <Text style={styles.settingsMenuItemText}>{t('profile.logoutMenuItem')}</Text>
                 </TouchableOpacity>
               </View>
             </Pressable>
           </Modal>
 
+          <LanguagePickerModal
+            visible={showLanguageModal}
+            language={language}
+            onClose={() => setShowLanguageModal(false)}
+            onSelect={handleSelectLanguage}
+          />
+
           <View style={styles.profileHeader}>
-            <View style={styles.avatarContainer}>
-              <Text style={styles.avatarIcon}>👤</Text>
+            <View style={styles.avatarWrapper}>
+              <TouchableOpacity
+                style={styles.avatarContainer}
+                onPress={handleChangeAvatar}
+                disabled={changingImage}
+              >
+                {profileData?.profileImageId ? (
+                  <Image
+                    source={{ uri: getProfileImageUrl(profileData.profileImageId) }}
+                    style={styles.avatarImage}
+                  />
+                ) : (
+                  <ProfilePlaceholder width={80} height={80} />
+                )}
+              </TouchableOpacity>
+              <View style={styles.avatarEditBadge}>
+                {changingImage ? (
+                  <ActivityIndicator size="small" color="#46a3a4" />
+                ) : (
+                  <EditIcon width={18} height={18} />
+                )}
+              </View>
             </View>
-            <TitleText style={styles.profileTitle}>MY PROFILE</TitleText>
+            <TitleText style={styles.profileTitle}>{t('profile.title')}</TitleText>
           </View>
 
           <View style={styles.infoContainer}>
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Full Name</Text>
-              <Text style={styles.infoValue}>{profileData?.fullName || userData?.name || 'Loading...'}</Text>
+              <Text style={styles.infoLabel}>{t('profile.fullNameLabel')}</Text>
+              <Text style={styles.infoValue}>{profileData?.fullName || userData?.name || t('common.loading')}</Text>
             </View>
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Email:</Text>
-              <Text style={styles.infoValue}>{userData?.email || 'Loading...'}</Text>
+              <Text style={styles.infoLabel}>{t('profile.emailLabel')}</Text>
+              <Text style={styles.infoValue}>{userData?.email || t('common.loading')}</Text>
             </View>
             <TouchableOpacity
               style={styles.infoRow}
               onPress={() => setShowStatusModal(true)}
             >
               <View style={styles.infoLabelRow}>
-                <Text style={styles.infoLabel}>Status:</Text>
+                <Text style={styles.infoLabel}>{t('profile.statusLabel')}</Text>
                 <EditIcon width={32} height={32} />
               </View>
-              <Text style={styles.infoValue}>{profileData?.educationStatus || 'Not set'}</Text>
+              <Text style={styles.infoValue}>
+                {profileData?.educationStatus
+                  ? translateOption(profileData.educationStatus, language, statusLabelsAr)
+                  : t('profile.notSet')}
+              </Text>
             </TouchableOpacity>
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Age:</Text>
-              <Text style={styles.infoValue}>{profileData?.dateOfBirth ? calculateAge(profileData.dateOfBirth) : 'Not set'}</Text>
+              <Text style={styles.infoLabel}>{t('profile.ageLabel')}</Text>
+              <Text style={styles.infoValue}>{profileData?.dateOfBirth ? calculateAge(profileData.dateOfBirth) : t('profile.notSet')}</Text>
             </View>
           </View>
 
           <View style={styles.sectionHeaderRow}>
-            <Text style={styles.sectionTitleInline}>SKILLS</Text>
+            <Text style={styles.sectionTitleInline}>{t('profile.skillsHeading')}</Text>
             <TouchableOpacity onPress={() => router.push('/Buildprofileskills?edit=true')}>
               <EditIcon width={38} height={38} />
             </TouchableOpacity>
@@ -216,16 +358,16 @@ const handleAppliedDayPress = (day) => {
             {profileData?.skills?.length > 0 ? (
               profileData.skills.map((skill) => (
                 <View key={skill} style={styles.chip}>
-                  <Text style={styles.chipText}>{skill}</Text>
+                  <Text style={styles.chipText}>{translateOption(skill, language, skillLabelsAr)}</Text>
                 </View>
               ))
             ) : (
-              <Text style={styles.emptyText}>No skills added yet</Text>
+              <Text style={styles.emptyText}>{t('profile.noSkills')}</Text>
             )}
           </View>
 
           <View style={styles.sectionHeaderRow}>
-            <Text style={styles.sectionTitleInline}>INTERESTS</Text>
+            <Text style={styles.sectionTitleInline}>{t('profile.interestsHeading')}</Text>
             <TouchableOpacity onPress={() => router.push('/Buildprofileinterests?edit=true')}>
               <EditIcon width={38} height={38} />
             </TouchableOpacity>
@@ -234,11 +376,11 @@ const handleAppliedDayPress = (day) => {
             {profileData?.interests?.length > 0 ? (
               profileData.interests.map((interest) => (
                 <View key={interest} style={styles.chip}>
-                  <Text style={styles.chipText}>{interest}</Text>
+                  <Text style={styles.chipText}>{translateOption(interest, language, interestLabelsAr)}</Text>
                 </View>
               ))
             ) : (
-              <Text style={styles.emptyText}>No interests added yet</Text>
+              <Text style={styles.emptyText}>{t('profile.noInterests')}</Text>
             )}
           </View>
 
@@ -250,7 +392,7 @@ const handleAppliedDayPress = (day) => {
 
           {savedOpportunities.length > 0 && (
             <>
-              <Text style={styles.sectionTitle}>SAVED{'\n'}OPPORTUNITIES:</Text>
+              <Text style={styles.sectionTitle}>{t('profile.savedOpportunitiesHeading')}</Text>
               <View style={styles.opportunitiesContainer}>
                 {savedOpportunities.map((opp) => (
                   <TouchableOpacity
@@ -265,7 +407,7 @@ const handleAppliedDayPress = (day) => {
                         resizeMode="contain"
                       />
                     </View>
-                    <Text style={styles.opportunityTitle}>{opp.opportunityTitle}</Text>
+                    <Text style={styles.opportunityTitle} numberOfLines={1} ellipsizeMode="tail">{opp.opportunityTitle}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -273,7 +415,7 @@ const handleAppliedDayPress = (day) => {
           )}
 {appliedEvents.length > 0 && (
             <>
-              <Text style={styles.sectionTitle}>APPLIED{'\n'}EVENTS:</Text>
+              <Text style={styles.sectionTitle}>{t('profile.appliedEventsHeading')}</Text>
               <Calendar
                 markingType="custom"
                 markedDates={markedAppliedDates}
@@ -305,12 +447,12 @@ const handleAppliedDayPress = (day) => {
                         resizeMode="contain"
                       />
                     </View>
-                    <Text style={styles.opportunityTitle}>{application.eventTitle}</Text>
+                    <Text style={styles.opportunityTitle} numberOfLines={1} ellipsizeMode="tail">{application.eventTitle}</Text>
                     <TouchableOpacity
                       style={styles.readMoreButton}
                       onPress={() => router.push(`/Status?id=${application.$id}`)}
                     >
-                      <Text style={styles.readMoreText}>View status</Text>
+                      <Text style={styles.readMoreText}>{t('profile.viewStatusButton')}</Text>
                     </TouchableOpacity>
                   </View>
                 ))}
@@ -327,6 +469,9 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
   },
+  scroll: {
+    flex: 1,
+  },
   scrollContainer: {
     flexGrow: 1,
   },
@@ -334,7 +479,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#e1e4e4',
     padding: 20,
-    paddingTop: 60,
+    paddingTop: 80,
   },
   header: {
     flexDirection: 'row',
@@ -342,24 +487,23 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 30,
   },
-  headerBrand: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
   settingsButton: {
-    padding: 8,
+    marginRight: 8,
+  },
+  logoSlot: {
+    flex: 1,
+    marginLeft: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    gap: 10,
   },
   menuOverlay: {
     flex: 1,
   },
   settingsMenu: {
     position: 'absolute',
-    top: 96,
+    top: 166,
     left: 20,
     backgroundColor: '#ffffff',
     borderRadius: 12,
@@ -380,26 +524,40 @@ const styles = StyleSheet.create({
     color: '#0a445c',
     fontWeight: '500',
   },
-  logoSmall: {
-    width: 173,
-    height: 38,
-  },
   profileHeader: {
     alignItems: 'center',
     marginBottom: 30,
+  },
+  avatarWrapper: {
+    width: 80,
+    height: 80,
+    marginBottom: 12,
   },
   avatarContainer: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#46a3a4',
+    backgroundColor: '#ffffff',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 12,
+    overflow: 'hidden',
   },
-  avatarIcon: {
-    fontSize: 40,
-    color: '#ffffff',
+  avatarImage: {
+    width: 80,
+    height: 80,
+  },
+  avatarEditBadge: {
+    position: 'absolute',
+    top: -6,
+    right: -6,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#ffffff',
+    borderWidth: 2,
+    borderColor: '#46a3a4',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   profileTitle: {
     fontSize: 28,

@@ -8,22 +8,25 @@ import {
   View,
 } from 'react-native';
 import Badge from '../assets/images/badge.svg';
-import HomeIcon from '../assets/images/home-icon.svg';
-import Logo from '../assets/images/logowname.svg';
-import Text from './components/AppText';
-import TextInput from './components/AppTextInput';
+import HeaderBrand from './components/HeaderBrand';
 import BottomNav from './components/BottomNav';
 import FilterPanel from './components/FilterPanel';
 import FilterSection from './components/FilterSection';
 import SingleChoiceRow from './components/SingleChoiceRow';
+import Text from './components/AppText';
+import TextInput from './components/AppTextInput';
 import TitleText from './components/TitleText';
+import { useLanguage } from './contexts/LanguageContext';
 import { getCurrentUser } from './services/auth-service';
 import { getAllOpportunities, scoreOpportunityMatch } from './services/opportunities-service';
 import { getUserProfile } from './services/profile-service';
-import { getDistinctValues, MATCH_THRESHOLD_OPTIONS, SORT_OPTIONS, sortItems } from './utils/filterUtils';
+import { getDistinctValues, getMatchThresholdOptions, getSortOptions, sortItems } from './utils/filterUtils';
 
 export default function AllOpportunities() {
   const router = useRouter();
+  const { t, language } = useLanguage();
+  const MATCH_THRESHOLD_OPTIONS = getMatchThresholdOptions(t);
+  const SORT_OPTIONS = getSortOptions(t);
   const [searchQuery, setSearchQuery] = useState('');
   const [allOpportunities, setAllOpportunities] = useState([]);
   const [profile, setProfile] = useState(null);
@@ -128,31 +131,18 @@ export default function AllOpportunities() {
 
   return (
     <View style={styles.screen}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <View style={styles.leftSection}>
-              <TouchableOpacity
-                style={styles.backButton}
-                onPress={() => router.back()}
-              >
-                <Text style={styles.backText}>{'< Back'}</Text>
-              </TouchableOpacity>
-              <Logo width={173} height={38} style={styles.logoSmall} />
-            </View>
-            <View style={styles.rightSection}>
-              <TouchableOpacity onPress={() => router.push('/Homepage')}>
-                <HomeIcon width={40} height={40} style={styles.homeIcon} />
-              </TouchableOpacity>
-            </View>
+            <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
           </View>
 
-          <TitleText style={styles.title}>ALL{'\n'}OPPORTUNITIES</TitleText>
+          <TitleText style={styles.title}>{t('allOpportunities.title')}</TitleText>
 
           <View style={styles.searchContainer}>
             <TextInput
               style={styles.searchInput}
-              placeholder="Search opportunities..."
+              placeholder={t('allOpportunities.searchPlaceholder')}
               placeholderTextColor="#46a3a4"
               value={searchQuery}
               onChangeText={setSearchQuery}
@@ -161,61 +151,61 @@ export default function AllOpportunities() {
 
           <FilterPanel activeCount={activeFilterCount} onClear={handleClearFilters}>
             <FilterSection
-              label="Skills"
+              label={t('filterLabels.skills')}
               options={skillOptions}
               selected={selectedSkills}
               onChange={setSelectedSkills}
             />
             <FilterSection
-              label="Interests"
+              label={t('filterLabels.interests')}
               options={interestOptions}
               selected={selectedInterests}
               onChange={setSelectedInterests}
             />
             {categoryOptions.length > 0 && (
               <FilterSection
-                label="Category"
+                label={t('filterLabels.category')}
                 options={categoryOptions}
                 selected={selectedCategories}
                 onChange={setSelectedCategories}
               />
             )}
             <SingleChoiceRow
-              label="Minimum Match"
+              label={t('filterLabels.minimumMatch')}
               options={MATCH_THRESHOLD_OPTIONS}
               value={matchThreshold}
               onChange={setMatchThreshold}
             />
-            <SingleChoiceRow label="Sort By" options={SORT_OPTIONS} value={sortBy} onChange={setSortBy} />
+            <SingleChoiceRow label={t('filterLabels.sortBy')} options={SORT_OPTIONS} value={sortBy} onChange={setSortBy} />
           </FilterPanel>
 
           <View style={styles.opportunitiesContainer}>
             {loading ? (
-              <Text style={styles.loadingText}>Loading opportunities...</Text>
+              <Text style={styles.loadingText}>{t('allOpportunities.loadingText')}</Text>
             ) : filteredOpportunities.length === 0 ? (
-              <Text style={styles.loadingText}>No opportunities match your search or filters</Text>
+              <Text style={styles.loadingText}>{t('allOpportunities.emptyText')}</Text>
             ) : (
               filteredOpportunities.map((opp) => (
                 <TouchableOpacity
-  key={opp.$id}
-  style={styles.opportunityCard}
-  onPress={() => router.push(`/Opportunitydetail?id=${opp.$id}`)}
->
-  <View style={styles.iconContainer}>
-    <Image
-      source={require('../assets/images/icon.png')}
-      style={styles.opportunityIcon}
-      resizeMode="contain"
-    />
-  </View>
-  <Text style={styles.opportunityTitle}>{opp.title}</Text>
-  <View style={styles.scoreBadge}>
-    <Text style={styles.scoreText}>{opp.matchPercentage}%</Text>
-  </View>
-  {badgeAssignments[opp.$id] && (
-    <Badge width={28} height={28} style={styles.badgeIcon} />
-  )}
-</TouchableOpacity>
+                  key={opp.$id}
+                  style={styles.opportunityCard}
+                  onPress={() => router.push(`/Opportunitydetail?id=${opp.$id}`)}
+                >
+                  <View style={styles.iconContainer}>
+                    <Image
+                      source={require('../assets/images/icon.png')}
+                      style={styles.opportunityIcon}
+                      resizeMode="contain"
+                    />
+                  </View>
+                  <Text style={styles.opportunityTitle} numberOfLines={1} ellipsizeMode="tail">{(language === 'ar' && opp.titleAr) || opp.title}</Text>
+                  <View style={styles.scoreBadge}>
+                    <Text style={styles.scoreText}>{opp.matchPercentage}%</Text>
+                  </View>
+                  {badgeAssignments[opp.$id] && (
+                    <Badge width={28} height={28} style={styles.badgeIcon} />
+                  )}
+                </TouchableOpacity>
               ))
             )}
           </View>
@@ -224,7 +214,7 @@ export default function AllOpportunities() {
             style={styles.topMatchesButton}
             onPress={() => router.push('/TopMatches')}
           >
-            <Text style={styles.topMatchesText}>View your top matches</Text>
+            <Text style={styles.topMatchesText}>{t('allOpportunities.viewTopMatches')}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -237,6 +227,9 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
   },
+  scroll: {
+    flex: 1,
+  },
   scrollContainer: {
     flexGrow: 1,
   },
@@ -244,7 +237,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#e1e4e4',
     padding: 20,
-    paddingTop: 60,
+    paddingTop: 80,
   },
   header: {
     flexDirection: 'row',
@@ -252,30 +245,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 30,
   },
-  leftSection: {
+  logoSlot: {
+    flex: 1,
+    marginLeft: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-  },
-  rightSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 16,
-  },
-  backButton: {
-    marginRight: 8,
-  },
-  backText: {
-    fontSize: 16,
-    color: '#0a445c',
-  },
-  logoSmall: {
-    width: 173,
-    height: 38,
-  },
-  homeIcon: {
-    width: 40,
-    height: 40,
+    justifyContent: 'flex-end',
+    gap: 10,
   },
   title: {
     fontSize: 32,

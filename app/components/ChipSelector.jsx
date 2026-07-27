@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Modal, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Text from './AppText';
 import TextInput from './AppTextInput';
+import { useLanguage } from '../contexts/LanguageContext';
+import { translateOption } from '../i18n/optionLabels';
 
 export default function ChipSelector({
   options,
@@ -10,7 +12,9 @@ export default function ChipSelector({
   modalTitle = 'Enter Your Own',
   placeholder = 'Type here',
   submitLabel = 'Add',
+  optionLabels = {},
 }) {
+  const { language } = useLanguage();
   const [showCustomInput, setShowCustomInput] = useState(false);
   const [customValue, setCustomValue] = useState('');
 
@@ -44,7 +48,7 @@ export default function ChipSelector({
             onPress={() => toggle(option)}
           >
             <Text style={[styles.chipText, selected.includes(option) && styles.chipTextSelected]}>
-              {option}
+              {translateOption(option, language, optionLabels)}
             </Text>
           </TouchableOpacity>
         ))}

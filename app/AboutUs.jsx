@@ -1,0 +1,202 @@
+import React, { useState } from 'react';
+import { Linking, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import InstaIcon from '../assets/images/insta.svg';
+import HeaderBrand from './components/HeaderBrand';
+import WhatsIcon from '../assets/images/whats.svg';
+import BackButton from './components/BackButton';
+import Text from './components/AppText';
+import BottomNav from './components/BottomNav';
+import TitleText from './components/TitleText';
+import { useLanguage } from './contexts/LanguageContext';
+import { getFaqs } from './data/faqs';
+
+const WHATSAPP_URL = 'https://chat.whatsapp.com/EudPXkosHkY9yfcOh1fjRq';
+const INSTAGRAM_URL = 'https://www.instagram.com/forsa.meet?igsh=YWVvMTZwOWl5NTN0';
+
+export default function AboutUs() {
+  const { t, language } = useLanguage();
+  const FAQS = getFaqs(language);
+  const [openFaqId, setOpenFaqId] = useState(null);
+
+  const toggleFaq = (id) => {
+    setOpenFaqId((current) => (current === id ? null : id));
+  };
+
+  const openLink = async (url) => {
+    try {
+      await Linking.openURL(url);
+    } catch (error) {
+      console.error('Failed to open link:', error);
+    }
+  };
+
+  return (
+    <View style={styles.screen}>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
+          </View>
+
+          <TitleText style={styles.title}>{t('aboutUs.title')}</TitleText>
+
+          <BackButton style={styles.backButton} />
+
+          <Text style={styles.sectionTitle}>{t('aboutUs.visionHeading')}</Text>
+          <Text style={styles.visionText}>{t('aboutUs.visionText')}</Text>
+
+          <Text style={styles.sectionTitle}>{t('aboutUs.faqsHeading')}</Text>
+          <View style={styles.faqContainer}>
+            {FAQS.map((faq) => {
+              const isOpen = openFaqId === faq.id;
+              return (
+                <View key={faq.id} style={styles.faqItem}>
+                  <TouchableOpacity style={styles.faqRow} onPress={() => toggleFaq(faq.id)}>
+                    <Text style={styles.faqQuestion}>{faq.question}</Text>
+                    <Text style={styles.faqPlus}>{isOpen ? '−' : '+'}</Text>
+                  </TouchableOpacity>
+                  {isOpen && (
+                    <View style={styles.faqAnswerContainer}>
+                      <Text style={styles.faqAnswer}>{faq.answer}</Text>
+                    </View>
+                  )}
+                </View>
+              );
+            })}
+          </View>
+
+          <View style={styles.contactContainer}>
+            <TouchableOpacity style={styles.contactRow} onPress={() => openLink(WHATSAPP_URL)}>
+              <View style={styles.iconCircle}>
+                <WhatsIcon width={36} height={36} />
+              </View>
+              <Text style={styles.contactLabel}>{t('aboutUs.whatsappLabel')}</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.contactRow} onPress={() => openLink(INSTAGRAM_URL)}>
+              <View style={styles.iconCircle}>
+                <InstaIcon width={36} height={36} />
+              </View>
+              <Text style={styles.contactLabel}>{t('aboutUs.instagramLabel')}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ScrollView>
+      <BottomNav />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+  },
+  scroll: {
+    flex: 1,
+  },
+  scrollContainer: {
+    flexGrow: 1,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: '#e1e4e4',
+    padding: 20,
+    paddingTop: 80,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 30,
+  },
+  logoSlot: {
+    flex: 1,
+    marginLeft: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    gap: 10,
+  },
+  title: {
+    fontSize: 32,
+    color: '#0a445c',
+    textAlign: 'left',
+    marginBottom: 24,
+    flexShrink: 1,
+    flexWrap: 'wrap',
+  },
+  backButton: {
+    alignSelf: 'flex-start',
+    marginBottom: 12,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#0a445c',
+    marginBottom: 12,
+    marginTop: 20,
+  },
+  visionText: {
+    fontSize: 15,
+    color: '#0a445c',
+    lineHeight: 22,
+  },
+  faqContainer: {
+    marginBottom: 10,
+  },
+  faqItem: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#46a3a4',
+  },
+  faqRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 12,
+    paddingVertical: 16,
+  },
+  faqQuestion: {
+    flex: 1,
+    fontSize: 15,
+    color: '#0a445c',
+    lineHeight: 20,
+  },
+  faqPlus: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#0a445c',
+  },
+  faqAnswerContainer: {
+    paddingBottom: 16,
+    paddingRight: 28,
+  },
+  faqAnswer: {
+    fontSize: 14,
+    color: '#0a445c',
+    lineHeight: 20,
+  },
+  contactContainer: {
+    marginTop: 20,
+  },
+  contactRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+    marginBottom: 24,
+  },
+  iconCircle: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: '#ffffff',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  contactLabel: {
+    flex: 1,
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#0a445c',
+    lineHeight: 23,
+  },
+});

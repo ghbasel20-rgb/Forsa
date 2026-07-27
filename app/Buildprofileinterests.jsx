@@ -7,16 +7,19 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import Logo from '../assets/images/logowname.svg';
+import HeaderBrand from './components/HeaderBrand';
 import { useProfile } from './ProfileContext';
 import Text from './components/AppText';
 import BackButton from './components/BackButton';
 import ChipSelector from './components/ChipSelector';
+import { useLanguage } from './contexts/LanguageContext';
+import { interestLabelsAr } from './i18n/optionLabels';
 import { getCurrentUser } from './services/auth-service';
 import { getUserProfile, updateUserProfile } from './services/profile-service';
 
 export default function Buildprofileinterests() {
   const router = useRouter();
+  const { t } = useLanguage();
   const { edit, flow } = useLocalSearchParams();
   const { profileData, clearProfile } = useProfile();
   const [selectedInterests, setSelectedInterests] = useState([]);
@@ -72,14 +75,14 @@ export default function Buildprofileinterests() {
 
   const handleNext = async () => {
     if (selectedInterests.length < 3) {
-      Alert.alert('Error', 'Please select at least three interests');
+      Alert.alert(t('common.errorTitle'), t('buildProfile.selectInterestError'));
       return;
     }
 
     try {
       const currentUserResult = await getCurrentUser();
       if (!currentUserResult.success) {
-        Alert.alert('Error', 'Could not get user information');
+        Alert.alert(t('common.errorTitle'), t('buildProfile.couldNotGetUser'));
         return;
       }
 
@@ -87,7 +90,7 @@ export default function Buildprofileinterests() {
 
       const profileResult = await getUserProfile(userId);
       if (!profileResult.success) {
-        Alert.alert('Error', 'Could not find your profile');
+        Alert.alert(t('common.errorTitle'), t('buildProfile.couldNotFindProfile'));
         return;
       }
 
@@ -103,55 +106,62 @@ export default function Buildprofileinterests() {
 
       if (result.success) {
         clearProfile();
-        Alert.alert('Success', 'Profile updated successfully!');
-        router.push(
-          edit
-            ? '/Profile'
-            : flow === 'events'
-            ? '/EventTopMatches'
-            : flow === 'signup'
-            ? '/Homepage'
-            : '/TopMatches'
-        );
+        if (edit) {
+          Alert.alert(t('common.successTitle'), t('buildProfile.profileUpdateSuccess'));
+          router.push('/Profile');
+        } else {
+          // Preferred language page is temporarily skipped after skills/interests.
+          router.push(
+            flow === 'events'
+              ? '/EventTopMatches'
+              : flow === 'signup'
+              ? '/Homepage'
+              : '/TopMatches'
+          );
+        }
       } else {
-        Alert.alert('Error', result.error);
+        Alert.alert(t('common.errorTitle'), result.error);
       }
     } catch (error) {
       console.error('Profile save error:', error);
-      Alert.alert('Error', 'Failed to save profile');
+      Alert.alert(t('common.errorTitle'), t('buildProfile.profileSaveError'));
     }
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <BackButton />
-          <View style={styles.logoContainer}>
-            <Logo width={173} height={38} style={styles.logoSmall} />
+    <View style={styles.screen}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <BackButton />
+            <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
           </View>
+
+          <Text style={styles.title}>{t('buildProfile.interestsTitle')}</Text>
+
+          <ChipSelector
+            options={interests}
+            selected={selectedInterests}
+            onChange={setSelectedInterests}
+            modalTitle={t('buildProfile.interestModalTitle')}
+            placeholder={t('buildProfile.interestPlaceholder')}
+            submitLabel={t('buildProfile.addInterestButton')}
+            optionLabels={interestLabelsAr}
+          />
+
+          <TouchableOpacity style={styles.button} onPress={handleNext}>
+            <Text style={styles.buttonText}>{edit ? t('buildProfile.finishEditingButton') : t('buildProfile.nextButton')}</Text>
+          </TouchableOpacity>
         </View>
-
-        <Text style={styles.title}>SELECT YOUR{'\n'}INTERESTS</Text>
-
-        <ChipSelector
-          options={interests}
-          selected={selectedInterests}
-          onChange={setSelectedInterests}
-          modalTitle="Enter Your Interest"
-          placeholder="Type your interest"
-          submitLabel="Add Interest"
-        />
-
-        <TouchableOpacity style={styles.button} onPress={handleNext}>
-          <Text style={styles.buttonText}>{edit ? 'Finish Editing' : 'Complete Profile'}</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+  },
   scrollContainer: {
     flexGrow: 1,
   },
@@ -159,7 +169,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#e1e4e4',
     padding: 20,
-    paddingTop: 60,
+    paddingTop: 80,
   },
   header: {
     flexDirection: 'row',
@@ -167,14 +177,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 40,
   },
-  logoContainer: {
+  logoSlot: {
+    flex: 1,
+    marginLeft: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-  },
-  logoSmall: {
-    width: 173,
-    height: 38,
+    justifyContent: 'flex-end',
+    gap: 10,
   },
   title: {
     fontSize: 32,

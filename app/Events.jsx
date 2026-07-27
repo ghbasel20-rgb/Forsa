@@ -1,17 +1,10 @@
 import { useRouter } from 'expo-router';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Calendar } from 'react-native-calendars';
-import Logo from '../assets/images/logowname.svg';
+import HeaderBrand from './components/HeaderBrand';
 import Text from './components/AppText';
 import TextInput from './components/AppTextInput';
-import BackButton from './components/BackButton';
 import BottomNav from './components/BottomNav';
 import FilterPanel from './components/FilterPanel';
 import FilterSection from './components/FilterSection';
@@ -25,25 +18,28 @@ import {
   isEventClosed,
   scoreEventMatch,
 } from './services/events-service';
+import { useLanguage } from './contexts/LanguageContext';
 import { getUserProfile } from './services/profile-service';
 import { getSavedEvents } from './services/saved-events-service';
 import { buildMarkedDates, toDateKey } from './utils/calendarUtils';
 import {
   AGE_BUCKETS,
-  EVENT_SORT_OPTIONS,
   eventMatchesAgeBuckets,
   getDistinctValues,
-  MATCH_THRESHOLD_OPTIONS,
+  getEventSortOptions,
+  getMatchThresholdOptions,
   sortItems,
 } from './utils/filterUtils';
 
-const APPLIED_OPTIONS = [
-  { label: 'All Events', value: 'all' },
-  { label: 'Applied Only', value: 'applied' },
-];
-
 export default function Events() {
   const router = useRouter();
+  const { t, language } = useLanguage();
+  const APPLIED_OPTIONS = [
+    { label: t('filterOptions.allEvents'), value: 'all' },
+    { label: t('filterOptions.appliedOnly'), value: 'applied' },
+  ];
+  const MATCH_THRESHOLD_OPTIONS = getMatchThresholdOptions(t);
+  const EVENT_SORT_OPTIONS = getEventSortOptions(t);
   const [events, setEvents] = useState([]);
   const [profile, setProfile] = useState(null);
   const [appliedEventIds, setAppliedEventIds] = useState(new Set());
@@ -173,30 +169,29 @@ const handleDayPress = (day) => {
 
   return (
     <View style={styles.screen}>
-      <ScrollView ref={scrollRef} contentContainerStyle={styles.scrollContainer}>
+      <ScrollView ref={scrollRef} style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <BackButton />
-            <Logo width={173} height={38} style={styles.logoSmall} />
+            <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
           </View>
 
-          <TitleText style={styles.title}>OUR EVENTS</TitleText>
-<Calendar
-  markingType="custom"
-  markedDates={markedEventDates}
-  onDayPress={handleDayPress}
-  theme={{
-    todayTextColor: '#46a3a4',
-    arrowColor: '#0a445c',
-    textMonthFontWeight: '600',
-  }}
-  style={styles.calendar}
-/>
+          <TitleText style={styles.title}>{t('events.title')}</TitleText>
+          <Calendar
+            markingType="custom"
+            markedDates={markedEventDates}
+            onDayPress={handleDayPress}
+            theme={{
+              todayTextColor: '#46a3a4',
+              arrowColor: '#0a445c',
+              textMonthFontWeight: '600',
+            }}
+            style={styles.calendar}
+          />
 
           <View style={styles.searchContainer}>
             <TextInput
               style={styles.searchInput}
-              placeholder="Search events..."
+              placeholder={t('events.searchPlaceholder')}
               placeholderTextColor="#46a3a4"
               value={searchQuery}
               onChangeText={setSearchQuery}
@@ -205,44 +200,44 @@ const handleDayPress = (day) => {
 
           <FilterPanel activeCount={activeFilterCount} onClear={handleClearFilters}>
             <FilterSection
-              label="Skills"
+              label={t('filterLabels.skills')}
               options={skillOptions}
               selected={selectedSkills}
               onChange={setSelectedSkills}
             />
             <FilterSection
-              label="Interests"
+              label={t('filterLabels.interests')}
               options={interestOptions}
               selected={selectedInterests}
               onChange={setSelectedInterests}
             />
             <FilterSection
-              label="Age Range"
+              label={t('filterLabels.ageRange')}
               options={ageBucketOptions}
               selected={selectedAgeBuckets}
               onChange={setSelectedAgeBuckets}
             />
             <SingleChoiceRow
-              label="Status"
+              label={t('filterLabels.status')}
               options={APPLIED_OPTIONS}
               value={appliedFilter}
               onChange={setAppliedFilter}
             />
             <SingleChoiceRow
-              label="Minimum Match"
+              label={t('filterLabels.minimumMatch')}
               options={MATCH_THRESHOLD_OPTIONS}
               value={matchThreshold}
               onChange={setMatchThreshold}
             />
-            <SingleChoiceRow label="Sort By" options={EVENT_SORT_OPTIONS} value={sortBy} onChange={setSortBy} />
+            <SingleChoiceRow label={t('filterLabels.sortBy')} options={EVENT_SORT_OPTIONS} value={sortBy} onChange={setSortBy} />
           </FilterPanel>
 
           <View style={styles.eventsContainer}
               onLayout={(e) => { eventsContainerY.current = e.nativeEvent.layout.y; }}>
             {loading ? (
-              <Text style={styles.loadingText}>Loading events...</Text>
+              <Text style={styles.loadingText}>{t('events.loadingText')}</Text>
             ) : filteredEvents.length === 0 ? (
-              <Text style={styles.loadingText}>No events match your search or filters</Text>
+              <Text style={styles.loadingText}>{t('events.emptyText')}</Text>
             ) : (
               filteredEvents.map((event) => (
                 <TouchableOpacity
@@ -263,8 +258,12 @@ const handleDayPress = (day) => {
                         resizeMode="contain"
                       />
                     </View>
-                    <Text style={[styles.eventTitle, event.isClosed && styles.eventTitleClosed]}>
-                      {event.title}
+                    <Text
+                      style={[styles.eventTitle, event.isClosed && styles.eventTitleClosed]}
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                    >
+                      {(language === 'ar' && event.titleAr) || event.title}
                     </Text>
                     <View style={styles.scoreBadge}>
                       <Text style={styles.scoreText}>{event.matchPercentage}%</Text>
@@ -280,7 +279,7 @@ const handleDayPress = (day) => {
                       </Text>
                       {event.isClosed && (
                         <View style={styles.closedBadge}>
-                          <Text style={styles.closedBadgeText}>Closed</Text>
+                          <Text style={styles.closedBadgeText}>{t('events.closedBadge')}</Text>
                         </View>
                       )}
                     </View>
@@ -308,6 +307,9 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
   },
+  scroll: {
+    flex: 1,
+  },
   scrollContainer: {
     flexGrow: 1,
   },
@@ -315,7 +317,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#e1e4e4',
     padding: 20,
-    paddingTop: 60,
+    paddingTop: 80,
   },
   header: {
     flexDirection: 'row',
@@ -323,9 +325,13 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 20,
   },
-  logoSmall: {
-    width: 173,
-    height: 38,
+  logoSlot: {
+    flex: 1,
+    marginLeft: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    gap: 10,
   },
   title: {
     fontSize: 32,

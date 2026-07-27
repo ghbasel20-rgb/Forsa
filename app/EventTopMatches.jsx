@@ -6,17 +6,18 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import Logo from '../assets/images/logowname.svg';
-import BackButton from './components/BackButton';
+import HeaderBrand from './components/HeaderBrand';
 import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
 import TitleText from './components/TitleText';
+import { useLanguage } from './contexts/LanguageContext';
 import { getCurrentUser } from './services/auth-service';
 import { getEvents, getMatchedEvents } from './services/events-service';
 import { getUserProfile } from './services/profile-service';
 
 export default function EventTopMatches() {
   const router = useRouter();
+  const { t, language } = useLanguage();
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
@@ -41,16 +42,13 @@ export default function EventTopMatches() {
 
   return (
     <View style={styles.screen}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <BackButton />
-            <View style={styles.logoContainer}>
-              <Logo width={173} height={38} style={styles.logoSmall} />
-            </View>
+            <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
           </View>
 
-          <TitleText style={styles.title}>YOUR TOP{'\n'}EVENT MATCHES</TitleText>
+          <TitleText style={styles.title}>{t('eventTopMatches.title')}</TitleText>
 
           <View style={styles.matchesContainer}>
             {events.map((match, index) => (
@@ -62,9 +60,9 @@ export default function EventTopMatches() {
                 <View style={styles.numberBadge}>
                   <Text style={styles.numberText}>#{index + 1}</Text>
                 </View>
-                <Text style={styles.matchTitle}>{match.title}</Text>
+                <Text style={styles.matchTitle} numberOfLines={1} ellipsizeMode="tail">{(language === 'ar' && match.titleAr) || match.title}</Text>
                 <View style={styles.scoreBadge}>
-                  <Text style={styles.scoreText}>{match.matchPercentage}% Match</Text>
+                  <Text style={styles.scoreText}>{match.matchPercentage}{t('eventTopMatches.matchSuffix')}</Text>
                 </View>
               </TouchableOpacity>
             ))}
@@ -74,7 +72,7 @@ export default function EventTopMatches() {
             style={styles.allEventsButton}
             onPress={() => router.push('/Events')}
           >
-            <Text style={styles.allEventsText}>Explore all events</Text>
+            <Text style={styles.allEventsText}>{t('eventTopMatches.exploreEvents')}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -87,6 +85,9 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
   },
+  scroll: {
+    flex: 1,
+  },
   scrollContainer: {
     flexGrow: 1,
   },
@@ -94,7 +95,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#e1e4e4',
     padding: 20,
-    paddingTop: 60,
+    paddingTop: 80,
   },
   header: {
     flexDirection: 'row',
@@ -102,14 +103,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 30,
   },
-  logoContainer: {
+  logoSlot: {
+    flex: 1,
+    marginLeft: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-  },
-  logoSmall: {
-    width: 173,
-    height: 38,
+    justifyContent: 'flex-end',
+    gap: 10,
   },
   title: {
     fontSize: 32,

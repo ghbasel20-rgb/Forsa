@@ -2,11 +2,12 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import HomeIcon from '../assets/images/home-icon.svg';
-import Logo from '../assets/images/logowname.svg';
+import HeaderBrand from './components/HeaderBrand';
 import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
 import TextInput from './components/AppTextInput';
 import TitleText from './components/TitleText';
+import { useLanguage } from './contexts/LanguageContext';
 import { getCurrentUser } from './services/auth-service';
 import { getEventById, isEventClosed } from './services/events-service';
 import { getUserProfile } from './services/profile-service';
@@ -14,6 +15,7 @@ import { applyToEvent } from './services/saved-events-service';
 
 export default function Application() {
   const router = useRouter();
+  const { t } = useLanguage();
   const { eventId } = useLocalSearchParams();
   const [event, setEvent] = useState(null);
   const [userId, setUserId] = useState(null);
@@ -66,18 +68,10 @@ export default function Application() {
 
   return (
     <View style={styles.screen}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <View style={styles.leftSection}>
-              <TouchableOpacity
-                style={styles.backButton}
-                onPress={() => router.back()}
-              >
-                <Text style={styles.backText}>{'< Back'}</Text>
-              </TouchableOpacity>
-              <Logo width={173} height={38} style={styles.logoSmall} />
-            </View>
+            <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
             <TouchableOpacity onPress={() => router.push('/Homepage')}>
               <HomeIcon width={40} height={40} style={styles.homeIcon} />
             </TouchableOpacity>
@@ -91,18 +85,18 @@ export default function Application() {
             />
           </View>
 
-          <TitleText style={styles.title}>APPLICATION</TitleText>
+          <TitleText style={styles.title}>{t('application.title')}</TitleText>
 
           {!loading && closed ? (
             <View style={styles.closedBar}>
-              <Text style={styles.closedBarText}>Applications closed</Text>
+              <Text style={styles.closedBarText}>{t('application.applicationsClosed')}</Text>
             </View>
           ) : (
             <>
-              <Text style={styles.label}>Name</Text>
+              <Text style={styles.label}>{t('application.nameLabel')}</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Your name"
+                placeholder={t('application.namePlaceholder')}
                 placeholderTextColor="#46a3a4"
                 value={name}
                 onChangeText={setName}
@@ -111,9 +105,9 @@ export default function Application() {
 
               {hasRequirements && (
                 <View style={styles.infoSection}>
-                  <Text style={styles.label}>Requirements</Text>
-                  {event.ageRange && <Text style={styles.value}>Age range: {event.ageRange}</Text>}
-                  {event.cost && <Text style={styles.value}>Cost: {event.cost}</Text>}
+                  <Text style={styles.label}>{t('application.requirementsLabel')}</Text>
+                  {event.ageRange && <Text style={styles.value}>{t('application.ageRangePrefix')}{event.ageRange}</Text>}
+                  {event.cost && <Text style={styles.value}>{t('application.costPrefix')}{event.cost}</Text>}
                   {event.details && <Text style={styles.value}>{event.details}</Text>}
                   {event.content && <Text style={styles.value}>{event.content}</Text>}
                 </View>
@@ -124,7 +118,7 @@ export default function Application() {
                 onPress={handleApply}
                 disabled={loading || submitting}
               >
-                <Text style={styles.applyButtonText}>Apply</Text>
+                <Text style={styles.applyButtonText}>{t('application.applyButton')}</Text>
               </TouchableOpacity>
             </>
           )}
@@ -139,6 +133,9 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
   },
+  scroll: {
+    flex: 1,
+  },
   scrollContainer: {
     flexGrow: 1,
   },
@@ -146,7 +143,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#e1e4e4',
     padding: 20,
-    paddingTop: 60,
+    paddingTop: 80,
   },
   header: {
     flexDirection: 'row',
@@ -154,21 +151,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 30,
   },
-  leftSection: {
+  logoSlot: {
+    flex: 1,
+    marginHorizontal: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-  },
-  backButton: {
-    marginRight: 8,
-  },
-  backText: {
-    fontSize: 16,
-    color: '#0a445c',
-  },
-  logoSmall: {
-    width: 173,
-    height: 38,
+    justifyContent: 'flex-end',
+    gap: 10,
   },
   homeIcon: {
     width: 40,

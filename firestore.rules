@@ -1,0 +1,33 @@
+rules_version = '2';
+
+// Mirrors the Appwrite permission model this app used before migrating:
+// events/opportunities are publicly readable content collections, and
+// everything else just requires a signed-in user (no per-document
+// ownership checks — the Appwrite setup didn't have them either, e.g. the
+// admin panel reads/updates every user's saved-event applications, not
+// just its own). Tighten this later if you add real user roles.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /events/{eventId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    match /opportunities/{opportunityId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    match /profiles/{profileId} {
+      allow read, write: if request.auth != null;
+    }
+
+    match /savedEvents/{documentId} {
+      allow read, write: if request.auth != null;
+    }
+
+    match /savedOpportunities/{documentId} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}

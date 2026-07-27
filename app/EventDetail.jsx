@@ -1,22 +1,23 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import HomeIcon from '../assets/images/home-icon.svg';
-import Logo from '../assets/images/logowname.svg';
+import HeaderBrand from './components/HeaderBrand';
 import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
 import TitleText from './components/TitleText';
+import { useLanguage } from './contexts/LanguageContext';
 import { getCurrentUser } from './services/auth-service';
 import {
   formatEventDate,
   formatFullDueDate,
-  getEventById,
+  getEventWithTranslation,
   isEventClosed,
 } from './services/events-service';
 import { getSavedEventStatus, unsaveEvent } from './services/saved-events-service';
 
 export default function EventDetail() {
   const router = useRouter();
+  const { t, language } = useLanguage();
   const { id } = useLocalSearchParams();
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -24,12 +25,12 @@ export default function EventDetail() {
 
   useEffect(() => {
     loadEvent();
-  }, [id]);
+  }, [id, language]);
 
   const loadEvent = async () => {
     if (!id) return;
 
-    const result = await getEventById(id);
+    const result = await getEventWithTranslation(id, language);
     if (result.success) {
       setEvent(result.data);
     }
@@ -50,15 +51,20 @@ export default function EventDetail() {
     if (result.success) {
       setApplicationId(null);
     } else {
-      Alert.alert('Error', result.error);
+      Alert.alert(t('common.errorTitle'), result.error);
     }
   };
 
   const closed = event ? isEventClosed(event) : false;
+  const displayTitle = (language === 'ar' && event?.titleAr) || event?.title;
+  const displayDetails = (language === 'ar' && event?.detailsAr) || event?.details;
+  const displayContent = (language === 'ar' && event?.contentAr) || event?.content;
+  const displayLocation = (language === 'ar' && event?.locationAr) || event?.location;
+  const displayCost = (language === 'ar' && event?.costAr) || event?.cost;
 
   return (
     <View style={styles.screen}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.header}>
             <View style={styles.leftSection}>
@@ -66,17 +72,14 @@ export default function EventDetail() {
                 style={styles.backButton}
                 onPress={() => router.back()}
               >
-                <Text style={styles.backText}>{'< Back'}</Text>
+                <Text style={styles.backText}>{t('common.back')}</Text>
               </TouchableOpacity>
-              <Logo width={173} height={38} style={styles.logoSmall} />
             </View>
-            <TouchableOpacity onPress={() => router.push('/Homepage')}>
-              <HomeIcon width={40} height={40} style={styles.homeIcon} />
-            </TouchableOpacity>
+            <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
           </View>
 
           <TitleText style={styles.title}>
-            {loading ? 'LOADING...' : event?.title || 'EVENT'}
+            {loading ? t('eventDetail.loading') : displayTitle || t('eventDetail.defaultTitle')}
           </TitleText>
 
           {!loading && event && (
@@ -84,7 +87,7 @@ export default function EventDetail() {
               {event.eventDate && (
                 <View style={styles.deadlineBar}>
                   <Text style={styles.deadlineText}>
-                    Event date: {formatEventDate(event.eventDate)}
+                    {t('eventDetail.eventDatePrefix')}{formatEventDate(event.eventDate)}
                   </Text>
                 </View>
               )}
@@ -93,57 +96,57 @@ export default function EventDetail() {
                 <View style={[styles.deadlineBar, closed && styles.deadlineBarClosed]}>
                   <Text style={styles.deadlineText}>
                     {closed
-                      ? 'Applications closed'
-                      : `Application deadline: ${formatFullDueDate(event.dueDate)}`}
+                      ? t('eventDetail.applicationsClosed')
+                      : `${t('eventDetail.applicationDeadlinePrefix')}${formatFullDueDate(event.dueDate)}`}
                   </Text>
                 </View>
               )}
 
-              {event.details && (
+              {displayDetails && (
                 <View style={styles.infoSection}>
-                  <Text style={styles.label}>Details:</Text>
-                  <Text style={styles.value}>{event.details}</Text>
+                  <Text style={styles.label}>{t('eventDetail.detailsLabel')}</Text>
+                  <Text style={styles.value}>{displayDetails}</Text>
                 </View>
               )}
 
               {event.location && (
                 <View style={styles.infoSection}>
-                  <Text style={styles.label}>Location:</Text>
-                  <Text style={styles.value}>{event.location}</Text>
+                  <Text style={styles.label}>{t('eventDetail.locationLabel')}</Text>
+                  <Text style={styles.value}>{displayLocation}</Text>
                 </View>
               )}
 
               {event.ageRange && (
                 <View style={styles.infoSection}>
-                  <Text style={styles.label}>Age range:</Text>
+                  <Text style={styles.label}>{t('eventDetail.ageRangeLabel')}</Text>
                   <Text style={styles.value}>{event.ageRange}</Text>
                 </View>
               )}
 
               {event.cost && (
                 <View style={styles.infoSection}>
-                  <Text style={styles.label}>Cost:</Text>
-                  <Text style={styles.value}>{event.cost}</Text>
+                  <Text style={styles.label}>{t('eventDetail.costLabel')}</Text>
+                  <Text style={styles.value}>{displayCost}</Text>
                 </View>
               )}
 
-              {event.content && (
+              {displayContent && (
                 <View style={styles.infoSection}>
-                  <Text style={styles.label}>Content:</Text>
-                  <Text style={styles.value}>{event.content}</Text>
+                  <Text style={styles.label}>{t('eventDetail.contentLabel')}</Text>
+                  <Text style={styles.value}>{displayContent}</Text>
                 </View>
               )}
 
               {applicationId ? (
                 <TouchableOpacity style={styles.withdrawButton} onPress={handleWithdraw}>
-                  <Text style={styles.withdrawButtonText}>Withdraw application</Text>
+                  <Text style={styles.withdrawButtonText}>{t('eventDetail.withdrawButton')}</Text>
                 </TouchableOpacity>
               ) : !closed ? (
                 <TouchableOpacity
                   style={styles.applyButton}
                   onPress={() => router.push(`/Application?eventId=${event.$id}`)}
                 >
-                  <Text style={styles.applyButtonText}>Apply</Text>
+                  <Text style={styles.applyButtonText}>{t('eventDetail.applyButton')}</Text>
                 </TouchableOpacity>
               ) : null}
             </>
@@ -159,6 +162,9 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
   },
+  scroll: {
+    flex: 1,
+  },
   scrollContainer: {
     flexGrow: 1,
   },
@@ -166,7 +172,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#e1e4e4',
     padding: 20,
-    paddingTop: 60,
+    paddingTop: 80,
   },
   header: {
     flexDirection: 'row',
@@ -186,13 +192,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#0a445c',
   },
-  logoSmall: {
-    width: 173,
-    height: 38,
-  },
-  homeIcon: {
-    width: 40,
-    height: 40,
+  logoSlot: {
+    flex: 1,
+    marginHorizontal: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    gap: 10,
   },
   title: {
     fontSize: 28,

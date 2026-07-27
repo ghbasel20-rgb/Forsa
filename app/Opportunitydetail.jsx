@@ -9,16 +9,17 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import HomeIcon from '../assets/images/home-icon.svg';
-import Logo from '../assets/images/logowname.svg';
+import HeaderBrand from './components/HeaderBrand';
 import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
+import { useLanguage } from './contexts/LanguageContext';
 import { getCurrentUser } from './services/auth-service';
-import { getOpportunityById } from './services/opportunities-service';
+import { getOpportunityWithTranslation } from './services/opportunities-service';
 import { checkIfSaved, saveOpportunity, unsaveOpportunity } from './services/saved-opportunities-service';
 
 export default function Opportunitydetail() {
   const router = useRouter();
+  const { t, language } = useLanguage();
   const { id } = useLocalSearchParams();
   const [isSaved, setIsSaved] = useState(false);
   const [savedDocumentId, setSavedDocumentId] = useState(null);
@@ -28,12 +29,12 @@ export default function Opportunitydetail() {
 
   useEffect(() => {
     loadOpportunityData();
-  }, [id]);
+  }, [id, language]);
 
   const loadOpportunityData = async () => {
     if (!id) return;
     
-    const oppResult = await getOpportunityById(id);
+    const oppResult = await getOpportunityWithTranslation(id, language);
     if (oppResult.success) {
       setOpportunity(oppResult.data);
     }
@@ -54,7 +55,7 @@ export default function Opportunitydetail() {
 
   const handleSave = async () => {
     if (!userId || !opportunity) {
-      Alert.alert('Error', 'Please log in to save opportunities');
+      Alert.alert(t('common.errorTitle'), t('opportunityDetail.loginToSave'));
       return;
     }
 
@@ -63,18 +64,18 @@ export default function Opportunitydetail() {
       if (result.success) {
         setIsSaved(false);
         setSavedDocumentId(null);
-        Alert.alert('Success', 'Opportunity removed from saved');
+        Alert.alert(t('common.successTitle'), t('opportunityDetail.removedSuccess'));
       } else {
-        Alert.alert('Error', result.error);
+        Alert.alert(t('common.errorTitle'), result.error);
       }
     } else {
       const result = await saveOpportunity(userId, opportunity.$id, opportunity.title);
       if (result.success) {
         setIsSaved(true);
         setSavedDocumentId(result.data.$id);
-        Alert.alert('Success', 'Opportunity saved!');
+        Alert.alert(t('common.successTitle'), t('opportunityDetail.savedSuccess'));
       } else {
-        Alert.alert('Error', result.error);
+        Alert.alert(t('common.errorTitle'), result.error);
       }
     }
   };
@@ -84,18 +85,24 @@ export default function Opportunitydetail() {
     if (!url.startsWith('http://') && !url.startsWith('https://')) {
       formattedUrl = 'https://' + url;
     }
-    
+
     const canOpen = await Linking.canOpenURL(formattedUrl);
     if (canOpen) {
       await Linking.openURL(formattedUrl);
     } else {
-      Alert.alert('Error', 'Cannot open this URL');
+      Alert.alert(t('common.errorTitle'), t('opportunityDetail.cannotOpenUrl'));
     }
   };
 
+  const displayTitle = (language === 'ar' && opportunity?.titleAr) || opportunity?.title;
+  const displayDescription = (language === 'ar' && opportunity?.descriptionAr) || opportunity?.description;
+  const displayLocation = (language === 'ar' && opportunity?.locationAr) || opportunity?.location;
+  const displayCategory = (language === 'ar' && opportunity?.categoryAr) || opportunity?.category;
+  const displayRequirements = (language === 'ar' && opportunity?.requirementsAr) || opportunity?.requirements;
+
   return (
     <View style={styles.screen}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.header}>
             <View style={styles.leftSection}>
@@ -103,13 +110,10 @@ export default function Opportunitydetail() {
                 style={styles.backButton}
                 onPress={() => router.back()}
               >
-                <Text style={styles.backText}>{'< Back'}</Text>
+                <Text style={styles.backText}>{t('common.back')}</Text>
               </TouchableOpacity>
-              <Logo width={173} height={38} style={styles.logoSmall} />
             </View>
-            <TouchableOpacity onPress={() => router.push('/Homepage')}>
-              <HomeIcon width={40} height={40} style={styles.homeIcon} />
-            </TouchableOpacity>
+            <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
           </View>
 
           <View style={styles.iconContainer}>
@@ -120,29 +124,29 @@ export default function Opportunitydetail() {
             />
           </View>
 
-          <Text style={styles.title}>{loading ? 'LOADING...' : opportunity?.title || 'OPPORTUNITY'}</Text>
+          <Text style={styles.title}>{loading ? t('opportunityDetail.loading') : displayTitle || t('opportunityDetail.defaultTitle')}</Text>
 
           {!loading && opportunity && (
             <>
               <View style={styles.infoSection}>
-                <Text style={styles.label}>Location:</Text>
-                <Text style={styles.value}>{opportunity.location || 'Not specified'}</Text>
+                <Text style={styles.label}>{t('opportunityDetail.locationLabel')}</Text>
+                <Text style={styles.value}>{displayLocation || t('opportunityDetail.notSpecified')}</Text>
               </View>
 
               <View style={styles.infoSection}>
-                <Text style={styles.label}>Category:</Text>
-                <Text style={styles.value}>{opportunity.category || 'Not specified'}</Text>
+                <Text style={styles.label}>{t('opportunityDetail.categoryLabel')}</Text>
+                <Text style={styles.value}>{displayCategory || t('opportunityDetail.notSpecified')}</Text>
               </View>
 
               <View style={styles.infoSection}>
-                <Text style={styles.label}>Description:</Text>
-                <Text style={styles.value}>{opportunity.description || 'No description available'}</Text>
+                <Text style={styles.label}>{t('opportunityDetail.descriptionLabel')}</Text>
+                <Text style={styles.value}>{displayDescription || t('opportunityDetail.noDescription')}</Text>
               </View>
 
               {opportunity.requirements && opportunity.requirements.length > 0 && (
                 <View style={styles.infoSection}>
-                  <Text style={styles.label}>Requirements:</Text>
-                  {opportunity.requirements.map((req, index) => (
+                  <Text style={styles.label}>{t('opportunityDetail.requirementsLabel')}</Text>
+                  {displayRequirements.map((req, index) => (
                     <Text key={index} style={styles.requirementItem}>• {req}</Text>
                   ))}
                 </View>
@@ -150,9 +154,9 @@ export default function Opportunitydetail() {
 
               {opportunity.url && (
                 <View style={styles.infoSection}>
-                  <Text style={styles.label}>Apply/Learn More:</Text>
+                  <Text style={styles.label}>{t('opportunityDetail.applyLearnMoreLabel')}</Text>
                   <TouchableOpacity onPress={() => handleOpenURL(opportunity.url)}>
-                    <Text style={styles.urlText}>{opportunity.url}</Text>
+                    <Text style={styles.urlText} numberOfLines={1} ellipsizeMode="middle">{opportunity.url}</Text>
                   </TouchableOpacity>
                 </View>
               )}
@@ -160,7 +164,7 @@ export default function Opportunitydetail() {
           )}
 
           <TouchableOpacity style={styles.saveButton} onPress={handleSave} disabled={loading}>
-            <Text style={styles.saveButtonText}>{isSaved ? 'Unsave' : 'Save'}</Text>
+            <Text style={styles.saveButtonText}>{isSaved ? t('opportunityDetail.unsaveButton') : t('opportunityDetail.saveButton')}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -173,6 +177,9 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
   },
+  scroll: {
+    flex: 1,
+  },
   scrollContainer: {
     flexGrow: 1,
   },
@@ -180,7 +187,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#e1e4e4',
     padding: 20,
-    paddingTop: 60,
+    paddingTop: 80,
   },
   header: {
     flexDirection: 'row',
@@ -200,13 +207,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#0a445c',
   },
-  logoSmall: {
-    width: 173,
-    height: 38,
-  },
-  homeIcon: {
-    width: 40,
-    height: 40,
+  logoSlot: {
+    flex: 1,
+    marginHorizontal: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    gap: 10,
   },
   iconContainer: {
     width: '100%',

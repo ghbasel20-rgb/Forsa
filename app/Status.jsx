@@ -2,15 +2,17 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Alert, Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import HomeIcon from '../assets/images/home-icon.svg';
-import Logo from '../assets/images/logowname.svg';
+import HeaderBrand from './components/HeaderBrand';
 import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
 import TitleText from './components/TitleText';
-import { getEventById } from './services/events-service';
+import { useLanguage } from './contexts/LanguageContext';
+import { getEventWithTranslation } from './services/events-service';
 import { getSavedEventStatus, unsaveEvent } from './services/saved-events-service';
 
 export default function Status() {
   const router = useRouter();
+  const { t, language } = useLanguage();
   const { id } = useLocalSearchParams();
   const [application, setApplication] = useState(null);
   const [event, setEvent] = useState(null);
@@ -18,7 +20,8 @@ export default function Status() {
 
   useEffect(() => {
     loadStatus();
-  }, [id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, language]);
 
   const loadStatus = async () => {
     if (!id) return;
@@ -27,7 +30,7 @@ export default function Status() {
     if (statusResult.success) {
       setApplication(statusResult.data);
 
-      const eventResult = await getEventById(statusResult.data.eventId);
+      const eventResult = await getEventWithTranslation(statusResult.data.eventId, language);
       if (eventResult.success) {
         setEvent(eventResult.data);
       }
@@ -41,26 +44,23 @@ export default function Status() {
     if (result.success) {
       router.push('/Profile');
     } else {
-      Alert.alert('Error', result.error);
+      Alert.alert(t('common.errorTitle'), result.error);
     }
   };
 
   const hasDetails = event && (event.location || event.ageRange || event.cost || event.details || event.content);
+  const displayTitle = (language === 'ar' && event?.titleAr) || event?.title;
+  const displayLocation = (language === 'ar' && event?.locationAr) || event?.location;
+  const displayCost = (language === 'ar' && event?.costAr) || event?.cost;
+  const displayDetails = (language === 'ar' && event?.detailsAr) || event?.details;
+  const displayContent = (language === 'ar' && event?.contentAr) || event?.content;
 
   return (
     <View style={styles.screen}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <View style={styles.leftSection}>
-              <TouchableOpacity
-                style={styles.backButton}
-                onPress={() => router.back()}
-              >
-                <Text style={styles.backText}>{'< Back'}</Text>
-              </TouchableOpacity>
-              <Logo width={173} height={38} style={styles.logoSmall} />
-            </View>
+            <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
             <TouchableOpacity onPress={() => router.push('/Homepage')}>
               <HomeIcon width={40} height={40} style={styles.homeIcon} />
             </TouchableOpacity>
@@ -74,41 +74,41 @@ export default function Status() {
             />
           </View>
 
-          <TitleText style={styles.title}>STATUS</TitleText>
+          <TitleText style={styles.title}>{t('status.title')}</TitleText>
 
           {!loading && application && (
             <>
               <View style={styles.statusBar}>
-                <Text style={styles.statusText}>{application.status}</Text>
+                <Text style={styles.statusText}>{t(`admin.tabs.${application.status}`)}</Text>
               </View>
 
-              {event?.title && (
+              {displayTitle && (
                 <View style={styles.infoSection}>
-                  <Text style={styles.label}>Event:</Text>
-                  <Text style={styles.value}>{event.title}</Text>
+                  <Text style={styles.label}>{t('status.eventLabel')}</Text>
+                  <Text style={styles.value}>{displayTitle}</Text>
                 </View>
               )}
 
               {application.name && (
                 <View style={styles.infoSection}>
-                  <Text style={styles.label}>Applied as:</Text>
+                  <Text style={styles.label}>{t('status.appliedAsLabel')}</Text>
                   <Text style={styles.value}>{application.name}</Text>
                 </View>
               )}
 
               {hasDetails && (
                 <View style={styles.infoSection}>
-                  <Text style={styles.label}>Details:</Text>
-                  {event.location && <Text style={styles.value}>Location: {event.location}</Text>}
-                  {event.ageRange && <Text style={styles.value}>Age range: {event.ageRange}</Text>}
-                  {event.cost && <Text style={styles.value}>Cost: {event.cost}</Text>}
-                  {event.details && <Text style={styles.value}>{event.details}</Text>}
-                  {event.content && <Text style={styles.value}>{event.content}</Text>}
+                  <Text style={styles.label}>{t('status.detailsLabel')}</Text>
+                  {displayLocation && <Text style={styles.value}>{t('status.locationPrefix')}{displayLocation}</Text>}
+                  {event.ageRange && <Text style={styles.value}>{t('status.ageRangePrefix')}{event.ageRange}</Text>}
+                  {displayCost && <Text style={styles.value}>{t('status.costPrefix')}{displayCost}</Text>}
+                  {displayDetails && <Text style={styles.value}>{displayDetails}</Text>}
+                  {displayContent && <Text style={styles.value}>{displayContent}</Text>}
                 </View>
               )}
 
               <TouchableOpacity style={styles.withdrawButton} onPress={handleWithdraw}>
-                <Text style={styles.withdrawButtonText}>Withdraw application</Text>
+                <Text style={styles.withdrawButtonText}>{t('status.withdrawButton')}</Text>
               </TouchableOpacity>
             </>
           )}
@@ -123,6 +123,9 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
   },
+  scroll: {
+    flex: 1,
+  },
   scrollContainer: {
     flexGrow: 1,
   },
@@ -130,7 +133,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#e1e4e4',
     padding: 20,
-    paddingTop: 60,
+    paddingTop: 80,
   },
   header: {
     flexDirection: 'row',
@@ -138,21 +141,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 30,
   },
-  leftSection: {
+  logoSlot: {
+    flex: 1,
+    marginHorizontal: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-  },
-  backButton: {
-    marginRight: 8,
-  },
-  backText: {
-    fontSize: 16,
-    color: '#0a445c',
-  },
-  logoSmall: {
-    width: 173,
-    height: 38,
+    justifyContent: 'flex-end',
+    gap: 10,
   },
   homeIcon: {
     width: 40,

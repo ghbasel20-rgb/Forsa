@@ -10,17 +10,20 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import Logo from '../assets/images/logowname.svg';
+import HeaderBrand from './components/HeaderBrand';
 import Text from './components/AppText';
 import TextInput from './components/AppTextInput';
 import PasswordInput from './components/PasswordInput';
 import StatusPickerModal from './components/StatusPickerModal';
 import TitleText from './components/TitleText';
+import { useLanguage } from './contexts/LanguageContext';
+import { statusLabelsAr, translateOption } from './i18n/optionLabels';
 import { signUp } from './services/auth-service';
 import { createUserProfile } from './services/profile-service';
 
 export default function SignUp() {
   const router = useRouter();
+  const { t, language } = useLanguage();
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -57,17 +60,17 @@ export default function SignUp() {
     }
 
     if (!fullName || !email || !password || !confirmPassword || !status || !dobSelected) {
-      Alert.alert('Error', 'Please fill in all fields');
+      Alert.alert(t('common.errorTitle'), t('signUp.fillAllFields'));
       return;
     }
 
     if (password !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match');
+      Alert.alert(t('common.errorTitle'), t('signUp.passwordsNoMatch'));
       return;
     }
 
     if (password.length < 8) {
-      Alert.alert('Error', 'Password must be at least 8 characters');
+      Alert.alert(t('common.errorTitle'), t('signUp.passwordTooShort'));
       return;
     }
 
@@ -78,7 +81,7 @@ export default function SignUp() {
     if (!result.success) {
       isSubmitting.current = false;
       setLoading(false);
-      Alert.alert('Error', result.error);
+      Alert.alert(t('common.errorTitle'), result.error);
       return;
     }
 
@@ -95,119 +98,123 @@ export default function SignUp() {
     setLoading(false);
 
     if (profileResult.success) {
-      Alert.alert('Success', 'Account created successfully!');
+      Alert.alert(t('common.successTitle'), t('signUp.accountCreated'));
       router.push({ pathname: '/Buildprofileskills', params: { flow: 'signup' } });
     } else {
-      Alert.alert('Error', profileResult.error);
+      Alert.alert(t('common.errorTitle'), profileResult.error);
     }
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Logo width={173} height={38} />
-        </View>
+    <View style={styles.screen}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.container}>
+          <HeaderBrand style={styles.logoSlot} logoLinksHome={false} />
 
-        <TitleText style={styles.title}>CREATE{'\n'}ACCOUNT</TitleText>
+          <TitleText style={styles.title}>{t('signUp.title')}</TitleText>
 
-        <View style={styles.formContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Full Name"
-            placeholderTextColor="#46a3a4"
-            value={fullName}
-            onChangeText={setFullName}
-            autoCapitalize="words"
-          />
-
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            placeholderTextColor="#46a3a4"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-
-          <PasswordInput
-            style={styles.input}
-            placeholder="Password"
-            placeholderTextColor="#46a3a4"
-            value={password}
-            onChangeText={setPassword}
-          />
-
-          <PasswordInput
-            style={styles.input}
-            placeholder="Confirm Password"
-            placeholderTextColor="#46a3a4"
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-          />
-
-          <TouchableOpacity
-            style={styles.input}
-            onPress={() => setShowDatePicker(true)}
-          >
-            <Text style={[styles.dateText, !dobSelected && styles.placeholderText]}>
-              {dobSelected ? formatDate(dateOfBirth) : 'Date of Birth'}
-            </Text>
-          </TouchableOpacity>
-
-          {showDatePicker && (
-            <DateTimePicker
-              value={dateOfBirth}
-              mode="date"
-              display="default"
-              onChange={onDateChange}
-              maximumDate={new Date()}
+          <View style={styles.formContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder={t('signUp.fullNamePlaceholder')}
+              placeholderTextColor="#46a3a4"
+              value={fullName}
+              onChangeText={setFullName}
+              autoCapitalize="words"
             />
-          )}
 
-          <TouchableOpacity
-            style={styles.input}
-            onPress={() => setShowStatusModal(true)}
-          >
-            <Text style={[styles.dateText, !status && styles.placeholderText]}>
-              {status || 'Status'}
-            </Text>
-          </TouchableOpacity>
+            <TextInput
+              style={styles.input}
+              placeholder={t('signUp.emailPlaceholder')}
+              placeholderTextColor="#46a3a4"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
 
-          <TouchableOpacity
-            style={styles.button}
-            onPress={handleSignUp}
-            disabled={loading}
-          >
-            {loading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.buttonText}>Create Account</Text>
+            <PasswordInput
+              style={styles.input}
+              placeholder={t('signUp.passwordPlaceholder')}
+              placeholderTextColor="#46a3a4"
+              value={password}
+              onChangeText={setPassword}
+            />
+
+            <PasswordInput
+              style={styles.input}
+              placeholder={t('signUp.confirmPasswordPlaceholder')}
+              placeholderTextColor="#46a3a4"
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+            />
+
+            <TouchableOpacity
+              style={styles.input}
+              onPress={() => setShowDatePicker(true)}
+            >
+              <Text style={[styles.dateText, !dobSelected && styles.placeholderText]}>
+                {dobSelected ? formatDate(dateOfBirth) : t('signUp.dobPlaceholder')}
+              </Text>
+            </TouchableOpacity>
+
+            {showDatePicker && (
+              <DateTimePicker
+                value={dateOfBirth}
+                mode="date"
+                display="default"
+                onChange={onDateChange}
+                maximumDate={new Date()}
+              />
             )}
-          </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => router.push('/Sign-in')}>
-            <Text style={styles.linkText}>
-              Already have an account? <Text style={styles.linkBold}>Log in</Text>
-            </Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.input}
+              onPress={() => setShowStatusModal(true)}
+            >
+              <Text style={[styles.dateText, !status && styles.placeholderText]}>
+                {status ? translateOption(status, language, statusLabelsAr) : t('signUp.statusPlaceholder')}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.button}
+              onPress={handleSignUp}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.buttonText}>{t('signUp.createAccount')}</Text>
+              )}
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => router.push('/Sign-in')}>
+              <Text style={styles.linkText}>
+                {t('signUp.haveAccount')}
+                <Text style={styles.linkBold}>{t('signUp.logInLink')}</Text>
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <StatusPickerModal
+            visible={showStatusModal}
+            onClose={() => setShowStatusModal(false)}
+            onSubmit={(value) => {
+              setStatus(value);
+              setShowStatusModal(false);
+            }}
+          />
         </View>
-
-        <StatusPickerModal
-          visible={showStatusModal}
-          onClose={() => setShowStatusModal(false)}
-          onSubmit={(value) => {
-            setStatus(value);
-            setShowStatusModal(false);
-          }}
-        />
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+  },
   scrollContainer: {
     flexGrow: 1,
   },
@@ -215,18 +222,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#e1e4e4',
     padding: 20,
-    paddingTop: 60,
+    paddingTop: 80,
   },
-  header: {
+  logoSlot: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    marginBottom: 40,
-    gap: 8,
-  },
-  logoSmall: {
-    width: 173,
-    height: 38,
+    gap: 10,
+    marginBottom: 12,
   },
   title: {
     fontSize: 36,

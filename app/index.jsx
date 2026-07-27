@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import Logo from '../assets/images/logowname.svg';
+import Logo from '../assets/images/log-sign-in-logo.svg';
 import Text from './components/AppText';
 
 export default function Index() {
@@ -14,7 +14,7 @@ export default function Index() {
   return (
     <View style={styles.container}>
       <View style={styles.logoContainer}>
-        <Logo width={260} height={57} style={styles.logo} />
+        <Logo width={520} height={288} style={styles.logo} />
       </View>
 
       <Text style={styles.tagline}>
@@ -50,11 +50,10 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     alignItems: 'center',
-    marginBottom: 60,
   },
   logo: {
-    width: 260,
-    height: 57,
+    width: 520,
+    height: 288,
   },
   tagline: {
     fontSize: 18,

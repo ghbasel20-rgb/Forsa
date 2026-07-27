@@ -2,13 +2,15 @@ import { useRouter } from 'expo-router';
 import React from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import Text from './AppText';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export default function BackButton({ style }) {
   const router = useRouter();
+  const { t } = useLanguage();
 
   return (
     <TouchableOpacity style={[styles.button, style]} onPress={() => router.back()}>
-      <Text style={styles.text}>{'< Back'}</Text>
+      <Text style={styles.text}>{t('common.back')}</Text>
     </TouchableOpacity>
   );
 }
