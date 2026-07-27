@@ -104,7 +104,11 @@ export default function Homepage() {
           <View style={styles.recommendedRow}>
             {recommendedOpportunities.length > 0 ? (
               recommendedOpportunities.map((opp) => (
-                <View key={opp.$id} style={styles.recommendedCard}>
+                <TouchableOpacity
+                  key={opp.$id}
+                  style={styles.recommendedCard}
+                  onPress={() => router.push(`/Opportunitydetail?id=${opp.$id}`)}
+                >
                   <View style={styles.recommendedImage}>
                     <Image
                       source={require('../assets/images/icon.png')}
@@ -115,13 +119,10 @@ export default function Homepage() {
                   <Text style={styles.recommendedTitle} numberOfLines={1} ellipsizeMode="tail">
                     {(language === 'ar' && opp.titleAr) || opp.title}
                   </Text>
-                  <TouchableOpacity
-                    style={styles.readMoreButton}
-                    onPress={() => router.push(`/Opportunitydetail?id=${opp.$id}`)}
-                  >
+                  <View style={styles.readMoreButton}>
                     <Text style={styles.readMoreText}>{t('homepage.readMore')}</Text>
-                  </TouchableOpacity>
-                </View>
+                  </View>
+                </TouchableOpacity>
               ))
             ) : (
               <Text style={styles.emptyText}>{t('homepage.noRecommendations')}</Text>
