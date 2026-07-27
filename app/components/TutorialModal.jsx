@@ -21,7 +21,13 @@ export default function TutorialModal({ visible, onFinish }) {
   const { t } = useLanguage();
   const [stepIndex, setStepIndex] = useState(0);
   const [pageWidth, setPageWidth] = useState(0);
+  const [pageHeight, setPageHeight] = useState(260);
   const scrollRef = useRef(null);
+
+  const handlePageLayout = (event) => {
+    const measuredHeight = event.nativeEvent.layout.height;
+    setPageHeight((prev) => Math.max(prev, measuredHeight));
+  };
 
   const isLastStep = stepIndex === STEPS.length - 1;
 
@@ -60,7 +66,7 @@ export default function TutorialModal({ visible, onFinish }) {
           </TouchableOpacity>
 
           <View
-            style={styles.pagerContainer}
+            style={[styles.pagerContainer, { height: pageHeight }]}
             onLayout={(event) => setPageWidth(event.nativeEvent.layout.width)}
           >
             {pageWidth > 0 && (
@@ -73,7 +79,11 @@ export default function TutorialModal({ visible, onFinish }) {
                 scrollEventThrottle={16}
               >
                 {STEPS.map((step) => (
-                  <View key={step.key} style={[styles.page, { width: pageWidth }]}>
+                  <View
+                    key={step.key}
+                    style={[styles.page, { width: pageWidth }]}
+                    onLayout={handlePageLayout}
+                  >
                     <View style={styles.iconCircle}>
                       <step.Icon
                         width={48}
