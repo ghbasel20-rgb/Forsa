@@ -19,8 +19,7 @@ import { useLanguage } from './contexts/LanguageContext';
 import { getCurrentUser } from './services/auth-service';
 import { getEvents, scoreEventMatch } from './services/events-service';
 import { getAllOpportunities, getMatchedOpportunities } from './services/opportunities-service';
-import { getUserProfile } from './services/profile-service';
-import { hasSeenTutorial, markTutorialSeen } from './services/tutorial-service';
+import { getUserProfile, updateUserProfile } from './services/profile-service';
 
 const formatEventDay = (eventDate) => {
   const date = new Date(eventDate);
@@ -34,16 +33,9 @@ export default function Homepage() {
   const [aboutModalVisible, setAboutModalVisible] = useState(false);
   const [tutorialVisible, setTutorialVisible] = useState(false);
   const [displayName, setDisplayName] = useState('');
+  const [profileId, setProfileId] = useState(null);
   const [recommendedOpportunities, setRecommendedOpportunities] = useState([]);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
-
-  useEffect(() => {
-    hasSeenTutorial().then((seen) => {
-      if (!seen) {
-        setTutorialVisible(true);
-      }
-    });
-  }, []);
 
   useEffect(() => {
     loadHomeData();
@@ -59,6 +51,10 @@ export default function Homepage() {
       if (profileResult.success) {
         profile = profileResult.data;
         setDisplayName(profileResult.data.fullName || userResult.data.name || '');
+        setProfileId(profile.$id);
+        if (!profile.hasSeenTutorial) {
+          setTutorialVisible(true);
+        }
       }
     }
 
@@ -91,7 +87,9 @@ export default function Homepage() {
 
   const finishTutorial = () => {
     setTutorialVisible(false);
-    markTutorialSeen();
+    if (profileId) {
+      updateUserProfile(profileId, { hasSeenTutorial: true });
+    }
   };
 
   return (

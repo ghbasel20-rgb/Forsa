@@ -34,6 +34,7 @@ export const createUserProfile = async (userId, profileData) => {
       skills: profileData.skills,
       interests: profileData.interests,
       hasCompletedSkillsInterests: profileData.hasCompletedSkillsInterests ?? false,
+      hasSeenTutorial: false,
       createdAt: serverTimestamp(),
     });
     const docSnap = await getDoc(docRef);
