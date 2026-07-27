@@ -13,6 +13,7 @@ import Text from './components/AppText';
 import BackButton from './components/BackButton';
 import ChipSelector from './components/ChipSelector';
 import { useLanguage } from './contexts/LanguageContext';
+import { interestLabelsAr } from './i18n/optionLabels';
 import { getCurrentUser } from './services/auth-service';
 import { getUserProfile, updateUserProfile } from './services/profile-service';
 
@@ -145,6 +146,7 @@ export default function Buildprofileinterests() {
             modalTitle={t('buildProfile.interestModalTitle')}
             placeholder={t('buildProfile.interestPlaceholder')}
             submitLabel={t('buildProfile.addInterestButton')}
+            optionLabels={interestLabelsAr}
           />
 
           <TouchableOpacity style={styles.button} onPress={handleNext}>

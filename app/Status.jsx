@@ -7,12 +7,12 @@ import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
 import TitleText from './components/TitleText';
 import { useLanguage } from './contexts/LanguageContext';
-import { getEventById } from './services/events-service';
+import { getEventWithTranslation } from './services/events-service';
 import { getSavedEventStatus, unsaveEvent } from './services/saved-events-service';
 
 export default function Status() {
   const router = useRouter();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { id } = useLocalSearchParams();
   const [application, setApplication] = useState(null);
   const [event, setEvent] = useState(null);
@@ -20,7 +20,8 @@ export default function Status() {
 
   useEffect(() => {
     loadStatus();
-  }, [id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, language]);
 
   const loadStatus = async () => {
     if (!id) return;
@@ -29,7 +30,7 @@ export default function Status() {
     if (statusResult.success) {
       setApplication(statusResult.data);
 
-      const eventResult = await getEventById(statusResult.data.eventId);
+      const eventResult = await getEventWithTranslation(statusResult.data.eventId, language);
       if (eventResult.success) {
         setEvent(eventResult.data);
       }
@@ -48,6 +49,11 @@ export default function Status() {
   };
 
   const hasDetails = event && (event.location || event.ageRange || event.cost || event.details || event.content);
+  const displayTitle = (language === 'ar' && event?.titleAr) || event?.title;
+  const displayLocation = (language === 'ar' && event?.locationAr) || event?.location;
+  const displayCost = (language === 'ar' && event?.costAr) || event?.cost;
+  const displayDetails = (language === 'ar' && event?.detailsAr) || event?.details;
+  const displayContent = (language === 'ar' && event?.contentAr) || event?.content;
 
   return (
     <View style={styles.screen}>
@@ -76,10 +82,10 @@ export default function Status() {
                 <Text style={styles.statusText}>{t(`admin.tabs.${application.status}`)}</Text>
               </View>
 
-              {event?.title && (
+              {displayTitle && (
                 <View style={styles.infoSection}>
                   <Text style={styles.label}>{t('status.eventLabel')}</Text>
-                  <Text style={styles.value}>{event.title}</Text>
+                  <Text style={styles.value}>{displayTitle}</Text>
                 </View>
               )}
 
@@ -93,11 +99,11 @@ export default function Status() {
               {hasDetails && (
                 <View style={styles.infoSection}>
                   <Text style={styles.label}>{t('status.detailsLabel')}</Text>
-                  {event.location && <Text style={styles.value}>{t('status.locationPrefix')}{event.location}</Text>}
+                  {displayLocation && <Text style={styles.value}>{t('status.locationPrefix')}{displayLocation}</Text>}
                   {event.ageRange && <Text style={styles.value}>{t('status.ageRangePrefix')}{event.ageRange}</Text>}
-                  {event.cost && <Text style={styles.value}>{t('status.costPrefix')}{event.cost}</Text>}
-                  {event.details && <Text style={styles.value}>{event.details}</Text>}
-                  {event.content && <Text style={styles.value}>{event.content}</Text>}
+                  {displayCost && <Text style={styles.value}>{t('status.costPrefix')}{displayCost}</Text>}
+                  {displayDetails && <Text style={styles.value}>{displayDetails}</Text>}
+                  {displayContent && <Text style={styles.value}>{displayContent}</Text>}
                 </View>
               )}
 

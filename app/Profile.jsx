@@ -23,8 +23,10 @@ import LanguagePickerModal from './components/LanguagePickerModal';
 import StatusPickerModal from './components/StatusPickerModal';
 import TitleText from './components/TitleText';
 import { useLanguage } from './contexts/LanguageContext';
+import { interestLabelsAr, skillLabelsAr, translateOption } from './i18n/optionLabels';
 import { getCurrentUser, signOut } from './services/auth-service';
-import { getEventById } from './services/events-service';
+import { getEventWithTranslation } from './services/events-service';
+import { getOpportunityWithTranslation } from './services/opportunities-service';
 import {
   deleteProfileImage,
   getProfileImageUrl,
@@ -50,14 +52,15 @@ export default function Profile() {
   useFocusEffect(
     React.useCallback(() => {
       loadUserData();
-    }, [])
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [language])
   );
 
   const loadUserData = async () => {
     const userResult = await getCurrentUser();
     if (userResult.success) {
       setUserData(userResult.data);
-      
+
       const profileResult = await getUserProfile(userResult.data.$id);
       if (profileResult.success) {
         setProfileData(profileResult.data);
@@ -65,17 +68,28 @@ export default function Profile() {
 
       const savedResult = await getSavedOpportunities(userResult.data.$id);
       if (savedResult.success) {
-        setSavedOpportunities(savedResult.data);
+        const withTitles = await Promise.all(
+          savedResult.data.map(async (saved) => {
+            const oppResult = await getOpportunityWithTranslation(saved.opportunityId, language);
+            const translatedTitle = (language === 'ar' && oppResult.data?.titleAr) || oppResult.data?.title;
+            return {
+              ...saved,
+              opportunityTitle: oppResult.success ? translatedTitle : saved.opportunityTitle,
+            };
+          })
+        );
+        setSavedOpportunities(withTitles);
       }
 
       const appliedResult = await getSavedEvents(userResult.data.$id);
       if (appliedResult.success) {
         const withTitles = await Promise.all(
           appliedResult.data.map(async (application) => {
-            const eventResult = await getEventById(application.eventId);
+            const eventResult = await getEventWithTranslation(application.eventId, language);
+            const translatedTitle = (language === 'ar' && eventResult.data?.titleAr) || eventResult.data?.title;
             return {
               ...application,
-              eventTitle: eventResult.success ? eventResult.data.title : t('eventDetail.defaultTitle'),
+              eventTitle: eventResult.success ? translatedTitle : t('eventDetail.defaultTitle'),
             };
           })
         );
@@ -310,7 +324,7 @@ export default function Profile() {
             {profileData?.skills?.length > 0 ? (
               profileData.skills.map((skill) => (
                 <View key={skill} style={styles.chip}>
-                  <Text style={styles.chipText}>{skill}</Text>
+                  <Text style={styles.chipText}>{translateOption(skill, language, skillLabelsAr)}</Text>
                 </View>
               ))
             ) : (
@@ -328,7 +342,7 @@ export default function Profile() {
             {profileData?.interests?.length > 0 ? (
               profileData.interests.map((interest) => (
                 <View key={interest} style={styles.chip}>
-                  <Text style={styles.chipText}>{interest}</Text>
+                  <Text style={styles.chipText}>{translateOption(interest, language, interestLabelsAr)}</Text>
                 </View>
               ))
             ) : (
