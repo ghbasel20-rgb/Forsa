@@ -7,13 +7,13 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import HeaderBrand from './components/HeaderBrand';
-import { useProfile } from './ProfileContext';
 import Text from './components/AppText';
 import BackButton from './components/BackButton';
 import ChipSelector from './components/ChipSelector';
+import HeaderBrand from './components/HeaderBrand';
 import { useLanguage } from './contexts/LanguageContext';
 import { skillLabelsAr } from './i18n/optionLabels';
+import { useProfile } from './ProfileContext';
 import { getCurrentUser } from './services/auth-service';
 import { getUserProfile, updateUserProfile } from './services/profile-service';
 
@@ -68,7 +68,6 @@ export default function BuildProfileSkills() {
     'Graphic Design',
     'Content Creation',
     'Social Media',
-    'SEO',
     'Cooking',
     'Other',
   ];
