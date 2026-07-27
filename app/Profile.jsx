@@ -1,7 +1,7 @@
 import { useFocusEffect } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import { default as React, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { Calendar } from 'react-native-calendars';
 import HeaderBrand from './components/HeaderBrand';
 import EditIcon from '../assets/images/edit.svg';
 import ProfilePlaceholder from '../assets/images/Profile.svg';
@@ -36,6 +37,7 @@ import {
 } from './services/profile-service';
 import { getSavedEvents } from './services/saved-events-service';
 import { getSavedOpportunities } from './services/saved-opportunities-service';
+import { buildMarkedDates, toDateKey } from './utils/calendarUtils';
 
 export default function Profile() {
   const router = useRouter();
@@ -90,6 +92,7 @@ export default function Profile() {
             return {
               ...application,
               eventTitle: eventResult.success ? translatedTitle : t('eventDetail.defaultTitle'),
+              eventDate: eventResult.success ? eventResult.data.eventDate : null,
             };
           })
         );
@@ -97,6 +100,33 @@ export default function Profile() {
       }
     }
   };
+
+  const markedAppliedDates = useMemo(() => buildMarkedDates(appliedEvents), [appliedEvents]);
+  const scrollRef = useRef(null);
+const appliedContainerY = useRef(0);
+const appliedPositions = useRef({});
+const highlightTimeoutRef = useRef(null);
+const [highlightedApplicationId, setHighlightedApplicationId] = useState(null);
+
+
+const scrollToApplication = (applicationId) => {
+  const relativeY = appliedPositions.current[applicationId];
+  if (relativeY === undefined || !scrollRef.current) return;
+  scrollRef.current.scrollTo({ y: Math.max(appliedContainerY.current + relativeY - 20, 0), animated: true });
+};
+
+const handleAppliedDayPress = (day) => {
+  const matches = appliedEvents.filter(
+    (application) => application.eventDate && toDateKey(application.eventDate) === day.dateString
+  );
+  if (matches.length === 0) return;
+
+  const target = matches[0];
+  if (highlightTimeoutRef.current) clearTimeout(highlightTimeoutRef.current);
+  setHighlightedApplicationId(target.$id);
+  scrollToApplication(target.$id);
+  highlightTimeoutRef.current = setTimeout(() => setHighlightedApplicationId(null), 2500);
+};
 
   const handleLogout = async () => {
     setSettingsMenuVisible(false);
@@ -205,7 +235,7 @@ export default function Profile() {
 
   return (
     <View style={styles.screen}>
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
+      <ScrollView ref={scrollRef} style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.header}>
             <TouchableOpacity
@@ -383,13 +413,33 @@ export default function Profile() {
               </View>
             </>
           )}
-
-          {appliedEvents.length > 0 && (
+{appliedEvents.length > 0 && (
             <>
               <Text style={styles.sectionTitle}>{t('profile.appliedEventsHeading')}</Text>
-              <View style={styles.opportunitiesContainer}>
+              <Calendar
+                markingType="custom"
+                markedDates={markedAppliedDates}
+                onDayPress={handleAppliedDayPress}
+                theme={{
+                  todayTextColor: '#46a3a4',
+                  arrowColor: '#0a445c',
+                  textMonthFontWeight: '600',
+                }}
+                style={styles.calendar}
+              />
+              <View
+                style={styles.opportunitiesContainer}
+                onLayout={(e) => { appliedContainerY.current = e.nativeEvent.layout.y; }}
+              >
                 {appliedEvents.map((application) => (
-                  <View key={application.$id} style={styles.opportunityCard}>
+                  <View
+                    key={application.$id}
+                    onLayout={(e) => { appliedPositions.current[application.$id] = e.nativeEvent.layout.y; }}
+                    style={[
+                      styles.opportunityCard,
+                      highlightedApplicationId === application.$id && styles.opportunityCardHighlighted,
+                    ]}
+                  >
                     <View style={styles.opportunityIcon}>
                       <Image
                         source={require('../assets/images/icon.png')}
@@ -415,7 +465,6 @@ export default function Profile() {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
@@ -621,4 +670,16 @@ const styles = StyleSheet.create({
     color: '#0a445c',
     fontSize: 12,
   },
+  calendar: {
+  borderRadius: 15,
+  borderWidth: 2,
+  borderColor: '#46a3a4',
+  marginBottom: 20,
+},
+
+opportunityCardHighlighted: {
+  borderWidth: 3,
+  borderColor: '#0a445c',
+  backgroundColor: '#eef7f7',
+},
 });

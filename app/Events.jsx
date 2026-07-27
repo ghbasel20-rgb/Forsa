@@ -1,13 +1,14 @@
 import { useRouter } from 'expo-router';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Calendar } from 'react-native-calendars';
 import HeaderBrand from './components/HeaderBrand';
+import Text from './components/AppText';
+import TextInput from './components/AppTextInput';
 import BottomNav from './components/BottomNav';
 import FilterPanel from './components/FilterPanel';
 import FilterSection from './components/FilterSection';
 import SingleChoiceRow from './components/SingleChoiceRow';
-import Text from './components/AppText';
-import TextInput from './components/AppTextInput';
 import TitleText from './components/TitleText';
 import { getCurrentUser } from './services/auth-service';
 import {
@@ -20,6 +21,7 @@ import {
 import { useLanguage } from './contexts/LanguageContext';
 import { getUserProfile } from './services/profile-service';
 import { getSavedEvents } from './services/saved-events-service';
+import { buildMarkedDates, toDateKey } from './utils/calendarUtils';
 import {
   AGE_BUCKETS,
   eventMatchesAgeBuckets,
@@ -94,7 +96,13 @@ export default function Events() {
   const skillOptions = useMemo(() => getDistinctValues(events, 'skills'), [events]);
   const interestOptions = useMemo(() => getDistinctValues(events, 'interests'), [events]);
   const ageBucketOptions = useMemo(() => AGE_BUCKETS.map((bucket) => bucket.label), []);
-
+  const markedEventDates = useMemo(() => buildMarkedDates(events), [events]);
+  const scrollRef = useRef(null);
+const eventsContainerY = useRef(0);
+const eventPositions = useRef({});
+const highlightTimeoutRef = useRef(null);
+const [highlightedEventId, setHighlightedEventId] = useState(null);
+  
   const filteredEvents = useMemo(() => {
     const filtered = eventsWithMatch.filter((event) => {
       if (!event.title.toLowerCase().includes(searchQuery.toLowerCase())) return false;
@@ -140,15 +148,45 @@ export default function Events() {
     setSortBy('match');
   };
 
+  const scrollToEvent = (eventId) => {
+  const relativeY = eventPositions.current[eventId];
+  if (relativeY === undefined || !scrollRef.current) return;
+  scrollRef.current.scrollTo({ y: Math.max(eventsContainerY.current + relativeY - 20, 0), animated: true });
+};
+
+const handleDayPress = (day) => {
+  const matches = filteredEvents.filter(
+    (event) => event.eventDate && toDateKey(event.eventDate) === day.dateString
+  );
+  if (matches.length === 0) return;
+
+  const target = matches[0];
+  if (highlightTimeoutRef.current) clearTimeout(highlightTimeoutRef.current);
+  setHighlightedEventId(target.$id);
+  scrollToEvent(target.$id);
+  highlightTimeoutRef.current = setTimeout(() => setHighlightedEventId(null), 2500);
+};
+
   return (
     <View style={styles.screen}>
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
+      <ScrollView ref={scrollRef} style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.header}>
             <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
           </View>
 
           <TitleText style={styles.title}>{t('events.title')}</TitleText>
+          <Calendar
+            markingType="custom"
+            markedDates={markedEventDates}
+            onDayPress={handleDayPress}
+            theme={{
+              todayTextColor: '#46a3a4',
+              arrowColor: '#0a445c',
+              textMonthFontWeight: '600',
+            }}
+            style={styles.calendar}
+          />
 
           <View style={styles.searchContainer}>
             <TextInput
@@ -194,7 +232,8 @@ export default function Events() {
             <SingleChoiceRow label={t('filterLabels.sortBy')} options={EVENT_SORT_OPTIONS} value={sortBy} onChange={setSortBy} />
           </FilterPanel>
 
-          <View style={styles.eventsContainer}>
+          <View style={styles.eventsContainer}
+              onLayout={(e) => { eventsContainerY.current = e.nativeEvent.layout.y; }}>
             {loading ? (
               <Text style={styles.loadingText}>{t('events.loadingText')}</Text>
             ) : filteredEvents.length === 0 ? (
@@ -202,10 +241,15 @@ export default function Events() {
             ) : (
               filteredEvents.map((event) => (
                 <TouchableOpacity
-                  key={event.$id}
-                  style={[styles.eventCard, event.isClosed && styles.eventCardClosed]}
-                  onPress={() => router.push(`/EventDetail?id=${event.$id}`)}
-                >
+        key={event.$id}
+        onLayout={(e) => { eventPositions.current[event.$id] = e.nativeEvent.layout.y; }}
+        style={[
+          styles.eventCard,
+          event.isClosed && styles.eventCardClosed,
+          highlightedEventId === event.$id && styles.eventCardHighlighted,
+        ]}
+        onPress={() => router.push(`/EventDetail?id=${event.$id}`)}
+      >
                   <View style={styles.eventCardTop}>
                     <View style={styles.iconContainer}>
                       <Image
@@ -394,4 +438,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
   },
+  calendar: {
+  borderRadius: 15,
+  borderWidth: 2,
+  borderColor: '#46a3a4',
+  marginBottom: 20,
+
+},
+
+eventCardHighlighted: {
+  borderWidth: 3,
+  borderColor: '#0a445c',
+  backgroundColor: '#eef7f7',
+},
+
 });

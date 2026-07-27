@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import Badge from '../assets/images/badge.svg';
 import HeaderBrand from './components/HeaderBrand';
 import BottomNav from './components/BottomNav';
 import FilterPanel from './components/FilterPanel';
@@ -36,12 +37,14 @@ export default function AllOpportunities() {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [matchThreshold, setMatchThreshold] = useState(0);
   const [sortBy, setSortBy] = useState('match');
+  const [badgeAssignments, setBadgeAssignments] = useState({});
 
   useEffect(() => {
     loadOpportunities();
   }, []);
 
   const loadOpportunities = async () => {
+  try {
     const [opportunitiesResult, userResult] = await Promise.all([
       getAllOpportunities(),
       getCurrentUser(),
@@ -49,17 +52,24 @@ export default function AllOpportunities() {
 
     if (opportunitiesResult.success) {
       setAllOpportunities(opportunitiesResult.data);
+
+      const badges = {};
+      opportunitiesResult.data.forEach((opp) => {
+        badges[opp.$id] = Math.random() < 0.5;
+      });
+      setBadgeAssignments(badges);
     }
 
     if (userResult.success) {
       const profileResult = await getUserProfile(userResult.data.$id);
-      if (profileResult.success) {
-        setProfile(profileResult.data);
-      }
+      if (profileResult.success) setProfile(profileResult.data);
     }
-
+  } finally {
     setLoading(false);
-  };
+  }
+};
+
+  
 
   const opportunitiesWithMatch = useMemo(
     () =>
@@ -192,6 +202,9 @@ export default function AllOpportunities() {
                   <View style={styles.scoreBadge}>
                     <Text style={styles.scoreText}>{opp.matchPercentage}%</Text>
                   </View>
+                  {badgeAssignments[opp.$id] && (
+                    <Badge width={28} height={28} style={styles.badgeIcon} />
+                  )}
                 </TouchableOpacity>
               ))
             )}
@@ -318,4 +331,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textDecorationLine: 'underline',
   },
+  badgeIcon: {
+  width: 28,
+  height: 28,
+},
 });
