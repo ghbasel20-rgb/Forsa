@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -11,12 +11,28 @@ import AboutUsModal from './components/AboutUsModal';
 import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
 import TitleText from './components/TitleText';
+import TutorialModal from './components/TutorialModal';
 import { useLanguage } from './contexts/LanguageContext';
+import { hasSeenTutorial, markTutorialSeen } from './services/tutorial-service';
 
 export default function Homepage() {
   const { t } = useLanguage();
   const successStories = t('homepage.stories');
   const [aboutModalVisible, setAboutModalVisible] = useState(false);
+  const [tutorialVisible, setTutorialVisible] = useState(false);
+
+  useEffect(() => {
+    hasSeenTutorial().then((seen) => {
+      if (!seen) {
+        setTutorialVisible(true);
+      }
+    });
+  }, []);
+
+  const finishTutorial = () => {
+    setTutorialVisible(false);
+    markTutorialSeen();
+  };
 
   return (
     <View style={styles.screen}>
@@ -63,6 +79,8 @@ export default function Homepage() {
         visible={aboutModalVisible}
         onClose={() => setAboutModalVisible(false)}
       />
+
+      <TutorialModal visible={tutorialVisible} onFinish={finishTutorial} />
     </View>
   );
 }

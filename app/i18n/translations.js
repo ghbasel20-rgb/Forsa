@@ -224,6 +224,27 @@ export const translations = {
       enterStatusTitle: 'Enter Your Status',
       statusPlaceholder: 'Type your status',
     },
+    tutorial: {
+      skip: 'Skip',
+      next: 'Next',
+      getStarted: 'Get Started',
+      welcome: {
+        title: 'Welcome to Forsa',
+        body: 'Discover events and opportunities matched to your skills and interests, all in one place.',
+      },
+      events: {
+        title: 'Explore Events',
+        body: 'Browse community events, apply in a tap, and track your application status.',
+      },
+      opportunities: {
+        title: 'Find Opportunities',
+        body: 'See internships, jobs, and volunteer roles matched to your profile, and save the ones you like.',
+      },
+      profile: {
+        title: 'Build Your Profile',
+        body: 'Add your skills and interests to get better matches, and manage everything from your profile.',
+      },
+    },
   },
   ar: {
     common: {
@@ -448,6 +469,27 @@ export const translations = {
       selectStatusTitle: 'اختر الحالة',
       enterStatusTitle: 'أدخل حالتك',
       statusPlaceholder: 'اكتب حالتك',
+    },
+    tutorial: {
+      skip: 'تخطي',
+      next: 'التالي',
+      getStarted: 'ابدأ الآن',
+      welcome: {
+        title: 'مرحبًا بك في فرصة',
+        body: 'اكتشف الفعاليات والفرص المناسبة لمهاراتك واهتماماتك، كل ذلك في مكان واحد.',
+      },
+      events: {
+        title: 'استكشف الفعاليات',
+        body: 'تصفح فعاليات المجتمع، قدّم بضغطة واحدة، وتابع حالة طلبك.',
+      },
+      opportunities: {
+        title: 'اكتشف الفرص',
+        body: 'شاهد فرص التدريب والوظائف والتطوع المناسبة لملفك الشخصي، واحفظ ما يعجبك منها.',
+      },
+      profile: {
+        title: 'أنشئ ملفك الشخصي',
+        body: 'أضف مهاراتك واهتماماتك للحصول على تطابقات أفضل، وأدر كل شيء من ملفك الشخصي.',
+      },
     },
   },
 };
