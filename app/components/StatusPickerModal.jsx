@@ -3,6 +3,7 @@ import { Modal, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Text from './AppText';
 import TextInput from './AppTextInput';
 import { useLanguage } from '../contexts/LanguageContext';
+import { statusLabelsAr, translateOption } from '../i18n/optionLabels';
 
 export const STATUS_OPTIONS = [
   'High School Student',
@@ -13,7 +14,7 @@ export const STATUS_OPTIONS = [
 ];
 
 export default function StatusPickerModal({ visible, onClose, onSubmit }) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [showCustomInput, setShowCustomInput] = useState(false);
   const [customValue, setCustomValue] = useState('');
 
@@ -56,7 +57,7 @@ export default function StatusPickerModal({ visible, onClose, onSubmit }) {
                 style={styles.modalOption}
                 onPress={() => handleSelect(option)}
               >
-                <Text style={styles.modalOptionText}>{option}</Text>
+                <Text style={styles.modalOptionText}>{translateOption(option, language, statusLabelsAr)}</Text>
               </TouchableOpacity>
             ))}
           </View>

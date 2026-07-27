@@ -23,7 +23,7 @@ import LanguagePickerModal from './components/LanguagePickerModal';
 import StatusPickerModal from './components/StatusPickerModal';
 import TitleText from './components/TitleText';
 import { useLanguage } from './contexts/LanguageContext';
-import { interestLabelsAr, skillLabelsAr, translateOption } from './i18n/optionLabels';
+import { interestLabelsAr, skillLabelsAr, statusLabelsAr, translateOption } from './i18n/optionLabels';
 import { getCurrentUser, signOut } from './services/auth-service';
 import { getEventWithTranslation } from './services/events-service';
 import { getOpportunityWithTranslation } from './services/opportunities-service';
@@ -306,7 +306,11 @@ export default function Profile() {
                 <Text style={styles.infoLabel}>{t('profile.statusLabel')}</Text>
                 <EditIcon width={32} height={32} />
               </View>
-              <Text style={styles.infoValue}>{profileData?.educationStatus || t('profile.notSet')}</Text>
+              <Text style={styles.infoValue}>
+                {profileData?.educationStatus
+                  ? translateOption(profileData.educationStatus, language, statusLabelsAr)
+                  : t('profile.notSet')}
+              </Text>
             </TouchableOpacity>
             <View style={styles.infoRow}>
               <Text style={styles.infoLabel}>{t('profile.ageLabel')}</Text>

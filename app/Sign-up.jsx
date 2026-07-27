@@ -17,12 +17,13 @@ import PasswordInput from './components/PasswordInput';
 import StatusPickerModal from './components/StatusPickerModal';
 import TitleText from './components/TitleText';
 import { useLanguage } from './contexts/LanguageContext';
+import { statusLabelsAr, translateOption } from './i18n/optionLabels';
 import { signUp } from './services/auth-service';
 import { createUserProfile } from './services/profile-service';
 
 export default function SignUp() {
   const router = useRouter();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -172,7 +173,7 @@ export default function SignUp() {
               onPress={() => setShowStatusModal(true)}
             >
               <Text style={[styles.dateText, !status && styles.placeholderText]}>
-                {status || t('signUp.statusPlaceholder')}
+                {status ? translateOption(status, language, statusLabelsAr) : t('signUp.statusPlaceholder')}
               </Text>
             </TouchableOpacity>
 

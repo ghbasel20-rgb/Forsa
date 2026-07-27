@@ -75,5 +75,13 @@ export const interestLabelsAr = {
   Other: 'أخرى',
 };
 
+export const statusLabelsAr = {
+  'High School Student': 'طالب في المدرسة الثانوية',
+  'High School Graduate': 'خريج مدرسة ثانوية',
+  'University Student': 'طالب جامعي',
+  'University Graduate': 'خريج جامعي',
+  Other: 'أخرى',
+};
+
 export const translateOption = (value, language, labels) =>
   (language === 'ar' && labels[value]) || value;
