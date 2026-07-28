@@ -2,7 +2,7 @@ import * as Google from 'expo-auth-session/providers/google';
 import { useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import { useEffect, useState } from 'react';
-import { GOOGLE_WEB_CLIENT_ID } from '../config/google-auth-config';
+import { GOOGLE_IOS_CLIENT_ID, GOOGLE_WEB_CLIENT_ID } from '../config/google-auth-config';
 import { signInWithGoogleCredential } from '../services/auth-service';
 import { createUserProfile, getUserProfile } from '../services/profile-service';
 
@@ -13,8 +13,12 @@ export function useGoogleAuth() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [request, response, promptAsync] = Google.useAuthRequest({
+    // Web client ID covers web and Android (no dedicated Android OAuth client
+    // yet — see google-auth-config.js). iOS uses its own client ID, required
+    // once this runs as a dev build instead of Expo Go.
     clientId: GOOGLE_WEB_CLIENT_ID,
     webClientId: GOOGLE_WEB_CLIENT_ID,
+    iosClientId: GOOGLE_IOS_CLIENT_ID,
   });
 
   useEffect(() => {

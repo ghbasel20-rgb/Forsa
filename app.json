@@ -11,7 +11,14 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.forsa.app",
-      "googleServicesFile": "./GoogleService-Info.plist"
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "infoPlist": {
+        "CFBundleURLTypes": [
+          {
+            "CFBundleURLSchemes": ["com.forsa.app"]
+          }
+        ]
+      }
     },
     "android": {
       "package": "com.forsa.app",

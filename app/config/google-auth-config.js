@@ -5,10 +5,10 @@
 export const GOOGLE_WEB_CLIENT_ID =
   '1095418919674-8cf023f14cohgfeo5ten4nnlj0vpbt7a.apps.googleusercontent.com';
 
-// From GoogleService-Info.plist (CLIENT_ID). Not used by useGoogleAuth.js yet —
-// only valid once the app runs as a standalone/dev build (not Expo Go), since
-// Expo Go's redirect can't be registered on an iOS-type OAuth client. Switch
-// useGoogleAuth.js's iosClientId over to this when that time comes.
+// From GoogleService-Info.plist (CLIENT_ID). Used by useGoogleAuth.js on iOS.
+// Only works in a standalone/dev build, not Expo Go — Expo Go's exp:// redirect
+// can't be validated against an iOS-type OAuth client (no redirect URI list to
+// register it in), so Google Sign-In on iOS requires a dev build from here on.
 export const GOOGLE_IOS_CLIENT_ID =
   '1095418919674-viu2j91fvmiugk906d3vbumuj72jrkh9.apps.googleusercontent.com';
 
