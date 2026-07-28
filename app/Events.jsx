@@ -30,7 +30,19 @@ import {
   getMatchThresholdOptions,
   sortItems,
 } from './utils/filterUtils';
+import { getFuzzyMatchIds } from './utils/fuzzySearch';
 import { floatingCard } from './styles/shadows';
+
+const EVENT_SEARCH_KEYS = [
+  'title',
+  'titleAr',
+  'details',
+  'detailsAr',
+  'content',
+  'contentAr',
+  'location',
+  'locationAr',
+];
 
 export default function Events() {
   const router = useRouter();
@@ -104,9 +116,14 @@ const eventPositions = useRef({});
 const highlightTimeoutRef = useRef(null);
 const [highlightedEventId, setHighlightedEventId] = useState(null);
   
+  const matchedSearchIds = useMemo(
+    () => getFuzzyMatchIds(eventsWithMatch, searchQuery, EVENT_SEARCH_KEYS),
+    [eventsWithMatch, searchQuery]
+  );
+
   const filteredEvents = useMemo(() => {
     const filtered = eventsWithMatch.filter((event) => {
-      if (!event.title.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+      if (matchedSearchIds && !matchedSearchIds.has(event.$id)) return false;
       if (event.matchPercentage < matchThreshold) return false;
       if (selectedSkills.length > 0 && !selectedSkills.some((s) => (event.skills || []).includes(s)))
         return false;
@@ -123,7 +140,7 @@ const [highlightedEventId, setHighlightedEventId] = useState(null);
     return sortItems(filtered, sortBy);
   }, [
     eventsWithMatch,
-    searchQuery,
+    matchedSearchIds,
     matchThreshold,
     selectedSkills,
     selectedInterests,

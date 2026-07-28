@@ -192,6 +192,7 @@ export default function Homepage() {
       </ScrollView>
 
       <TouchableOpacity
+        ref={registerTarget('aboutButton')}
         style={styles.aboutButton}
         onPress={() => setAboutModalVisible(true)}
       >

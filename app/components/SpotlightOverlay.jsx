@@ -1,24 +1,38 @@
-import React, { useEffect, useState } from 'react';
-import { Modal, Pressable, StyleSheet, TouchableOpacity, View, useWindowDimensions } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Animated, Modal, Pressable, StyleSheet, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import Svg, { Defs, Mask, Rect } from 'react-native-svg';
 import Text from './AppText';
 import TitleText from './TitleText';
 import { useLanguage } from '../contexts/LanguageContext';
 import { floatingCard } from '../styles/shadows';
 
+const AnimatedRect = Animated.createAnimatedComponent(Rect);
+
 const CUTOUT_PADDING = 8;
 const CUTOUT_RADIUS = 14;
 const TOOLTIP_MARGIN = 16;
+const SCREEN_MARGIN = 40;
+const TRANSITION_DURATION = 350;
+const DEFAULT_TOOLTIP_HEIGHT = 180;
 
 export default function SpotlightOverlay({ visible, steps, onFinish }) {
   const { t } = useLanguage();
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
   const [stepIndex, setStepIndex] = useState(0);
   const [bounds, setBounds] = useState(null);
+  const [tooltipHeight, setTooltipHeight] = useState(DEFAULT_TOOLTIP_HEIGHT);
+  const hasPositioned = useRef(false);
+
+  const cutoutX = useRef(new Animated.Value(0)).current;
+  const cutoutY = useRef(new Animated.Value(0)).current;
+  const cutoutWidth = useRef(new Animated.Value(0)).current;
+  const cutoutHeight = useRef(new Animated.Value(0)).current;
+  const tooltipTop = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     if (visible) {
       setStepIndex(0);
+      hasPositioned.current = false;
     }
   }, [visible]);
 
@@ -41,10 +55,6 @@ export default function SpotlightOverlay({ visible, steps, onFinish }) {
     return () => cancelAnimationFrame(raf);
   }, [visible, stepIndex, step]);
 
-  if (!visible || !step) return null;
-
-  const isLastStep = stepIndex === steps.length - 1;
-
   const cutout = bounds && {
     x: bounds.x - CUTOUT_PADDING,
     y: bounds.y - CUTOUT_PADDING,
@@ -53,11 +63,42 @@ export default function SpotlightOverlay({ visible, steps, onFinish }) {
   };
 
   const placeBelow = !cutout || cutout.y + cutout.height / 2 < screenHeight / 2;
-  const tooltipPosition = cutout
+  const desiredTop = cutout
     ? placeBelow
-      ? { top: cutout.y + cutout.height + TOOLTIP_MARGIN }
-      : { bottom: screenHeight - cutout.y + TOOLTIP_MARGIN }
-    : { top: screenHeight / 2 - 90 };
+      ? cutout.y + cutout.height + TOOLTIP_MARGIN
+      : cutout.y - TOOLTIP_MARGIN - tooltipHeight
+    : screenHeight / 2 - tooltipHeight / 2;
+  const clampedTop = Math.max(
+    SCREEN_MARGIN,
+    Math.min(desiredTop, screenHeight - tooltipHeight - SCREEN_MARGIN)
+  );
+
+  useEffect(() => {
+    if (!visible || !cutout) return;
+
+    if (!hasPositioned.current) {
+      cutoutX.setValue(cutout.x);
+      cutoutY.setValue(cutout.y);
+      cutoutWidth.setValue(cutout.width);
+      cutoutHeight.setValue(cutout.height);
+      tooltipTop.setValue(clampedTop);
+      hasPositioned.current = true;
+      return;
+    }
+
+    Animated.parallel([
+      Animated.timing(cutoutX, { toValue: cutout.x, duration: TRANSITION_DURATION, useNativeDriver: false }),
+      Animated.timing(cutoutY, { toValue: cutout.y, duration: TRANSITION_DURATION, useNativeDriver: false }),
+      Animated.timing(cutoutWidth, { toValue: cutout.width, duration: TRANSITION_DURATION, useNativeDriver: false }),
+      Animated.timing(cutoutHeight, { toValue: cutout.height, duration: TRANSITION_DURATION, useNativeDriver: false }),
+      Animated.timing(tooltipTop, { toValue: clampedTop, duration: TRANSITION_DURATION, useNativeDriver: false }),
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    ]).start();
+  }, [visible, cutout?.x, cutout?.y, cutout?.width, cutout?.height, clampedTop]);
+
+  if (!visible || !step) return null;
+
+  const isLastStep = stepIndex === steps.length - 1;
 
   const goNext = () => {
     if (isLastStep) {
@@ -77,11 +118,11 @@ export default function SpotlightOverlay({ visible, steps, onFinish }) {
             <Mask id="spotlight-mask">
               <Rect x={0} y={0} width={screenWidth} height={screenHeight} fill="#ffffff" />
               {cutout && (
-                <Rect
-                  x={cutout.x}
-                  y={cutout.y}
-                  width={cutout.width}
-                  height={cutout.height}
+                <AnimatedRect
+                  x={cutoutX}
+                  y={cutoutY}
+                  width={cutoutWidth}
+                  height={cutoutHeight}
                   rx={CUTOUT_RADIUS}
                   fill="#000000"
                 />
@@ -109,7 +150,10 @@ export default function SpotlightOverlay({ visible, steps, onFinish }) {
           />
         )}
 
-        <View style={[styles.tooltip, tooltipPosition]}>
+        <Animated.View
+          style={[styles.tooltip, { top: cutout ? tooltipTop : clampedTop }]}
+          onLayout={(event) => setTooltipHeight(event.nativeEvent.layout.height)}
+        >
           <TitleText style={styles.tooltipTitle}>{step.title}</TitleText>
           <Text style={styles.tooltipBody}>{step.description}</Text>
 
@@ -129,7 +173,7 @@ export default function SpotlightOverlay({ visible, steps, onFinish }) {
               </Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </Animated.View>
       </View>
     </Modal>
   );

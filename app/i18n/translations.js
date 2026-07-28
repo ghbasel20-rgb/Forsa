@@ -251,6 +251,18 @@ export const translations = {
         title: 'Build Your Profile',
         body: 'Add your skills and interests to get better matches, and manage everything from your profile.',
       },
+      opportunitiesTab: {
+        title: 'Browse All Opportunities',
+        body: 'Tap here anytime to explore the full list of matched opportunities.',
+      },
+      eventsTab: {
+        title: 'Browse All Events',
+        body: 'Tap here anytime to see all upcoming events and your matches.',
+      },
+      about: {
+        title: 'Learn More About Forsa',
+        body: 'Tap this button anytime to read more about Forsa and how it works.',
+      },
     },
   },
   ar: {
@@ -503,6 +515,18 @@ export const translations = {
       profile: {
         title: 'أنشئ ملفك الشخصي',
         body: 'أضف مهاراتك واهتماماتك للحصول على تطابقات أفضل، وأدر كل شيء من ملفك الشخصي.',
+      },
+      opportunitiesTab: {
+        title: 'تصفح جميع الفرص',
+        body: 'اضغط هنا في أي وقت لاستكشاف القائمة الكاملة للفرص المطابقة.',
+      },
+      eventsTab: {
+        title: 'تصفح جميع الفعاليات',
+        body: 'اضغط هنا في أي وقت لعرض جميع الفعاليات القادمة وتطابقاتك.',
+      },
+      about: {
+        title: 'تعرّف أكثر على فرصة',
+        body: 'اضغط على هذا الزر في أي وقت لقراءة المزيد عن فرصة وكيفية عملها.',
       },
     },
   },

@@ -21,7 +21,10 @@ import { getCurrentUser } from './services/auth-service';
 import { getAllOpportunities, scoreOpportunityMatch } from './services/opportunities-service';
 import { getUserProfile } from './services/profile-service';
 import { getDistinctValues, getMatchThresholdOptions, getSortOptions, sortItems } from './utils/filterUtils';
+import { getFuzzyMatchIds } from './utils/fuzzySearch';
 import { floatingCard } from './styles/shadows';
+
+const OPPORTUNITY_SEARCH_KEYS = ['title', 'titleAr', 'description', 'descriptionAr', 'category', 'location'];
 
 export default function AllOpportunities() {
   const router = useRouter();
@@ -91,9 +94,14 @@ export default function AllOpportunities() {
     return Array.from(values).sort();
   }, [allOpportunities]);
 
+  const matchedSearchIds = useMemo(
+    () => getFuzzyMatchIds(opportunitiesWithMatch, searchQuery, OPPORTUNITY_SEARCH_KEYS),
+    [opportunitiesWithMatch, searchQuery]
+  );
+
   const filteredOpportunities = useMemo(() => {
     const filtered = opportunitiesWithMatch.filter((opp) => {
-      if (!opp.title.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+      if (matchedSearchIds && !matchedSearchIds.has(opp.$id)) return false;
       if (opp.matchPercentage < matchThreshold) return false;
       if (selectedSkills.length > 0 && !selectedSkills.some((s) => (opp.skills || []).includes(s))) return false;
       if (
@@ -108,7 +116,7 @@ export default function AllOpportunities() {
     return sortItems(filtered, sortBy);
   }, [
     opportunitiesWithMatch,
-    searchQuery,
+    matchedSearchIds,
     matchThreshold,
     selectedSkills,
     selectedInterests,
