@@ -1,7 +1,5 @@
-import * as Google from 'expo-auth-session/providers/google';
 import { useRouter } from 'expo-router';
-import * as WebBrowser from 'expo-web-browser';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -12,73 +10,17 @@ import {
 import GoogleIcon from '../assets/images/google.svg';
 import Logo from '../assets/images/log-sign-in-logo.svg';
 import Text from './components/AppText';
-import {
-  GOOGLE_ANDROID_CLIENT_ID,
-  GOOGLE_IOS_CLIENT_ID,
-  GOOGLE_WEB_CLIENT_ID,
-} from './config/google-auth-config';
-import { signInWithGoogleCredential } from './services/auth-service';
-import { createUserProfile, getUserProfile } from './services/profile-service';
-
-WebBrowser.maybeCompleteAuthSession();
+import { useGoogleAuth } from './hooks/useGoogleAuth';
 
 export default function Index() {
   const router = useRouter();
-  const [googleLoading, setGoogleLoading] = useState(false);
-  const [request, response, promptAsync] = Google.useAuthRequest({
-    // Falls back to the web client ID on platforms without their own yet
-    // (see google-auth-config.js) so useAuthRequest doesn't throw on native
-    // before those are filled in — native sign-in just won't complete
-    // successfully until they are.
-    clientId: GOOGLE_WEB_CLIENT_ID,
-    webClientId: GOOGLE_WEB_CLIENT_ID,
-    iosClientId: GOOGLE_IOS_CLIENT_ID || undefined,
-    androidClientId: GOOGLE_ANDROID_CLIENT_ID || undefined,
-  });
+  const { promptGoogleSignIn, googleReady, googleLoading, googleError } = useGoogleAuth();
 
   useEffect(() => {
-    if (response?.type === 'success') {
-      const { idToken, accessToken } = response.authentication ?? {};
-      handleGoogleSignIn({ idToken, accessToken });
-    } else if (response?.type === 'error') {
-      Alert.alert('Error', 'Google sign-in failed. Please try again.');
+    if (googleError) {
+      Alert.alert('Error', googleError);
     }
-  }, [response]);
-
-  const handleGoogleSignIn = async ({ idToken, accessToken }) => {
-    setGoogleLoading(true);
-
-    const result = await signInWithGoogleCredential({ idToken, accessToken });
-    if (!result.success) {
-      setGoogleLoading(false);
-      Alert.alert('Error', result.error);
-      return;
-    }
-
-    const profileResult = await getUserProfile(result.data.$id);
-    if (profileResult.success) {
-      setGoogleLoading(false);
-      router.push('/Homepage');
-      return;
-    }
-
-    const createResult = await createUserProfile(result.data.$id, {
-      fullName: result.data.name || '',
-      email: result.data.email,
-      dateOfBirth: null,
-      educationStatus: null,
-      skills: [],
-      interests: [],
-      hasCompletedSkillsInterests: false,
-    });
-    setGoogleLoading(false);
-
-    if (createResult.success) {
-      router.push({ pathname: '/Buildprofileskills', params: { flow: 'signup' } });
-    } else {
-      Alert.alert('Error', createResult.error);
-    }
-  };
+  }, [googleError]);
 
   return (
     <View style={styles.container}>
@@ -113,8 +55,8 @@ export default function Index() {
 
         <TouchableOpacity
           style={[styles.button, styles.googleButton]}
-          onPress={() => promptAsync()}
-          disabled={!request || googleLoading}
+          onPress={promptGoogleSignIn}
+          disabled={!googleReady || googleLoading}
         >
           {googleLoading ? (
             <ActivityIndicator color="#46a3a4" />

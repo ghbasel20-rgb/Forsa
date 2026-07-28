@@ -1,6 +1,6 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useRouter } from 'expo-router';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import GoogleIcon from '../assets/images/google.svg';
 import HeaderBrand from './components/HeaderBrand';
 import Text from './components/AppText';
 import TextInput from './components/AppTextInput';
@@ -17,6 +18,7 @@ import PasswordInput from './components/PasswordInput';
 import StatusPickerModal from './components/StatusPickerModal';
 import TitleText from './components/TitleText';
 import { useLanguage } from './contexts/LanguageContext';
+import { useGoogleAuth } from './hooks/useGoogleAuth';
 import { statusLabelsAr, translateOption } from './i18n/optionLabels';
 import { signUp } from './services/auth-service';
 import { createUserProfile } from './services/profile-service';
@@ -35,6 +37,13 @@ export default function SignUp() {
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const isSubmitting = useRef(false);
+  const { promptGoogleSignIn, googleReady, googleLoading, googleError } = useGoogleAuth();
+
+  useEffect(() => {
+    if (googleError) {
+      Alert.alert(t('common.errorTitle'), googleError);
+    }
+  }, [googleError]);
 
   const onDateChange = (event, selectedDate) => {
     if (Platform.OS === 'android') {
@@ -200,6 +209,27 @@ export default function SignUp() {
                 <Text style={styles.linkBold}>{t('signUp.logInLink')}</Text>
               </Text>
             </TouchableOpacity>
+
+            <View style={styles.dividerRow}>
+              <View style={styles.dividerLine} />
+              <Text style={styles.dividerText}>or</Text>
+              <View style={styles.dividerLine} />
+            </View>
+
+            <TouchableOpacity
+              style={styles.googleButton}
+              onPress={promptGoogleSignIn}
+              disabled={!googleReady || googleLoading}
+            >
+              {googleLoading ? (
+                <ActivityIndicator color="#46a3a4" />
+              ) : (
+                <>
+                  <GoogleIcon width={20} height={20} />
+                  <Text style={styles.googleButtonText}>Continue with Google</Text>
+                </>
+              )}
+            </TouchableOpacity>
           </View>
 
           <StatusPickerModal
@@ -292,5 +322,36 @@ const styles = StyleSheet.create({
   linkBold: {
     fontWeight: 'bold',
     color: '#0a445c',
+  },
+  dividerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginTop: 8,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#b7c2c2',
+  },
+  dividerText: {
+    color: '#6b8788',
+    fontSize: 14,
+  },
+  googleButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    backgroundColor: '#ffffff',
+    borderWidth: 2,
+    borderColor: '#46a3a4',
+    borderRadius: 25,
+    paddingVertical: 16,
+  },
+  googleButtonText: {
+    color: '#0a445c',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
