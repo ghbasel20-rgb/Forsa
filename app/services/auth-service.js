@@ -1,10 +1,8 @@
 import {
   auth,
-  createUserWithEmailAndPassword,
   firebaseSignOut,
   onAuthStateChanged,
-  signInWithEmailAndPassword,
-  updateProfile,
+  signInWithEmailAndPassword
 } from '../config/firebase-config';
 
 const mapUser = (user) => ({
@@ -16,15 +14,27 @@ const mapUser = (user) => ({
 
 export const signUp = async (email, password, name) => {
   try {
-    const credential = await createUserWithEmailAndPassword(auth, email, password);
-    await updateProfile(credential.user, { displayName: name });
+    try {
+      await account.deleteSession('current');
+    } catch (error) {
+      console.log('No session to delete');
+    }
 
-    console.log('User created successfully:', credential.user.uid);
-
-    return { success: true, data: mapUser(credential.user) };
+    const response = await account.create(
+      ID.unique(), 
+      email,
+      password,
+      name
+    );
+    
+    console.log('User created successfully:', response);
+    
+    await signIn(email, password);
+    
+    return { success: true, data: response };
   } catch (error) {
     console.error('Sign up error:', error);
-    return { success: false, error: error.message };
+    return { success: false, error: error.message, code: error.code };
   }
 };
 

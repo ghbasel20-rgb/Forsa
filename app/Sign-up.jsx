@@ -10,9 +10,9 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import HeaderBrand from './components/HeaderBrand';
 import Text from './components/AppText';
 import TextInput from './components/AppTextInput';
+import HeaderBrand from './components/HeaderBrand';
 import PasswordInput from './components/PasswordInput';
 import StatusPickerModal from './components/StatusPickerModal';
 import TitleText from './components/TitleText';
@@ -53,24 +53,24 @@ export default function SignUp() {
       day: 'numeric',
     });
   };
+const handleSignUp = async () => {
+  if (isSubmitting.current) {
+    return;
+  }
 
-  const handleSignUp = async () => {
-    if (isSubmitting.current) {
-      return;
-    }
-
+  try {
     if (!fullName || !email || !password || !confirmPassword || !status || !dobSelected) {
-      Alert.alert(t('common.errorTitle'), t('signUp.fillAllFields'));
+      Alert.alert('Missing Info', 'Please fill in all fields');
       return;
     }
 
     if (password !== confirmPassword) {
-      Alert.alert(t('common.errorTitle'), t('signUp.passwordsNoMatch'));
+      Alert.alert("Passwords Don't Match", 'Please make sure both passwords are the same');
       return;
     }
 
     if (password.length < 8) {
-      Alert.alert(t('common.errorTitle'), t('signUp.passwordTooShort'));
+      Alert.alert('Password Too Short', 'Your password needs to be at least 8 characters long');
       return;
     }
 
@@ -79,9 +79,11 @@ export default function SignUp() {
     const result = await signUp(email, password, fullName);
 
     if (!result.success) {
-      isSubmitting.current = false;
-      setLoading(false);
-      Alert.alert(t('common.errorTitle'), result.error);
+      const message =
+        result.code === 409
+          ? 'An account with this email already exists. Try signing in instead.'
+          : "We couldn't create your account right now. Please check your details and try again.";
+      Alert.alert('Sign Up Failed', message);
       return;
     }
 
@@ -94,16 +96,24 @@ export default function SignUp() {
       interests: [],
       hasCompletedSkillsInterests: false,
     });
-    isSubmitting.current = false;
-    setLoading(false);
 
     if (profileResult.success) {
-      Alert.alert(t('common.successTitle'), t('signUp.accountCreated'));
+      Alert.alert('Success', 'Account created successfully!');
       router.push({ pathname: '/Buildprofileskills', params: { flow: 'signup' } });
     } else {
-      Alert.alert(t('common.errorTitle'), profileResult.error);
+      Alert.alert(
+        'Almost There',
+        "Your account was created, but we couldn't save your profile. Please sign in to finish setting it up."
+      );
     }
-  };
+  } catch (error) {
+    console.error('Unexpected sign up error:', error);
+    Alert.alert('Something Went Wrong', 'Please try again in a moment.');
+  } finally {
+    isSubmitting.current = false;
+    setLoading(false);
+  }
+};
 
   return (
     <View style={styles.screen}>
@@ -133,13 +143,23 @@ export default function SignUp() {
               autoCapitalize="none"
             />
 
-            <PasswordInput
-              style={styles.input}
-              placeholder={t('signUp.passwordPlaceholder')}
-              placeholderTextColor="#46a3a4"
-              value={password}
-              onChangeText={setPassword}
-            />
+            <View>
+  <PasswordInput
+    style={styles.input}
+    placeholder="Password"
+    placeholderTextColor="#46a3a4"
+    value={password}
+    onChangeText={setPassword}
+  />
+  <Text
+    style={[
+      styles.hintText,
+      password.length > 0 && password.length < 8 && styles.hintTextWarning,
+    ]}
+  >
+    At least 8 characters
+  </Text>
+</View>
 
             <PasswordInput
               style={styles.input}
@@ -280,4 +300,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#0a445c',
   },
+  hintText: {
+  fontSize: 12,
+  color: '#46a3a4',
+  marginTop: 6,
+  marginLeft: 12,
+},
+hintTextWarning: {
+  color: '#b3455a',
+  fontWeight: '600',
+},
 });
