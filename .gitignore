@@ -11,6 +11,7 @@ npm-debug.*
 *.orig.*
 serviceAccount*.json
 firebase-service-account*.json
+GoogleService-Info.plist
 .env
 .env.*
 web-build/
