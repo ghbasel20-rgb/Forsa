@@ -189,7 +189,7 @@ export default function Homepage() {
         style={styles.tutorialButton}
         onPress={() => setTutorialVisible(true)}
       >
-        <QuestionIcon width={26} height={26} viewBox="471 30 498 750" />
+        <QuestionIcon width={26} height={26} />
       </TouchableOpacity>
 
       <BottomNav />
