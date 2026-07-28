@@ -131,7 +131,7 @@ const handleAppliedDayPress = (day) => {
   const handleLogout = async () => {
     setSettingsMenuVisible(false);
     await signOut();
-    router.replace('/Sign-in');
+    router.replace('/');
   };
 
   const handleSelectLanguage = (code) => {
