@@ -92,8 +92,8 @@ export default function SpotlightOverlay({ visible, steps, onFinish }) {
       Animated.timing(cutoutWidth, { toValue: cutout.width, duration: TRANSITION_DURATION, useNativeDriver: false }),
       Animated.timing(cutoutHeight, { toValue: cutout.height, duration: TRANSITION_DURATION, useNativeDriver: false }),
       Animated.timing(tooltipTop, { toValue: clampedTop, duration: TRANSITION_DURATION, useNativeDriver: false }),
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     ]).start();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, cutout?.x, cutout?.y, cutout?.width, cutout?.height, clampedTop]);
 
   if (!visible || !step) return null;
