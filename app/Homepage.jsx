@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Image,
   ScrollView,
@@ -13,9 +13,10 @@ import QuestionIcon from '../assets/images/question.svg';
 import Logo from '../assets/images/logowname.svg';
 import AboutUsModal from './components/AboutUsModal';
 import BottomNav from './components/BottomNav';
+import SpotlightOverlay from './components/SpotlightOverlay';
 import Text from './components/AppText';
 import TitleText from './components/TitleText';
-import TutorialModal from './components/TutorialModal';
+import { ONBOARDING_STEPS } from './config/onboarding-config';
 import { useLanguage } from './contexts/LanguageContext';
 import { getCurrentUser } from './services/auth-service';
 import { getEvents, scoreEventMatch } from './services/events-service';
@@ -38,6 +39,18 @@ export default function Homepage() {
   const [profileId, setProfileId] = useState(null);
   const [recommendedOpportunities, setRecommendedOpportunities] = useState([]);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
+  const targetRefs = useRef({});
+
+  const registerTarget = (key) => (node) => {
+    if (node) targetRefs.current[key] = node;
+  };
+
+  const spotlightSteps = ONBOARDING_STEPS.map((step) => ({
+    id: step.id,
+    title: t(`tutorial.${step.id}.title`),
+    description: t(`tutorial.${step.id}.body`),
+    getTarget: () => (step.target ? targetRefs.current[step.target] : null),
+  }));
 
   useEffect(() => {
     loadHomeData();
@@ -104,7 +117,7 @@ export default function Homepage() {
           <View style={styles.headerUnderline} />
 
           <Text style={styles.sectionTitleInline}>{t('homepage.recommendedForYou')}</Text>
-          <View style={styles.recommendedRow}>
+          <View style={styles.recommendedRow} ref={registerTarget('opportunitiesCard')}>
             {recommendedOpportunities.length > 0 ? (
               recommendedOpportunities.map((opp) => (
                 <TouchableOpacity
@@ -133,7 +146,7 @@ export default function Homepage() {
           </View>
 
           <Text style={styles.sectionTitleInline}>{t('homepage.upcomingEvents')}</Text>
-          <View style={styles.upcomingRow}>
+          <View style={styles.upcomingRow} ref={registerTarget('eventsCard')}>
             {upcomingEvents.length > 0 ? (
               upcomingEvents.map((event) => (
                 <TouchableOpacity
@@ -192,14 +205,14 @@ export default function Homepage() {
         <QuestionIcon width={26} height={26} style={{ marginLeft: 14 }} />
       </TouchableOpacity>
 
-      <BottomNav />
+      <BottomNav registerTarget={registerTarget} />
 
       <AboutUsModal
         visible={aboutModalVisible}
         onClose={() => setAboutModalVisible(false)}
       />
 
-      <TutorialModal visible={tutorialVisible} onFinish={finishTutorial} />
+      <SpotlightOverlay visible={tutorialVisible} steps={spotlightSteps} onFinish={finishTutorial} />
     </View>
   );
 }

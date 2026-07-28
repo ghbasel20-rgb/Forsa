@@ -19,7 +19,7 @@ const tabs = [
   { key: 'opportunities', route: '/TopMatches', Icon: PurpleSearchIcon, viewBox: '37.65 6.64 62.55 66.85', onPress: exploreOpportunities, activeRoutes: ['/TopMatches', '/Allopportunities', '/Opportunitydetail'] },
 ];
 
-export default function BottomNav() {
+export default function BottomNav({ registerTarget }) {
   const router = useRouter();
   const pathname = usePathname();
   const { t } = useLanguage();
@@ -31,6 +31,7 @@ export default function BottomNav() {
         return (
           <TouchableOpacity
             key={key}
+            ref={registerTarget?.(key)}
             style={styles.tab}
             onPress={() => (onPress ? onPress(router) : router.push(route))}
           >
