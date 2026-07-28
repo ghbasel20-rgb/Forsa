@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import AboutIcon from '../assets/images/aboutus.svg';
 import CalendarIcon from '../assets/images/calender.svg';
+import QuestionIcon from '../assets/images/question.svg';
 import Logo from '../assets/images/logowname.svg';
 import AboutUsModal from './components/AboutUsModal';
 import BottomNav from './components/BottomNav';
@@ -188,7 +189,7 @@ export default function Homepage() {
         style={styles.tutorialButton}
         onPress={() => setTutorialVisible(true)}
       >
-        <Text style={styles.tutorialButtonText}>?</Text>
+        <QuestionIcon width={26} height={26} viewBox="471 30 498 750" />
       </TouchableOpacity>
 
       <BottomNav />
@@ -246,11 +247,6 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 6,
     zIndex: 10,
-  },
-  tutorialButtonText: {
-    color: '#c6389a',
-    fontSize: 26,
-    fontWeight: '700',
   },
   container: {
     flex: 1,
