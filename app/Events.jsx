@@ -30,6 +30,7 @@ import {
   getMatchThresholdOptions,
   sortItems,
 } from './utils/filterUtils';
+import { floatingCard } from './styles/shadows';
 
 export default function Events() {
   const router = useRouter();
@@ -370,6 +371,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     padding: 16,
     gap: 12,
+    ...floatingCard,
   },
   eventCardClosed: {
     backgroundColor: '#e9e9e9',

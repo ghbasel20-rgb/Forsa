@@ -21,6 +21,7 @@ import { getCurrentUser } from './services/auth-service';
 import { getAllOpportunities, scoreOpportunityMatch } from './services/opportunities-service';
 import { getUserProfile } from './services/profile-service';
 import { getDistinctValues, getMatchThresholdOptions, getSortOptions, sortItems } from './utils/filterUtils';
+import { floatingCard } from './styles/shadows';
 
 export default function AllOpportunities() {
   const router = useRouter();
@@ -290,6 +291,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
+    ...floatingCard,
   },
   iconContainer: {
     width: 60,

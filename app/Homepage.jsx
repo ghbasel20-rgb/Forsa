@@ -20,6 +20,7 @@ import { getCurrentUser } from './services/auth-service';
 import { getEvents, scoreEventMatch } from './services/events-service';
 import { getAllOpportunities, getMatchedOpportunities } from './services/opportunities-service';
 import { getUserProfile, updateUserProfile } from './services/profile-service';
+import { floatingCard } from './styles/shadows';
 
 const formatEventDay = (eventDate) => {
   const date = new Date(eventDate);
@@ -299,6 +300,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     padding: 12,
     alignItems: 'center',
+    ...floatingCard,
   },
   recommendedImage: {
     width: '100%',
@@ -335,6 +337,7 @@ const styles = StyleSheet.create({
   upcomingRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    gap: 20,
     marginBottom: 24,
   },
   upcomingCard: {

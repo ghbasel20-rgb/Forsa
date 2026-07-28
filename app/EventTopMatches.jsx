@@ -14,6 +14,7 @@ import { useLanguage } from './contexts/LanguageContext';
 import { getCurrentUser } from './services/auth-service';
 import { getEvents, getMatchedEvents } from './services/events-service';
 import { getUserProfile } from './services/profile-service';
+import { floatingCard } from './styles/shadows';
 
 export default function EventTopMatches() {
   const router = useRouter();
@@ -130,6 +131,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
+    ...floatingCard,
   },
   numberBadge: {
     width: 60,
