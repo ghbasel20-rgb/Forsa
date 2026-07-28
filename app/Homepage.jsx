@@ -101,10 +101,6 @@ export default function Homepage() {
           </View>
           <View style={styles.headerUnderline} />
 
-          {displayName ? (
-            <Text style={styles.greeting}>{t('homepage.greeting', { name: displayName })}</Text>
-          ) : null}
-
           <Text style={styles.sectionTitleInline}>{t('homepage.recommendedForYou')}</Text>
           <View style={styles.recommendedRow}>
             {recommendedOpportunities.length > 0 ? (
@@ -187,6 +183,13 @@ export default function Homepage() {
         <AboutIcon width={26} height={26} viewBox="324 8 794 796" />
       </TouchableOpacity>
 
+      <TouchableOpacity
+        style={styles.tutorialButton}
+        onPress={() => setTutorialVisible(true)}
+      >
+        <Text style={styles.tutorialButtonText}>?</Text>
+      </TouchableOpacity>
+
       <BottomNav />
 
       <AboutUsModal
@@ -225,6 +228,28 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 6,
     zIndex: 10,
+  },
+  tutorialButton: {
+    position: 'absolute',
+    left: 12,
+    bottom: 90,
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: '#ffffff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 6,
+    zIndex: 10,
+  },
+  tutorialButtonText: {
+    color: '#c6389a',
+    fontSize: 26,
+    fontWeight: '700',
   },
   container: {
     flex: 1,

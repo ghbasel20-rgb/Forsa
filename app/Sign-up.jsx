@@ -133,13 +133,18 @@ export default function SignUp() {
               autoCapitalize="none"
             />
 
-            <PasswordInput
-              style={styles.input}
-              placeholder={t('signUp.passwordPlaceholder')}
-              placeholderTextColor="#46a3a4"
-              value={password}
-              onChangeText={setPassword}
-            />
+            <View style={styles.passwordFieldGroup}>
+              <PasswordInput
+                style={styles.input}
+                placeholder={t('signUp.passwordPlaceholder')}
+                placeholderTextColor="#46a3a4"
+                value={password}
+                onChangeText={setPassword}
+              />
+              {password.length > 0 && password.length < 8 && (
+                <Text style={styles.errorText}>{t('signUp.passwordTooShort')}</Text>
+              )}
+            </View>
 
             <PasswordInput
               style={styles.input}
@@ -240,6 +245,14 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     gap: 16,
+  },
+  passwordFieldGroup: {
+    gap: 6,
+  },
+  errorText: {
+    color: '#d64545',
+    fontSize: 13,
+    marginLeft: 8,
   },
   input: {
     backgroundColor: '#ffffff',

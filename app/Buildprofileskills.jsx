@@ -11,6 +11,7 @@ import Text from './components/AppText';
 import BackButton from './components/BackButton';
 import ChipSelector from './components/ChipSelector';
 import HeaderBrand from './components/HeaderBrand';
+import TitleText from './components/TitleText';
 import { useLanguage } from './contexts/LanguageContext';
 import { skillLabelsAr } from './i18n/optionLabels';
 import { useProfile } from './ProfileContext';
@@ -113,7 +114,7 @@ export default function BuildProfileSkills() {
             <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
           </View>
 
-          <Text style={styles.title}>{t('buildProfile.skillsTitle')}</Text>
+          <TitleText style={styles.title}>{t('buildProfile.skillsTitle')}</TitleText>
 
           <ChipSelector
             options={skills}
@@ -163,6 +164,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 32,
+    fontWeight: 'bold',
     color: '#0a445c',
     marginBottom: 30,
     lineHeight: 52,
