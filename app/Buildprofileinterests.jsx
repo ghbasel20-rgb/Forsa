@@ -139,6 +139,7 @@ export default function Buildprofileinterests() {
           </View>
 
           <TitleText style={styles.title}>{t('buildProfile.interestsTitle')}</TitleText>
+          <Text style={styles.hint}>{t('buildProfile.interestsHint')}</Text>
 
           <ChipSelector
             options={interests}
@@ -193,6 +194,12 @@ const styles = StyleSheet.create({
     lineHeight: 52,
     flexShrink: 1,
     flexWrap: 'wrap',
+  },
+  hint: {
+    fontSize: 14,
+    color: '#46a3a4',
+    marginTop: -20,
+    marginBottom: 20,
   },
   button: {
     backgroundColor: '#c6a2ba',

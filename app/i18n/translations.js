@@ -173,6 +173,7 @@ export const translations = {
     buildProfile: {
       skillsTitle: 'SELECT YOUR\nSKILLS',
       interestsTitle: 'SELECT YOUR\nINTERESTS',
+      interestsHint: 'Pick at least 3 interests',
       languageTitle: 'SELECT YOUR\nLANGUAGE',
       skillModalTitle: 'Enter Your Skill',
       skillPlaceholder: 'Type your skill',
@@ -425,6 +426,7 @@ export const translations = {
     buildProfile: {
       skillsTitle: 'اختر\nمهاراتك',
       interestsTitle: 'اختر\nاهتماماتك',
+      interestsHint: 'اختر ثلاثة اهتمامات على الأقل',
       languageTitle: 'اختر\nلغتك',
       skillModalTitle: 'أدخل مهارتك',
       skillPlaceholder: 'اكتب مهارتك',
