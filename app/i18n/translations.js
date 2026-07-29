@@ -75,6 +75,7 @@ export const translations = {
       status: 'Status',
       minimumMatch: 'Minimum Match',
       sortBy: 'Sort By',
+      forsaApproved: 'Forsa Approved',
     },
     filterOptions: {
       allEvents: 'All Events',
@@ -86,6 +87,8 @@ export const translations = {
       sortRecent: 'Most Recent',
       sortAlpha: 'A-Z',
       sortDueDate: 'Due Date (Soonest)',
+      all: 'All',
+      approvedOnly: 'Forsa Approved Only',
     },
     events: {
       title: 'OUR EVENTS',
@@ -114,6 +117,7 @@ export const translations = {
       contentLabel: 'Content:',
       withdrawButton: 'Withdraw application',
       applyButton: 'Apply',
+      forsaApproved: 'Forsa Approved',
     },
     opportunityDetail: {
       loading: 'LOADING...',
@@ -130,6 +134,7 @@ export const translations = {
       loginToSave: 'Please log in to save opportunities',
       savedSuccess: 'Opportunity saved!',
       removedSuccess: 'Opportunity removed from saved',
+      forsaApproved: 'Forsa Approved',
       cannotOpenUrl: 'Cannot open this URL',
     },
     application: {
@@ -351,6 +356,7 @@ export const translations = {
       status: 'الحالة',
       minimumMatch: 'الحد الأدنى للتطابق',
       sortBy: 'ترتيب حسب',
+      forsaApproved: 'معتمد من فرصة',
     },
     filterOptions: {
       allEvents: 'جميع الفعاليات',
@@ -362,6 +368,8 @@ export const translations = {
       sortRecent: 'الأحدث',
       sortAlpha: 'أبجدي',
       sortDueDate: 'الموعد النهائي (الأقرب)',
+      all: 'الكل',
+      approvedOnly: 'معتمد من فرصة فقط',
     },
     events: {
       title: 'فعالياتنا',
@@ -390,6 +398,7 @@ export const translations = {
       contentLabel: 'المحتوى:',
       withdrawButton: 'سحب الطلب',
       applyButton: 'تقديم',
+      forsaApproved: 'معتمد من فرصة',
     },
     opportunityDetail: {
       loading: 'جارٍ التحميل...',
@@ -407,6 +416,7 @@ export const translations = {
       savedSuccess: 'تم حفظ الفرصة!',
       removedSuccess: 'تمت إزالة الفرصة من المحفوظات',
       cannotOpenUrl: 'تعذر فتح هذا الرابط',
+      forsaApproved: 'معتمد من فرصة',
     },
     application: {
       title: 'التقديم',

@@ -17,7 +17,6 @@ import { Calendar } from 'react-native-calendars';
 import HeaderBrand from './components/HeaderBrand';
 import EditIcon from '../assets/images/edit.svg';
 import ProfilePlaceholder from '../assets/images/Profile.svg';
-import SettingsIcon from '../assets/images/settings.svg';
 import Text from './components/AppText';
 import BottomNav from './components/BottomNav';
 import LanguagePickerModal from './components/LanguagePickerModal';
@@ -239,13 +238,11 @@ const handleAppliedDayPress = (day) => {
       <ScrollView ref={scrollRef} style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <TouchableOpacity
-              style={styles.settingsButton}
-              onPress={() => setSettingsMenuVisible(true)}
-            >
-              <SettingsIcon width={34} height={34} />
-            </TouchableOpacity>
-            <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" showLanguageButton={false} />
+            <HeaderBrand
+              style={styles.logoSlot}
+              pointerEvents="box-none"
+              onSettingsPress={() => setSettingsMenuVisible(true)}
+            />
           </View>
           <View style={styles.headerUnderline} />
 
@@ -481,7 +478,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#e1e4e4',
     padding: 20,
-    paddingTop: 80,
+    paddingTop: 68,
   },
   header: {
     flexDirection: 'row',
@@ -494,12 +491,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#46a3a4',
     marginBottom: 30,
   },
-  settingsButton: {
-    marginRight: 8,
-  },
   logoSlot: {
     flex: 1,
-    marginLeft: 12,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

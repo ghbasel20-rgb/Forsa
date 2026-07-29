@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Calendar } from 'react-native-calendars';
+import ApprovedIcon from '../assets/images/approved.svg';
 import Text from './components/AppText';
 import TextInput from './components/AppTextInput';
 import BottomNav from './components/BottomNav';
@@ -28,6 +29,7 @@ import {
   eventMatchesAgeBuckets,
   getDistinctValues,
   getEventSortOptions,
+  getForsaApprovedOptions,
   getMatchThresholdOptions,
   sortItems,
 } from './utils/filterUtils';
@@ -53,6 +55,7 @@ export default function Events() {
   ];
   const MATCH_THRESHOLD_OPTIONS = getMatchThresholdOptions(t);
   const EVENT_SORT_OPTIONS = getEventSortOptions(t);
+  const FORSA_APPROVED_OPTIONS = getForsaApprovedOptions(t);
   const [events, setEvents] = useState([]);
   const [profile, setProfile] = useState(null);
   const [appliedEventIds, setAppliedEventIds] = useState(new Set());
@@ -65,6 +68,7 @@ export default function Events() {
   const [appliedFilter, setAppliedFilter] = useState('all');
   const [matchThreshold, setMatchThreshold] = useState(0);
   const [sortBy, setSortBy] = useState('match');
+  const [forsaApprovedFilter, setForsaApprovedFilter] = useState('all');
 
   useEffect(() => {
     loadEvents();
@@ -134,6 +138,7 @@ const [highlightedEventId, setHighlightedEventId] = useState(null);
         return false;
       if (!eventMatchesAgeBuckets(event, selectedAgeBuckets)) return false;
       if (appliedFilter === 'applied' && !appliedEventIds.has(event.$id)) return false;
+      if (forsaApprovedFilter === 'approved' && !event.forsaApproved) return false;
       return true;
     });
 
@@ -147,6 +152,7 @@ const [highlightedEventId, setHighlightedEventId] = useState(null);
     selectedAgeBuckets,
     appliedFilter,
     appliedEventIds,
+    forsaApprovedFilter,
     sortBy,
   ]);
 
@@ -155,7 +161,8 @@ const [highlightedEventId, setHighlightedEventId] = useState(null);
     selectedInterests.length +
     selectedAgeBuckets.length +
     (matchThreshold > 0 ? 1 : 0) +
-    (appliedFilter !== 'all' ? 1 : 0);
+    (appliedFilter !== 'all' ? 1 : 0) +
+    (forsaApprovedFilter !== 'all' ? 1 : 0);
 
   const handleClearFilters = () => {
     setSelectedSkills([]);
@@ -164,6 +171,7 @@ const [highlightedEventId, setHighlightedEventId] = useState(null);
     setAppliedFilter('all');
     setMatchThreshold(0);
     setSortBy('match');
+    setForsaApprovedFilter('all');
   };
 
   const scrollToEvent = (eventId) => {
@@ -248,6 +256,12 @@ const handleDayPress = (day) => {
               value={matchThreshold}
               onChange={setMatchThreshold}
             />
+            <SingleChoiceRow
+              label={t('filterLabels.forsaApproved')}
+              options={FORSA_APPROVED_OPTIONS}
+              value={forsaApprovedFilter}
+              onChange={setForsaApprovedFilter}
+            />
             <SingleChoiceRow label={t('filterLabels.sortBy')} options={EVENT_SORT_OPTIONS} value={sortBy} onChange={setSortBy} />
           </FilterPanel>
 
@@ -291,6 +305,9 @@ const handleDayPress = (day) => {
                     >
                       {(language === 'ar' && event.titleAr) || event.title}
                     </Text>
+                    {event.forsaApproved && (
+                      <ApprovedIcon width={52} height={52} style={styles.approvedIcon} />
+                    )}
                     <View style={styles.scoreBadge}>
                       <Text style={styles.scoreText}>{event.matchPercentage}%</Text>
                     </View>
@@ -343,7 +360,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#e1e4e4',
     padding: 20,
-    paddingTop: 80,
+    paddingTop: 68,
   },
   header: {
     flexDirection: 'row',
@@ -358,7 +375,6 @@ const styles = StyleSheet.create({
   },
   logoSlot: {
     flex: 1,
-    marginLeft: 12,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -474,6 +490,10 @@ const styles = StyleSheet.create({
     color: '#0E445C',
     fontSize: 14,
     fontWeight: '700',
+  },
+  approvedIcon: {
+    width: 52,
+    height: 52,
   },
   calendar: {
   borderRadius: 15,

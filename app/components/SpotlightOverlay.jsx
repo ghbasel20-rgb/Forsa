@@ -15,7 +15,7 @@ const SCREEN_MARGIN = 40;
 const TRANSITION_DURATION = 350;
 const DEFAULT_TOOLTIP_HEIGHT = 180;
 
-export default function SpotlightOverlay({ visible, steps, onFinish }) {
+export default function SpotlightOverlay({ visible, steps, onFinish, scrollRef }) {
   const { t } = useLanguage();
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
   const [stepIndex, setStepIndex] = useState(0);
@@ -47,13 +47,86 @@ export default function SpotlightOverlay({ visible, steps, onFinish }) {
       return undefined;
     }
 
-    const raf = requestAnimationFrame(() => {
+    let cancelled = false;
+    let settleRaf = null;
+
+    const measure = () => {
       target.measureInWindow((x, y, width, height) => {
+        if (cancelled) return;
         setBounds({ x, y, width, height });
       });
-    });
-    return () => cancelAnimationFrame(raf);
-  }, [visible, stepIndex, step]);
+    };
+
+    // Polls until the target's window position stops changing (rather than
+    // assuming a fixed duration), since the native scrollTo animation's
+    // length isn't guaranteed to match any constant we pick.
+    const waitForScrollToSettle = () => {
+      let lastY = null;
+      let stableFrames = 0;
+      let attempts = 0;
+      const MAX_ATTEMPTS = 90; // ~1.5s at 60fps safety cap
+
+      const check = () => {
+        if (cancelled) return;
+        attempts += 1;
+        target.measureInWindow((mx, my, mwidth, mheight) => {
+          if (cancelled) return;
+          if (lastY !== null && Math.abs(my - lastY) < 0.5) {
+            stableFrames += 1;
+          } else {
+            stableFrames = 0;
+          }
+          lastY = my;
+
+          if (stableFrames >= 3 || attempts >= MAX_ATTEMPTS) {
+            // One final correction once the native scroll has actually
+            // stopped moving (or the safety cap is hit), rather than
+            // reacting to every in-flight frame of the scroll animation.
+            setBounds({ x: mx, y: my, width: mwidth, height: mheight });
+            return;
+          }
+          settleRaf = requestAnimationFrame(check);
+        });
+      };
+      settleRaf = requestAnimationFrame(check);
+    };
+
+    const scrollIntoViewThenMeasure = () => {
+      target.measureInWindow((x, y, width, height) => {
+        if (cancelled) return;
+
+        const isVisible = y >= SCREEN_MARGIN && y + height <= screenHeight - SCREEN_MARGIN;
+        if (isVisible || !step.scrollable || !scrollRef?.current || !target.measureLayout) {
+          setBounds({ x, y, width, height });
+          return;
+        }
+
+        target.measureLayout(
+          scrollRef.current,
+          (relX, relY) => {
+            if (cancelled) return;
+            const desiredScrollY = Math.max(0, relY - SCREEN_MARGIN);
+            scrollRef.current.scrollTo({ y: desiredScrollY, animated: true });
+
+            scrollRef.current.measureInWindow((scrollWinX, scrollWinY) => {
+              if (cancelled) return;
+              const predictedY = scrollWinY + (relY - desiredScrollY);
+              setBounds({ x, y: predictedY, width, height });
+              waitForScrollToSettle();
+            });
+          },
+          () => setBounds({ x, y, width, height })
+        );
+      });
+    };
+
+    const raf = requestAnimationFrame(scrollIntoViewThenMeasure);
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(raf);
+      if (settleRaf) cancelAnimationFrame(settleRaf);
+    };
+  }, [visible, stepIndex, step, scrollRef, screenHeight]);
 
   const cutout = bounds && {
     x: bounds.x - CUTOUT_PADDING,

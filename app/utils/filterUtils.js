@@ -15,6 +15,11 @@ export const getEventSortOptions = (t) => [
   { label: t('filterOptions.sortDueDate'), value: 'dueDate' },
 ];
 
+export const getForsaApprovedOptions = (t) => [
+  { label: t('filterOptions.all'), value: 'all' },
+  { label: t('filterOptions.approvedOnly'), value: 'approved' },
+];
+
 export const AGE_BUCKETS = [
   { label: '13-17', min: 13, max: 17 },
   { label: '18-24', min: 18, max: 24 },

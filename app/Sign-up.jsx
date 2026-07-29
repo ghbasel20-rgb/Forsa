@@ -1,10 +1,10 @@
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { Picker } from '@react-native-picker/picker';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
-  Platform,
+  Modal,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -22,6 +22,11 @@ import { useGoogleAuth } from './hooks/useGoogleAuth';
 import { statusLabelsAr, translateOption } from './i18n/optionLabels';
 import { signUp } from './services/auth-service';
 import { createUserProfile } from './services/profile-service';
+import { floatingCard } from './styles/shadows';
+
+const CURRENT_YEAR = new Date().getFullYear();
+const DOB_YEARS = Array.from({ length: 100 }, (_, i) => CURRENT_YEAR - i);
+const DOB_DEFAULT_YEAR = CURRENT_YEAR - 20;
 
 export default function SignUp() {
   const router = useRouter();
@@ -30,9 +35,10 @@ export default function SignUp() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [dateOfBirth, setDateOfBirth] = useState(new Date());
-  const [dobSelected, setDobSelected] = useState(false);
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [dobDay, setDobDay] = useState(1);
+  const [dobMonth, setDobMonth] = useState(0);
+  const [dobYear, setDobYear] = useState(DOB_DEFAULT_YEAR);
+  const [activeDobField, setActiveDobField] = useState(null);
   const [status, setStatus] = useState('');
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -45,41 +51,44 @@ export default function SignUp() {
     }
   }, [googleError]);
 
-  const onDateChange = (event, selectedDate) => {
-    if (Platform.OS === 'android') {
-      setShowDatePicker(false);
-    }
-    if (selectedDate) {
-      setDateOfBirth(selectedDate);
-      setDobSelected(true);
-    }
+  const dobDaysInMonth = new Date(dobYear, dobMonth + 1, 0).getDate();
+  const dobDays = Array.from({ length: dobDaysInMonth }, (_, i) => i + 1);
+  const dobMonths = Array.from({ length: 12 }, (_, i) =>
+    new Date(2000, i, 1).toLocaleDateString(language === 'ar' ? 'ar' : 'en-US', { month: 'long' })
+  );
+
+  const handleDobMonthChange = (month) => {
+    const maxDay = new Date(dobYear, month + 1, 0).getDate();
+    setDobMonth(month);
+    if (dobDay > maxDay) setDobDay(maxDay);
   };
 
-  const formatDate = (date) => {
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
+  const handleDobYearChange = (year) => {
+    const maxDay = new Date(year, dobMonth + 1, 0).getDate();
+    setDobYear(year);
+    if (dobDay > maxDay) setDobDay(maxDay);
   };
-const handleSignUp = async () => {
-  if (isSubmitting.current) {
-    return;
-  }
+  const isFormValid = Boolean(
+    fullName && email && password && confirmPassword && password.length >= 8 && status
+  );
 
-  try {
-    if (!fullName || !email || !password || !confirmPassword || !status || !dobSelected) {
-      Alert.alert('Missing Info', 'Please fill in all fields');
+  const handleSignUp = async () => {
+    if (isSubmitting.current) {
+      return;
+    }
+
+    if (!fullName || !email || !password || !confirmPassword || !status) {
+      Alert.alert(t('common.errorTitle'), t('signUp.fillAllFields'));
       return;
     }
 
     if (password !== confirmPassword) {
-      Alert.alert("Passwords Don't Match", 'Please make sure both passwords are the same');
+      Alert.alert(t('common.errorTitle'), t('signUp.passwordsNoMatch'));
       return;
     }
 
     if (password.length < 8) {
-      Alert.alert('Password Too Short', 'Your password needs to be at least 8 characters long');
+      Alert.alert(t('common.errorTitle'), t('signUp.passwordTooShort'));
       return;
     }
 
@@ -88,41 +97,31 @@ const handleSignUp = async () => {
     const result = await signUp(email, password, fullName);
 
     if (!result.success) {
-      const message =
-        result.code === 409
-          ? 'An account with this email already exists. Try signing in instead.'
-          : "We couldn't create your account right now. Please check your details and try again.";
-      Alert.alert('Sign Up Failed', message);
+      isSubmitting.current = false;
+      setLoading(false);
+      Alert.alert(t('common.errorTitle'), result.error);
       return;
     }
 
     const profileResult = await createUserProfile(result.data.$id, {
       fullName,
       email: result.data.email,
-      dateOfBirth: dateOfBirth.toISOString(),
+      dateOfBirth: new Date(dobYear, dobMonth, dobDay).toISOString(),
       educationStatus: status,
       skills: [],
       interests: [],
       hasCompletedSkillsInterests: false,
     });
-
-    if (profileResult.success) {
-      Alert.alert('Success', 'Account created successfully!');
-      router.push({ pathname: '/Buildprofileskills', params: { flow: 'signup' } });
-    } else {
-      Alert.alert(
-        'Almost There',
-        "Your account was created, but we couldn't save your profile. Please sign in to finish setting it up."
-      );
-    }
-  } catch (error) {
-    console.error('Unexpected sign up error:', error);
-    Alert.alert('Something Went Wrong', 'Please try again in a moment.');
-  } finally {
     isSubmitting.current = false;
     setLoading(false);
-  }
-};
+
+    if (profileResult.success) {
+      Alert.alert(t('common.successTitle'), t('signUp.accountCreated'));
+      router.push({ pathname: '/Buildprofileskills', params: { flow: 'signup' } });
+    } else {
+      Alert.alert(t('common.errorTitle'), profileResult.error);
+    }
+  };
 
   return (
     <View style={styles.screen}>
@@ -174,24 +173,65 @@ const handleSignUp = async () => {
               onChangeText={setConfirmPassword}
             />
 
-            <TouchableOpacity
-              style={styles.input}
-              onPress={() => setShowDatePicker(true)}
-            >
-              <Text style={[styles.dateText, !dobSelected && styles.placeholderText]}>
-                {dobSelected ? formatDate(dateOfBirth) : t('signUp.dobPlaceholder')}
-              </Text>
-            </TouchableOpacity>
+            <View style={styles.dobField}>
+              <Text style={styles.dobLabel}>{t('signUp.dobPlaceholder')}</Text>
+              <View style={styles.dobRow}>
+                <TouchableOpacity style={styles.dobChip} onPress={() => setActiveDobField('day')}>
+                  <Text style={styles.dobChipLabel}>Day</Text>
+                  <Text style={styles.dobChipValue}>{dobDay}</Text>
+                </TouchableOpacity>
+                <View style={styles.dobChipDivider} />
+                <TouchableOpacity style={[styles.dobChip, styles.dobChipWide]} onPress={() => setActiveDobField('month')}>
+                  <Text style={styles.dobChipLabel}>Month</Text>
+                  <Text style={styles.dobChipValue} numberOfLines={1}>{dobMonths[dobMonth]}</Text>
+                </TouchableOpacity>
+                <View style={styles.dobChipDivider} />
+                <TouchableOpacity style={styles.dobChip} onPress={() => setActiveDobField('year')}>
+                  <Text style={styles.dobChipLabel}>Year</Text>
+                  <Text style={styles.dobChipValue}>{dobYear}</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
 
-            {showDatePicker && (
-              <DateTimePicker
-                value={dateOfBirth}
-                mode="date"
-                display="default"
-                onChange={onDateChange}
-                maximumDate={new Date()}
-              />
-            )}
+            <Modal
+              visible={activeDobField != null}
+              transparent
+              animationType="fade"
+              onRequestClose={() => setActiveDobField(null)}
+            >
+              <TouchableOpacity
+                style={styles.dobModalOverlay}
+                activeOpacity={1}
+                onPress={() => setActiveDobField(null)}
+              >
+                <View style={styles.dobModalContent} onStartShouldSetResponder={() => true}>
+                  {activeDobField === 'day' && (
+                    <Picker selectedValue={dobDay} onValueChange={setDobDay} itemStyle={styles.dobPickerItem}>
+                      {dobDays.map((day) => (
+                        <Picker.Item key={day} label={String(day)} value={day} />
+                      ))}
+                    </Picker>
+                  )}
+                  {activeDobField === 'month' && (
+                    <Picker selectedValue={dobMonth} onValueChange={handleDobMonthChange} itemStyle={styles.dobPickerItem}>
+                      {dobMonths.map((label, index) => (
+                        <Picker.Item key={label} label={label} value={index} />
+                      ))}
+                    </Picker>
+                  )}
+                  {activeDobField === 'year' && (
+                    <Picker selectedValue={dobYear} onValueChange={handleDobYearChange} itemStyle={styles.dobPickerItem}>
+                      {DOB_YEARS.map((year) => (
+                        <Picker.Item key={year} label={String(year)} value={year} />
+                      ))}
+                    </Picker>
+                  )}
+                  <TouchableOpacity style={styles.dobDoneButton} onPress={() => setActiveDobField(null)}>
+                    <Text style={styles.dobDoneButtonText}>Done</Text>
+                  </TouchableOpacity>
+                </View>
+              </TouchableOpacity>
+            </Modal>
 
             <TouchableOpacity
               style={styles.input}
@@ -203,9 +243,10 @@ const handleSignUp = async () => {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={styles.button}
+              style={[styles.button, isFormValid && styles.buttonReady]}
               onPress={handleSignUp}
-              disabled={loading}
+              disabled={loading || !isFormValid}
+              activeOpacity={0.75}
             >
               {loading ? (
                 <ActivityIndicator color="#fff" />
@@ -317,12 +358,88 @@ const styles = StyleSheet.create({
   placeholderText: {
     color: '#46a3a4',
   },
+  dobField: {
+    gap: 6,
+  },
+  dobLabel: {
+    fontSize: 13,
+    color: '#46a3a4',
+    marginLeft: 12,
+  },
+  dobRow: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    backgroundColor: '#ffffff',
+    borderWidth: 2,
+    borderColor: '#46a3a4',
+    borderRadius: 25,
+    overflow: 'hidden',
+  },
+  dobChip: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 6,
+  },
+  dobChipWide: {
+    flex: 1.4,
+  },
+  dobChipDivider: {
+    width: 1,
+    backgroundColor: '#d3e4e4',
+  },
+  dobChipLabel: {
+    fontSize: 11,
+    color: '#46a3a4',
+  },
+  dobChipValue: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#0a445c',
+    marginTop: 2,
+  },
+  dobModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+  dobModalContent: {
+    width: '100%',
+    maxWidth: 320,
+    backgroundColor: '#ffffff',
+    borderRadius: 20,
+    padding: 16,
+  },
+  dobPickerItem: {
+    fontSize: 20,
+    color: '#0a445c',
+  },
+  dobDoneButton: {
+    backgroundColor: '#46a3a4',
+    borderRadius: 20,
+    paddingVertical: 12,
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  dobDoneButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
   button: {
     backgroundColor: '#c6a2ba',
+    opacity: 0.6,
     paddingVertical: 16,
     borderRadius: 25,
     alignItems: 'center',
     marginTop: 8,
+  },
+  buttonReady: {
+    opacity: 1,
+    ...floatingCard,
   },
   buttonText: {
     color: '#ffffff',

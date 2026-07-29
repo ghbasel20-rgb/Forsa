@@ -102,12 +102,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#e1e4e4',
     padding: 20,
-    paddingTop: 80,
+    paddingTop: 68,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
     marginBottom: 8,
   },
   headerUnderline: {
@@ -117,7 +116,6 @@ const styles = StyleSheet.create({
   },
   logoSlot: {
     flex: 1,
-    marginLeft: 12,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

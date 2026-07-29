@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import ApprovedIcon from '../assets/images/approved.svg';
 import HeaderBrand from './components/HeaderBrand';
 import BottomNav from './components/BottomNav';
 import Text from './components/AppText';
@@ -105,17 +106,16 @@ export default function Opportunitydetail() {
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <View style={styles.leftSection}>
-              <TouchableOpacity
-                style={styles.backButton}
-                onPress={() => router.back()}
-              >
-                <Text style={styles.backText}>{t('common.back')}</Text>
-              </TouchableOpacity>
-            </View>
             <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
           </View>
           <View style={styles.headerUnderline} />
+
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => router.back()}
+          >
+            <Text style={styles.backText}>{t('common.back')}</Text>
+          </TouchableOpacity>
 
           <View style={styles.iconContainer}>
             <Image
@@ -124,6 +124,13 @@ export default function Opportunitydetail() {
               resizeMode="contain"
             />
           </View>
+
+          {opportunity?.forsaApproved && (
+            <View style={styles.approvedRow}>
+              <ApprovedIcon width={88} height={88} style={styles.approvedIcon} />
+              <Text style={styles.approvedText}>{t('opportunityDetail.forsaApproved')}</Text>
+            </View>
+          )}
 
           <Text style={styles.title}>{loading ? t('opportunityDetail.loading') : displayTitle || t('opportunityDetail.defaultTitle')}</Text>
 
@@ -188,7 +195,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#e1e4e4',
     padding: 20,
-    paddingTop: 80,
+    paddingTop: 68,
   },
   header: {
     flexDirection: 'row',
@@ -201,13 +208,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#46a3a4',
     marginBottom: 30,
   },
-  leftSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
   backButton: {
-    marginRight: 8,
+    alignSelf: 'flex-start',
+    marginBottom: 12,
   },
   backText: {
     fontSize: 16,
@@ -215,7 +218,6 @@ const styles = StyleSheet.create({
   },
   logoSlot: {
     flex: 1,
-    marginHorizontal: 12,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -242,6 +244,22 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     flexShrink: 1,
     flexWrap: 'wrap',
+  },
+  approvedRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'center',
+    gap: 6,
+    marginBottom: 12,
+  },
+  approvedIcon: {
+    width: 88,
+    height: 88,
+  },
+  approvedText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#46a3a4',
   },
   infoSection: {
     marginBottom: 30,

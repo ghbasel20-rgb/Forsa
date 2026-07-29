@@ -72,11 +72,12 @@ export default function Application() {
         <View style={styles.container}>
           <View style={styles.header}>
             <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
-            <TouchableOpacity onPress={() => router.push('/Homepage')}>
-              <HomeIcon width={40} height={40} style={styles.homeIcon} />
-            </TouchableOpacity>
           </View>
           <View style={styles.headerUnderline} />
+
+          <TouchableOpacity style={styles.homeButton} onPress={() => router.push('/Homepage')}>
+            <HomeIcon width={40} height={40} style={styles.homeIcon} />
+          </TouchableOpacity>
 
           <View style={styles.iconContainer}>
             <Image
@@ -144,7 +145,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#e1e4e4',
     padding: 20,
-    paddingTop: 80,
+    paddingTop: 68,
   },
   header: {
     flexDirection: 'row',
@@ -159,11 +160,14 @@ const styles = StyleSheet.create({
   },
   logoSlot: {
     flex: 1,
-    marginHorizontal: 12,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: 10,
+  },
+  homeButton: {
+    alignSelf: 'flex-end',
+    marginBottom: 12,
   },
   homeIcon: {
     width: 40,

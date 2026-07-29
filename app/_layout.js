@@ -36,7 +36,7 @@ export default function Layout() {
   return (
     <LanguageProvider>
       <ProfileProvider>
-        <Stack screenOptions={{ headerShown: false, animation: 'none' }} />
+        <Stack screenOptions={{ headerShown: false, animation: 'none', gestureEnabled: false }} />
       </ProfileProvider>
     </LanguageProvider>
   );

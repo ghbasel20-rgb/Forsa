@@ -13,9 +13,7 @@ import QuestionIcon from '../assets/images/question.svg';
 import AboutUsModal from './components/AboutUsModal';
 import Text from './components/AppText';
 import BottomNav from './components/BottomNav';
-import BrandLogo from './components/BrandLogo';
-import LanguageMenu from './components/LanguageMenu';
-import NotificationBell from './components/NotificationBell';
+import HeaderBrand from './components/HeaderBrand';
 import SpotlightOverlay from './components/SpotlightOverlay';
 import TitleText from './components/TitleText';
 import { ONBOARDING_STEPS } from './config/onboarding-config';
@@ -50,27 +48,20 @@ export default function Homepage() {
   const [profileId, setProfileId] = useState(null);
   const [recommendedOpportunities, setRecommendedOpportunities] = useState([]);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
-  const [headerWidth, setHeaderWidth] = useState(null);
   const targetRefs = useRef({});
+  const scrollRef = useRef(null);
   const [storyModalVisible, setStoryModalVisible] = useState(false);
-const [selectedStory, setSelectedStory] = useState(null);
+  const [selectedStory, setSelectedStory] = useState(null);
 
   const registerTarget = (key) => (node) => {
     if (node) targetRefs.current[key] = node;
   };
 
-  const handleHeaderLayout = (event) => {
-    setHeaderWidth(event.nativeEvent.layout.width);
-  };
-
-  const HEADER_ICONS_RESERVED_WIDTH = 88; // globe + notification bell + gaps
-  const logoMaxWidth =
-    headerWidth != null ? Math.max(headerWidth - HEADER_ICONS_RESERVED_WIDTH, 0) : undefined;
-
   const spotlightSteps = ONBOARDING_STEPS.map((step) => ({
     id: step.id,
     title: t(`tutorial.${step.id}.title`),
     description: t(`tutorial.${step.id}.body`),
+    scrollable: Boolean(step.scrollable),
     getTarget: () => (step.target ? targetRefs.current[step.target] : null),
   }));
 
@@ -131,18 +122,15 @@ const [selectedStory, setSelectedStory] = useState(null);
 
   return (
     <View style={styles.screen}>
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
+      <ScrollView ref={scrollRef} style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
-          <View style={styles.header} onLayout={handleHeaderLayout}>
-            <BrandLogo
-              maxWidthPercent={1}
-              maxWidth={logoMaxWidth}
-              preserveAspectRatio="xMinYMid meet"
+          <View style={styles.header}>
+            <HeaderBrand
+              style={styles.logoSlot}
+              pointerEvents="box-none"
+              logoLinksHome={false}
+              registerTarget={registerTarget}
             />
-            <View style={styles.headerIcons}>
-              <LanguageMenu />
-              <NotificationBell registerTarget={registerTarget} />
-            </View>
           </View>
           <View style={styles.headerUnderline} />
 
@@ -285,7 +273,12 @@ const [selectedStory, setSelectedStory] = useState(null);
         onClose={() => setAboutModalVisible(false)}
       />
 
-      <SpotlightOverlay visible={tutorialVisible} steps={spotlightSteps} onFinish={finishTutorial} />
+      <SpotlightOverlay
+        visible={tutorialVisible}
+        steps={spotlightSteps}
+        onFinish={finishTutorial}
+        scrollRef={scrollRef}
+      />
     </View>
   );
 }
@@ -293,6 +286,7 @@ const [selectedStory, setSelectedStory] = useState(null);
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
+    backgroundColor: '#e1e4e4',
   },
   scroll: {
     flex: 1,
@@ -339,6 +333,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#e1e4e4',
     padding: 20,
     paddingTop: 68,
+    paddingBottom: 64,
   },
   header: {
     flexDirection: 'row',
@@ -346,10 +341,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 8,
   },
-  headerIcons: {
+  logoSlot: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    justifyContent: 'space-between',
+    gap: 10,
   },
   headerUnderline: {
     height: 2,
