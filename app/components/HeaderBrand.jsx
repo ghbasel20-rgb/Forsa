@@ -8,7 +8,13 @@ import NotificationBell from './NotificationBell';
 const GLOBE_RESERVED_WIDTH = 36; // globe button width + row gap
 const BELL_RESERVED_WIDTH = 36; // notification bell width + row gap
 
-export default function HeaderBrand({ style, pointerEvents, showLanguageButton = true, logoLinksHome = true }) {
+export default function HeaderBrand({
+  style,
+  pointerEvents,
+  showLanguageButton = true,
+  showNotifications = true,
+  logoLinksHome = true,
+}) {
   const router = useRouter();
   const [rowWidth, setRowWidth] = useState(null);
 
@@ -16,7 +22,8 @@ export default function HeaderBrand({ style, pointerEvents, showLanguageButton =
     setRowWidth(event.nativeEvent.layout.width);
   };
 
-  const reservedWidth = (showLanguageButton ? GLOBE_RESERVED_WIDTH : 0) + BELL_RESERVED_WIDTH;
+  const reservedWidth =
+    (showLanguageButton ? GLOBE_RESERVED_WIDTH : 0) + (showNotifications ? BELL_RESERVED_WIDTH : 0);
   const logoMaxWidth = rowWidth != null ? Math.max(rowWidth - reservedWidth, 0) : undefined;
 
   const logo = (
@@ -26,7 +33,7 @@ export default function HeaderBrand({ style, pointerEvents, showLanguageButton =
   return (
     <View style={style} pointerEvents={pointerEvents} onLayout={handleLayout}>
       {showLanguageButton && <LanguageMenu />}
-      <NotificationBell />
+      {showNotifications && <NotificationBell />}
       {logoLinksHome ? (
         <TouchableOpacity onPress={() => router.push('/Homepage')}>{logo}</TouchableOpacity>
       ) : (
