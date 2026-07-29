@@ -1,15 +1,26 @@
 import { useRouter } from 'expo-router';
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
+  ActivityIndicator,
+  Alert,
   StyleSheet,
   TouchableOpacity,
   View
 } from 'react-native';
+import GoogleIcon from '../assets/images/google.svg';
 import Logo from '../assets/images/log-sign-in-logo.svg';
 import Text from './components/AppText';
+import { useGoogleAuth } from './hooks/useGoogleAuth';
 
 export default function Index() {
   const router = useRouter();
+  const { promptGoogleSignIn, googleReady, googleLoading, googleError } = useGoogleAuth();
+
+  useEffect(() => {
+    if (googleError) {
+      Alert.alert('Error', googleError);
+    }
+  }, [googleError]);
 
   return (
     <View style={styles.container}>
@@ -34,6 +45,27 @@ export default function Index() {
           onPress={() => router.push('/Sign-up')}
         >
           <Text style={styles.signupButtonText}>SIGN UP</Text>
+        </TouchableOpacity>
+
+        <View style={styles.dividerRow}>
+          <View style={styles.dividerLine} />
+          <Text style={styles.dividerText}>or</Text>
+          <View style={styles.dividerLine} />
+        </View>
+
+        <TouchableOpacity
+          style={[styles.button, styles.googleButton]}
+          onPress={promptGoogleSignIn}
+          disabled={!googleReady || googleLoading}
+        >
+          {googleLoading ? (
+            <ActivityIndicator color="#46a3a4" />
+          ) : (
+            <>
+              <GoogleIcon width={20} height={20} />
+              <Text style={styles.googleButtonText}>Continue with Google</Text>
+            </>
+          )}
         </TouchableOpacity>
       </View>
     </View>
@@ -91,5 +123,33 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     letterSpacing: 1,
+  },
+  dividerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#b7c2c2',
+  },
+  dividerText: {
+    color: '#6b8788',
+    fontSize: 13,
+  },
+  googleButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#b7c2c2',
+  },
+  googleButtonText: {
+    color: '#3c4043',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });

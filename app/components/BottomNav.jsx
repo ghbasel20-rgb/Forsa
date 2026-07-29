@@ -14,12 +14,12 @@ const INACTIVE_COLOR = '#ffffff';
 
 const tabs = [
   { key: 'home', route: '/Homepage', Icon: PurpleHomeIcon, viewBox: '317.91 15.7 804.26 776.27', activeRoutes: ['/Homepage'] },
-  { key: 'profile', route: '/Profile', Icon: PurplePfpIcon, viewBox: '15 2 29 30', activeRoutes: ['/Profile'] },
-  { key: 'events', route: '/EventTopMatches', Icon: EventsIcon, onPress: exploreEvents, activeRoutes: ['/EventTopMatches', '/Events', '/EventDetail'] },
   { key: 'opportunities', route: '/TopMatches', Icon: PurpleSearchIcon, viewBox: '37.65 6.64 62.55 66.85', onPress: exploreOpportunities, activeRoutes: ['/TopMatches', '/Allopportunities', '/Opportunitydetail'] },
+  { key: 'events', route: '/EventTopMatches', Icon: EventsIcon, onPress: exploreEvents, activeRoutes: ['/EventTopMatches', '/Events', '/EventDetail'] },
+  { key: 'profile', route: '/Profile', Icon: PurplePfpIcon, viewBox: '15 2 29 30', activeRoutes: ['/Profile'] },
 ];
 
-export default function BottomNav() {
+export default function BottomNav({ registerTarget }) {
   const router = useRouter();
   const pathname = usePathname();
   const { t } = useLanguage();
@@ -31,6 +31,7 @@ export default function BottomNav() {
         return (
           <TouchableOpacity
             key={key}
+            ref={registerTarget?.(key)}
             style={styles.tab}
             onPress={() => (onPress ? onPress(router) : router.push(route))}
           >

@@ -2,7 +2,9 @@ import {
   auth,
   createUserWithEmailAndPassword,
   firebaseSignOut,
+  GoogleAuthProvider,
   onAuthStateChanged,
+  signInWithCredential,
   signInWithEmailAndPassword,
   updateProfile,
 } from '../config/firebase-config';
@@ -36,6 +38,19 @@ export const signIn = async (email, password) => {
     return { success: true, data: mapUser(credential.user) };
   } catch (error) {
     console.error('Sign in error:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+export const signInWithGoogleCredential = async ({ idToken, accessToken } = {}) => {
+  try {
+    const credential = GoogleAuthProvider.credential(idToken ?? null, accessToken ?? null);
+    const userCredential = await signInWithCredential(auth, credential);
+
+    console.log('Logged in with Google:', userCredential.user.uid);
+    return { success: true, data: mapUser(userCredential.user) };
+  } catch (error) {
+    console.error('Google sign in error:', error);
     return { success: false, error: error.message };
   }
 };

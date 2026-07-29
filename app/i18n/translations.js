@@ -48,12 +48,18 @@ export const translations = {
       exploreOpportunities: 'Explore opportunities',
       joinEvents: 'JOIN our events!',
       aboutUs: 'About us',
+      greeting: 'Hello, {name}',
+      recommendedForYou: 'Recommended for you:',
+      upcomingEvents: 'Upcoming events:',
+      readMore: 'Read more',
+      noRecommendations: 'No recommendations yet',
+      noUpcomingEvents: 'No upcoming events',
       successStories: 'SUCCESS STORIES',
       stories: [
         { id: '1', name: 'Yamen Abdulaziz', info: 'Placed in a 3-month internship' },
         { id: '2', name: 'Samir Ibrahim', info: 'Landed a volunteering role' },
         { id: '3', name: 'Razi Shiek Ahmad', info: 'Completed a mentorship program' },
-        { id: '4', name: 'Lour Dahlah', info: 'Got into Columbia University' },
+        { id: '4', name: 'Lour Dahleh', info: 'Got into Columbia University' },
       ],
     },
     filterPanel: {
@@ -155,6 +161,12 @@ export const translations = {
       approveButton: 'Approve',
       denyButton: 'Deny',
     },
+    notifications: {
+      title: 'NOTIFICATIONS',
+      empty: 'No notifications yet',
+      approved: 'Great news! You were accepted into {event}.',
+      denied: 'Your application to {event} was not accepted this time.',
+    },
     aboutUs: {
       title: 'ABOUT US',
       visionHeading: 'Our Vision',
@@ -167,6 +179,7 @@ export const translations = {
     buildProfile: {
       skillsTitle: 'SELECT YOUR\nSKILLS',
       interestsTitle: 'SELECT YOUR\nINTERESTS',
+      interestsHint: 'Pick at least 3 interests',
       languageTitle: 'SELECT YOUR\nLANGUAGE',
       skillModalTitle: 'Enter Your Skill',
       skillPlaceholder: 'Type your skill',
@@ -244,6 +257,22 @@ export const translations = {
         title: 'Build Your Profile',
         body: 'Add your skills and interests to get better matches, and manage everything from your profile.',
       },
+      opportunitiesTab: {
+        title: 'Browse All Opportunities',
+        body: 'Tap here anytime to explore the full list of matched opportunities.',
+      },
+      eventsTab: {
+        title: 'Browse All Events',
+        body: 'Tap here anytime to see all upcoming events and your matches.',
+      },
+      notifications: {
+        title: 'Stay Updated',
+        body: 'Check here to see if you got accepted to the events you applied to.',
+      },
+      about: {
+        title: 'Learn More About Forsa',
+        body: 'Tap this button anytime to read more about Forsa and how it works.',
+      },
     },
   },
   ar: {
@@ -295,6 +324,12 @@ export const translations = {
       exploreOpportunities: 'استكشف الفرص',
       joinEvents: 'انضم إلى فعالياتنا!',
       aboutUs: 'من نحن',
+      greeting: 'مرحبًا، {name}',
+      recommendedForYou: 'موصى به لك:',
+      upcomingEvents: 'الفعاليات القادمة:',
+      readMore: 'اقرأ المزيد',
+      noRecommendations: 'لا توجد توصيات بعد',
+      noUpcomingEvents: 'لا توجد فعاليات قادمة',
       successStories: 'قصص نجاح',
       stories: [
         { id: '1', name: 'يامن عبدالعزيز', info: 'حصل على تدريب لمدة 3 أشهر' },
@@ -402,6 +437,12 @@ export const translations = {
       approveButton: 'قبول',
       denyButton: 'رفض',
     },
+    notifications: {
+      title: 'الإشعارات',
+      empty: 'لا توجد إشعارات بعد',
+      approved: 'أخبار رائعة! تم قبولك في {event}.',
+      denied: 'لم يتم قبول طلبك في {event} هذه المرة.',
+    },
     aboutUs: {
       title: 'من نحن',
       visionHeading: 'رؤيتنا',
@@ -413,6 +454,7 @@ export const translations = {
     buildProfile: {
       skillsTitle: 'اختر\nمهاراتك',
       interestsTitle: 'اختر\nاهتماماتك',
+      interestsHint: 'اختر ثلاثة اهتمامات على الأقل',
       languageTitle: 'اختر\nلغتك',
       skillModalTitle: 'أدخل مهارتك',
       skillPlaceholder: 'اكتب مهارتك',
@@ -489,6 +531,22 @@ export const translations = {
       profile: {
         title: 'أنشئ ملفك الشخصي',
         body: 'أضف مهاراتك واهتماماتك للحصول على تطابقات أفضل، وأدر كل شيء من ملفك الشخصي.',
+      },
+      opportunitiesTab: {
+        title: 'تصفح جميع الفرص',
+        body: 'اضغط هنا في أي وقت لاستكشاف القائمة الكاملة للفرص المطابقة.',
+      },
+      eventsTab: {
+        title: 'تصفح جميع الفعاليات',
+        body: 'اضغط هنا في أي وقت لعرض جميع الفعاليات القادمة وتطابقاتك.',
+      },
+      notifications: {
+        title: 'ابقَ على اطلاع',
+        body: 'تحقق هنا لمعرفة ما إذا تم قبولك في الفعاليات التي تقدمت لها.',
+      },
+      about: {
+        title: 'تعرّف أكثر على فرصة',
+        body: 'اضغط على هذا الزر في أي وقت لقراءة المزيد عن فرصة وكيفية عملها.',
       },
     },
   },

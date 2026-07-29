@@ -38,6 +38,7 @@ import {
 import { getSavedEvents } from './services/saved-events-service';
 import { getSavedOpportunities } from './services/saved-opportunities-service';
 import { buildMarkedDates, toDateKey } from './utils/calendarUtils';
+import { floatingCard } from './styles/shadows';
 
 export default function Profile() {
   const router = useRouter();
@@ -131,7 +132,7 @@ const handleAppliedDayPress = (day) => {
   const handleLogout = async () => {
     setSettingsMenuVisible(false);
     await signOut();
-    router.replace('/Sign-in');
+    router.replace('/');
   };
 
   const handleSelectLanguage = (code) => {
@@ -640,6 +641,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
+    ...floatingCard,
   },
   opportunityIcon: {
     width: 60,

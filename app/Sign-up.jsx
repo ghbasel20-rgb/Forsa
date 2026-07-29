@@ -1,6 +1,6 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useRouter } from 'expo-router';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import GoogleIcon from '../assets/images/google.svg';
 import Text from './components/AppText';
 import TextInput from './components/AppTextInput';
 import HeaderBrand from './components/HeaderBrand';
@@ -17,6 +18,7 @@ import PasswordInput from './components/PasswordInput';
 import StatusPickerModal from './components/StatusPickerModal';
 import TitleText from './components/TitleText';
 import { useLanguage } from './contexts/LanguageContext';
+import { useGoogleAuth } from './hooks/useGoogleAuth';
 import { statusLabelsAr, translateOption } from './i18n/optionLabels';
 import { signUp } from './services/auth-service';
 import { createUserProfile } from './services/profile-service';
@@ -35,6 +37,13 @@ export default function SignUp() {
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const isSubmitting = useRef(false);
+  const { promptGoogleSignIn, googleReady, googleLoading, googleError } = useGoogleAuth();
+
+  useEffect(() => {
+    if (googleError) {
+      Alert.alert(t('common.errorTitle'), googleError);
+    }
+  }, [googleError]);
 
   const onDateChange = (event, selectedDate) => {
     if (Platform.OS === 'android') {
@@ -119,7 +128,7 @@ const handleSignUp = async () => {
     <View style={styles.screen}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
-          <HeaderBrand style={styles.logoSlot} logoLinksHome={false} />
+          <HeaderBrand style={styles.logoSlot} logoLinksHome={false} showNotifications={false} />
 
           <TitleText style={styles.title}>{t('signUp.title')}</TitleText>
 
@@ -143,23 +152,18 @@ const handleSignUp = async () => {
               autoCapitalize="none"
             />
 
-            <View>
-  <PasswordInput
-    style={styles.input}
-    placeholder="Password"
-    placeholderTextColor="#46a3a4"
-    value={password}
-    onChangeText={setPassword}
-  />
-  <Text
-    style={[
-      styles.hintText,
-      password.length > 0 && password.length < 8 && styles.hintTextWarning,
-    ]}
-  >
-    At least 8 characters
-  </Text>
-</View>
+            <View style={styles.passwordFieldGroup}>
+              <PasswordInput
+                style={styles.input}
+                placeholder={t('signUp.passwordPlaceholder')}
+                placeholderTextColor="#46a3a4"
+                value={password}
+                onChangeText={setPassword}
+              />
+              {password.length > 0 && password.length < 8 && (
+                <Text style={styles.errorText}>{t('signUp.passwordTooShort')}</Text>
+              )}
+            </View>
 
             <PasswordInput
               style={styles.input}
@@ -215,6 +219,27 @@ const handleSignUp = async () => {
                 <Text style={styles.linkBold}>{t('signUp.logInLink')}</Text>
               </Text>
             </TouchableOpacity>
+
+            <View style={styles.dividerRow}>
+              <View style={styles.dividerLine} />
+              <Text style={styles.dividerText}>or</Text>
+              <View style={styles.dividerLine} />
+            </View>
+
+            <TouchableOpacity
+              style={styles.googleButton}
+              onPress={promptGoogleSignIn}
+              disabled={!googleReady || googleLoading}
+            >
+              {googleLoading ? (
+                <ActivityIndicator color="#46a3a4" />
+              ) : (
+                <>
+                  <GoogleIcon width={20} height={20} />
+                  <Text style={styles.googleButtonText}>Continue with Google</Text>
+                </>
+              )}
+            </TouchableOpacity>
           </View>
 
           <StatusPickerModal
@@ -261,6 +286,14 @@ const styles = StyleSheet.create({
   formContainer: {
     gap: 16,
   },
+  passwordFieldGroup: {
+    gap: 6,
+  },
+  errorText: {
+    color: '#d64545',
+    fontSize: 13,
+    marginLeft: 8,
+  },
   input: {
     backgroundColor: '#ffffff',
     borderWidth: 2,
@@ -300,14 +333,35 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#0a445c',
   },
-  hintText: {
-  fontSize: 12,
-  color: '#46a3a4',
-  marginTop: 6,
-  marginLeft: 12,
-},
-hintTextWarning: {
-  color: '#b3455a',
-  fontWeight: '600',
-},
+  dividerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginTop: 8,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#b7c2c2',
+  },
+  dividerText: {
+    color: '#6b8788',
+    fontSize: 14,
+  },
+  googleButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    backgroundColor: '#ffffff',
+    borderWidth: 2,
+    borderColor: '#46a3a4',
+    borderRadius: 25,
+    paddingVertical: 16,
+  },
+  googleButtonText: {
+    color: '#0a445c',
+    fontSize: 16,
+    fontWeight: '600',
+  },
 });
