@@ -162,7 +162,7 @@ export const translations = {
       denyButton: 'Deny',
     },
     notifications: {
-      title: 'NOTIFICATIONS',
+      title: 'Notifications',
       empty: 'No notifications yet',
       approved: 'Great news! You were accepted into {event}.',
       denied: 'Your application to {event} was not accepted this time.',

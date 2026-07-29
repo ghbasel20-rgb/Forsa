@@ -32,6 +32,7 @@ export default function Buildprofilelanguage() {
             <BackButton />
             <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
           </View>
+          <View style={styles.headerUnderline} />
 
           <Text style={styles.title}>{t('buildProfile.languageTitle')}</Text>
 
@@ -77,6 +78,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  headerUnderline: {
+    height: 2,
+    backgroundColor: '#46a3a4',
     marginBottom: 40,
   },
   logoSlot: {
@@ -84,7 +90,7 @@ const styles = StyleSheet.create({
     marginLeft: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     gap: 10,
   },
   title: {

@@ -129,6 +129,7 @@ const handleSignUp = async () => {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <HeaderBrand style={styles.logoSlot} logoLinksHome={false} showNotifications={false} />
+          <View style={styles.headerUnderline} />
 
           <TitleText style={styles.title}>{t('signUp.title')}</TitleText>
 
@@ -272,8 +273,13 @@ const styles = StyleSheet.create({
   logoSlot: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     gap: 10,
+    marginBottom: 8,
+  },
+  headerUnderline: {
+    height: 2,
+    backgroundColor: '#46a3a4',
     marginBottom: 12,
   },
   title: {

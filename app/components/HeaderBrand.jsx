@@ -1,11 +1,11 @@
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import BrandLogo from './BrandLogo';
 import LanguageMenu from './LanguageMenu';
 import NotificationBell from './NotificationBell';
 
-const GLOBE_RESERVED_WIDTH = 36; // globe button width + row gap
+const GLOBE_RESERVED_WIDTH = 40; // globe button width + row gap
 const BELL_RESERVED_WIDTH = 36; // notification bell width + row gap
 
 export default function HeaderBrand({
@@ -32,13 +32,23 @@ export default function HeaderBrand({
 
   return (
     <View style={style} pointerEvents={pointerEvents} onLayout={handleLayout}>
-      {showLanguageButton && <LanguageMenu />}
-      {showNotifications && <NotificationBell />}
       {logoLinksHome ? (
         <TouchableOpacity onPress={() => router.push('/Homepage')}>{logo}</TouchableOpacity>
       ) : (
         logo
       )}
+      <View style={styles.icons}>
+        {showLanguageButton && <LanguageMenu />}
+        {showNotifications && <NotificationBell />}
+      </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  icons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+});

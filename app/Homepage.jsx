@@ -63,7 +63,7 @@ const [selectedStory, setSelectedStory] = useState(null);
     setHeaderWidth(event.nativeEvent.layout.width);
   };
 
-  const HEADER_ICONS_RESERVED_WIDTH = 84; // globe + notification bell + gaps
+  const HEADER_ICONS_RESERVED_WIDTH = 88; // globe + notification bell + gaps
   const logoMaxWidth =
     headerWidth != null ? Math.max(headerWidth - HEADER_ICONS_RESERVED_WIDTH, 0) : undefined;
 
@@ -338,7 +338,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#e1e4e4',
     padding: 20,
-    paddingTop: 20,
+    paddingTop: 68,
   },
   header: {
     flexDirection: 'row',

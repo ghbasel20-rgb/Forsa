@@ -76,6 +76,7 @@ export default function Application() {
               <HomeIcon width={40} height={40} style={styles.homeIcon} />
             </TouchableOpacity>
           </View>
+          <View style={styles.headerUnderline} />
 
           <View style={styles.iconContainer}>
             <Image
@@ -149,6 +150,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginBottom: 8,
+  },
+  headerUnderline: {
+    height: 2,
+    backgroundColor: '#46a3a4',
     marginBottom: 30,
   },
   logoSlot: {
@@ -156,7 +162,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     gap: 10,
   },
   homeIcon: {
