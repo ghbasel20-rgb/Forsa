@@ -110,7 +110,7 @@ export default function BuildProfileSkills() {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <BackButton />
+            {flow !== 'signup' && <BackButton />}
             <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
           </View>
           <View style={styles.headerUnderline} />

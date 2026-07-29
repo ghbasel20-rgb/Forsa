@@ -1,10 +1,9 @@
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { Picker } from '@react-native-picker/picker';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
-  Platform,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -23,6 +22,10 @@ import { statusLabelsAr, translateOption } from './i18n/optionLabels';
 import { signUp } from './services/auth-service';
 import { createUserProfile } from './services/profile-service';
 
+const CURRENT_YEAR = new Date().getFullYear();
+const DOB_YEARS = Array.from({ length: 100 }, (_, i) => CURRENT_YEAR - i);
+const DOB_DEFAULT_YEAR = CURRENT_YEAR - 20;
+
 export default function SignUp() {
   const router = useRouter();
   const { t, language } = useLanguage();
@@ -30,9 +33,9 @@ export default function SignUp() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [dateOfBirth, setDateOfBirth] = useState(new Date());
-  const [dobSelected, setDobSelected] = useState(false);
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [dobDay, setDobDay] = useState(1);
+  const [dobMonth, setDobMonth] = useState(0);
+  const [dobYear, setDobYear] = useState(DOB_DEFAULT_YEAR);
   const [status, setStatus] = useState('');
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -45,22 +48,22 @@ export default function SignUp() {
     }
   }, [googleError]);
 
-  const onDateChange = (event, selectedDate) => {
-    if (Platform.OS === 'android') {
-      setShowDatePicker(false);
-    }
-    if (selectedDate) {
-      setDateOfBirth(selectedDate);
-      setDobSelected(true);
-    }
+  const dobDaysInMonth = new Date(dobYear, dobMonth + 1, 0).getDate();
+  const dobDays = Array.from({ length: dobDaysInMonth }, (_, i) => i + 1);
+  const dobMonths = Array.from({ length: 12 }, (_, i) =>
+    new Date(2000, i, 1).toLocaleDateString(language === 'ar' ? 'ar' : 'en-US', { month: 'long' })
+  );
+
+  const handleDobMonthChange = (month) => {
+    const maxDay = new Date(dobYear, month + 1, 0).getDate();
+    setDobMonth(month);
+    if (dobDay > maxDay) setDobDay(maxDay);
   };
 
-  const formatDate = (date) => {
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
+  const handleDobYearChange = (year) => {
+    const maxDay = new Date(year, dobMonth + 1, 0).getDate();
+    setDobYear(year);
+    if (dobDay > maxDay) setDobDay(maxDay);
   };
 
   const handleSignUp = async () => {
@@ -68,7 +71,7 @@ export default function SignUp() {
       return;
     }
 
-    if (!fullName || !email || !password || !confirmPassword || !status || !dobSelected) {
+    if (!fullName || !email || !password || !confirmPassword || !status) {
       Alert.alert(t('common.errorTitle'), t('signUp.fillAllFields'));
       return;
     }
@@ -97,7 +100,7 @@ export default function SignUp() {
     const profileResult = await createUserProfile(result.data.$id, {
       fullName,
       email: result.data.email,
-      dateOfBirth: dateOfBirth.toISOString(),
+      dateOfBirth: new Date(dobYear, dobMonth, dobDay).toISOString(),
       educationStatus: status,
       skills: [],
       interests: [],
@@ -164,24 +167,32 @@ export default function SignUp() {
               onChangeText={setConfirmPassword}
             />
 
-            <TouchableOpacity
-              style={styles.input}
-              onPress={() => setShowDatePicker(true)}
-            >
-              <Text style={[styles.dateText, !dobSelected && styles.placeholderText]}>
-                {dobSelected ? formatDate(dateOfBirth) : t('signUp.dobPlaceholder')}
-              </Text>
-            </TouchableOpacity>
-
-            {showDatePicker && (
-              <DateTimePicker
-                value={dateOfBirth}
-                mode="date"
-                display="default"
-                onChange={onDateChange}
-                maximumDate={new Date()}
-              />
-            )}
+            <View style={styles.dobField}>
+              <Text style={styles.dobLabel}>{t('signUp.dobPlaceholder')}</Text>
+              <View style={styles.dobRow}>
+                <View style={styles.dobPickerWrap}>
+                  <Picker selectedValue={dobDay} onValueChange={setDobDay} style={styles.dobPicker} itemStyle={styles.dobPickerItem}>
+                    {dobDays.map((day) => (
+                      <Picker.Item key={day} label={String(day)} value={day} />
+                    ))}
+                  </Picker>
+                </View>
+                <View style={[styles.dobPickerWrap, styles.dobPickerWrapWide]}>
+                  <Picker selectedValue={dobMonth} onValueChange={handleDobMonthChange} style={styles.dobPicker} itemStyle={styles.dobPickerItem}>
+                    {dobMonths.map((label, index) => (
+                      <Picker.Item key={label} label={label} value={index} />
+                    ))}
+                  </Picker>
+                </View>
+                <View style={styles.dobPickerWrap}>
+                  <Picker selectedValue={dobYear} onValueChange={handleDobYearChange} style={styles.dobPicker} itemStyle={styles.dobPickerItem}>
+                    {DOB_YEARS.map((year) => (
+                      <Picker.Item key={year} label={String(year)} value={year} />
+                    ))}
+                  </Picker>
+                </View>
+              </View>
+            </View>
 
             <TouchableOpacity
               style={styles.input}
@@ -306,6 +317,35 @@ const styles = StyleSheet.create({
   },
   placeholderText: {
     color: '#46a3a4',
+  },
+  dobField: {
+    gap: 6,
+  },
+  dobLabel: {
+    fontSize: 13,
+    color: '#46a3a4',
+    marginLeft: 12,
+  },
+  dobRow: {
+    flexDirection: 'row',
+    backgroundColor: '#ffffff',
+    borderWidth: 2,
+    borderColor: '#46a3a4',
+    borderRadius: 25,
+    overflow: 'hidden',
+  },
+  dobPickerWrap: {
+    flex: 1,
+  },
+  dobPickerWrapWide: {
+    flex: 1.4,
+  },
+  dobPicker: {
+    color: '#0a445c',
+  },
+  dobPickerItem: {
+    fontSize: 16,
+    color: '#0a445c',
   },
   button: {
     backgroundColor: '#c6a2ba',
