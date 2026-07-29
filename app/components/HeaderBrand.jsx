@@ -3,8 +3,10 @@ import React, { useState } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import BrandLogo from './BrandLogo';
 import LanguageMenu from './LanguageMenu';
+import NotificationBell from './NotificationBell';
 
 const GLOBE_RESERVED_WIDTH = 36; // globe button width + row gap
+const BELL_RESERVED_WIDTH = 36; // notification bell width + row gap
 
 export default function HeaderBrand({ style, pointerEvents, showLanguageButton = true, logoLinksHome = true }) {
   const router = useRouter();
@@ -14,7 +16,7 @@ export default function HeaderBrand({ style, pointerEvents, showLanguageButton =
     setRowWidth(event.nativeEvent.layout.width);
   };
 
-  const reservedWidth = showLanguageButton ? GLOBE_RESERVED_WIDTH : 0;
+  const reservedWidth = (showLanguageButton ? GLOBE_RESERVED_WIDTH : 0) + BELL_RESERVED_WIDTH;
   const logoMaxWidth = rowWidth != null ? Math.max(rowWidth - reservedWidth, 0) : undefined;
 
   const logo = (
@@ -24,6 +26,7 @@ export default function HeaderBrand({ style, pointerEvents, showLanguageButton =
   return (
     <View style={style} pointerEvents={pointerEvents} onLayout={handleLayout}>
       {showLanguageButton && <LanguageMenu />}
+      <NotificationBell />
       {logoLinksHome ? (
         <TouchableOpacity onPress={() => router.push('/Homepage')}>{logo}</TouchableOpacity>
       ) : (

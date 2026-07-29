@@ -26,6 +26,7 @@ export const applyToEvent = async (userId, eventId, name) => {
       name,
       status: 'Pending',
       appliedAt: new Date().toISOString(),
+      notificationSeen: true,
     });
     const docSnap = await getDoc(docRef);
 
@@ -75,13 +76,48 @@ export const getAllSavedEvents = async () => {
 export const updateApplicationStatus = async (documentId, status) => {
   try {
     const docRef = doc(db, SAVED_EVENTS_COLLECTION_ID, documentId);
-    await updateDoc(docRef, { status });
+    await updateDoc(docRef, {
+      status,
+      statusUpdatedAt: new Date().toISOString(),
+      notificationSeen: status === 'Pending',
+    });
     const docSnap = await getDoc(docRef);
 
     console.log('Application status updated:', documentId);
     return { success: true, data: mapSavedEvent(docSnap) };
   } catch (error) {
     console.error('Update application status error:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+export const markApplicationNotificationsSeen = async (documentIds) => {
+  try {
+    await Promise.all(
+      documentIds.map((documentId) =>
+        updateDoc(doc(db, SAVED_EVENTS_COLLECTION_ID, documentId), { notificationSeen: true })
+      )
+    );
+    return { success: true };
+  } catch (error) {
+    console.error('Mark notifications seen error:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+export const getApplicationNotifications = async (userId) => {
+  try {
+    const q = query(collection(db, SAVED_EVENTS_COLLECTION_ID), where('userId', '==', userId));
+    const snapshot = await getDocs(q);
+
+    const notifications = snapshot.docs
+      .map(mapSavedEvent)
+      .filter((application) => application.status && application.status !== 'Pending')
+      .sort((a, b) => new Date(b.statusUpdatedAt || 0) - new Date(a.statusUpdatedAt || 0));
+
+    return { success: true, data: notifications };
+  } catch (error) {
+    console.error('Get application notifications error:', error);
     return { success: false, error: error.message };
   }
 };

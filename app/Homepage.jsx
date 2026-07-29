@@ -13,6 +13,7 @@ import QuestionIcon from '../assets/images/question.svg';
 import Logo from '../assets/images/logowname.svg';
 import AboutUsModal from './components/AboutUsModal';
 import BottomNav from './components/BottomNav';
+import NotificationBell from './components/NotificationBell';
 import SpotlightOverlay from './components/SpotlightOverlay';
 import Text from './components/AppText';
 import TitleText from './components/TitleText';
@@ -112,6 +113,9 @@ export default function Homepage() {
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.header}>
+            <View style={styles.notificationSlot}>
+              <NotificationBell />
+            </View>
             <Logo width={760} height={168} />
           </View>
           <View style={styles.headerUnderline} />
@@ -274,6 +278,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 10,
     marginBottom: -8,
+    position: 'relative',
+  },
+  notificationSlot: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    zIndex: 10,
   },
   headerUnderline: {
     height: 2,

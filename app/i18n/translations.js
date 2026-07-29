@@ -161,6 +161,12 @@ export const translations = {
       approveButton: 'Approve',
       denyButton: 'Deny',
     },
+    notifications: {
+      title: 'NOTIFICATIONS',
+      empty: 'No notifications yet',
+      approved: 'Great news! You were accepted into {event}.',
+      denied: 'Your application to {event} was not accepted this time.',
+    },
     aboutUs: {
       title: 'ABOUT US',
       visionHeading: 'Our Vision',
@@ -426,6 +432,12 @@ export const translations = {
       appliedLabel: 'تاريخ التقديم:',
       approveButton: 'قبول',
       denyButton: 'رفض',
+    },
+    notifications: {
+      title: 'الإشعارات',
+      empty: 'لا توجد إشعارات بعد',
+      approved: 'أخبار رائعة! تم قبولك في {event}.',
+      denied: 'لم يتم قبول طلبك في {event} هذه المرة.',
     },
     aboutUs: {
       title: 'من نحن',
