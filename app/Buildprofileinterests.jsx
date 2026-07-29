@@ -137,6 +137,7 @@ export default function Buildprofileinterests() {
             <BackButton />
             <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
           </View>
+          <View style={styles.headerUnderline} />
 
           <TitleText style={styles.title}>{t('buildProfile.interestsTitle')}</TitleText>
           <Text style={styles.hint}>{t('buildProfile.interestsHint')}</Text>
@@ -177,6 +178,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  headerUnderline: {
+    height: 2,
+    backgroundColor: '#46a3a4',
     marginBottom: 40,
   },
   logoSlot: {
@@ -184,7 +190,7 @@ const styles = StyleSheet.create({
     marginLeft: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     gap: 10,
   },
   title: {

@@ -48,6 +48,7 @@ export default function EventTopMatches() {
           <View style={styles.header}>
             <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
           </View>
+          <View style={styles.headerUnderline} />
 
           <TitleText style={styles.title}>{t('eventTopMatches.title')}</TitleText>
 
@@ -102,6 +103,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginBottom: 8,
+  },
+  headerUnderline: {
+    height: 2,
+    backgroundColor: '#46a3a4',
     marginBottom: 30,
   },
   logoSlot: {
@@ -109,7 +115,7 @@ const styles = StyleSheet.create({
     marginLeft: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     gap: 10,
   },
   title: {

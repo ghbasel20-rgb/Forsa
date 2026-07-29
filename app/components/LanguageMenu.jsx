@@ -16,7 +16,7 @@ export default function LanguageMenu() {
   return (
     <>
       <TouchableOpacity style={styles.button} onPress={() => setVisible(true)}>
-        <GlobeIcon width={26} height={26} />
+        <GlobeIcon width={38} height={38} />
       </TouchableOpacity>
 
       <LanguagePickerModal

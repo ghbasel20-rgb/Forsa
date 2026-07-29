@@ -247,6 +247,7 @@ const handleAppliedDayPress = (day) => {
             </TouchableOpacity>
             <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" showLanguageButton={false} />
           </View>
+          <View style={styles.headerUnderline} />
 
           <Modal
             transparent
@@ -486,6 +487,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  headerUnderline: {
+    height: 2,
+    backgroundColor: '#46a3a4',
     marginBottom: 30,
   },
   settingsButton: {
@@ -496,7 +502,7 @@ const styles = StyleSheet.create({
     marginLeft: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     gap: 10,
   },
   menuOverlay: {
