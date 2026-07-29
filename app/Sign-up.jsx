@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
+  Modal,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -36,6 +37,7 @@ export default function SignUp() {
   const [dobDay, setDobDay] = useState(1);
   const [dobMonth, setDobMonth] = useState(0);
   const [dobYear, setDobYear] = useState(DOB_DEFAULT_YEAR);
+  const [activeDobField, setActiveDobField] = useState(null);
   const [status, setStatus] = useState('');
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -170,29 +172,62 @@ export default function SignUp() {
             <View style={styles.dobField}>
               <Text style={styles.dobLabel}>{t('signUp.dobPlaceholder')}</Text>
               <View style={styles.dobRow}>
-                <View style={styles.dobPickerWrap}>
-                  <Picker selectedValue={dobDay} onValueChange={setDobDay} style={styles.dobPicker} itemStyle={styles.dobPickerItem}>
-                    {dobDays.map((day) => (
-                      <Picker.Item key={day} label={String(day)} value={day} />
-                    ))}
-                  </Picker>
-                </View>
-                <View style={[styles.dobPickerWrap, styles.dobPickerWrapWide]}>
-                  <Picker selectedValue={dobMonth} onValueChange={handleDobMonthChange} style={styles.dobPicker} itemStyle={styles.dobPickerItem}>
-                    {dobMonths.map((label, index) => (
-                      <Picker.Item key={label} label={label} value={index} />
-                    ))}
-                  </Picker>
-                </View>
-                <View style={styles.dobPickerWrap}>
-                  <Picker selectedValue={dobYear} onValueChange={handleDobYearChange} style={styles.dobPicker} itemStyle={styles.dobPickerItem}>
-                    {DOB_YEARS.map((year) => (
-                      <Picker.Item key={year} label={String(year)} value={year} />
-                    ))}
-                  </Picker>
-                </View>
+                <TouchableOpacity style={styles.dobChip} onPress={() => setActiveDobField('day')}>
+                  <Text style={styles.dobChipLabel}>Day</Text>
+                  <Text style={styles.dobChipValue}>{dobDay}</Text>
+                </TouchableOpacity>
+                <View style={styles.dobChipDivider} />
+                <TouchableOpacity style={[styles.dobChip, styles.dobChipWide]} onPress={() => setActiveDobField('month')}>
+                  <Text style={styles.dobChipLabel}>Month</Text>
+                  <Text style={styles.dobChipValue} numberOfLines={1}>{dobMonths[dobMonth]}</Text>
+                </TouchableOpacity>
+                <View style={styles.dobChipDivider} />
+                <TouchableOpacity style={styles.dobChip} onPress={() => setActiveDobField('year')}>
+                  <Text style={styles.dobChipLabel}>Year</Text>
+                  <Text style={styles.dobChipValue}>{dobYear}</Text>
+                </TouchableOpacity>
               </View>
             </View>
+
+            <Modal
+              visible={activeDobField != null}
+              transparent
+              animationType="fade"
+              onRequestClose={() => setActiveDobField(null)}
+            >
+              <TouchableOpacity
+                style={styles.dobModalOverlay}
+                activeOpacity={1}
+                onPress={() => setActiveDobField(null)}
+              >
+                <View style={styles.dobModalContent} onStartShouldSetResponder={() => true}>
+                  {activeDobField === 'day' && (
+                    <Picker selectedValue={dobDay} onValueChange={setDobDay} itemStyle={styles.dobPickerItem}>
+                      {dobDays.map((day) => (
+                        <Picker.Item key={day} label={String(day)} value={day} />
+                      ))}
+                    </Picker>
+                  )}
+                  {activeDobField === 'month' && (
+                    <Picker selectedValue={dobMonth} onValueChange={handleDobMonthChange} itemStyle={styles.dobPickerItem}>
+                      {dobMonths.map((label, index) => (
+                        <Picker.Item key={label} label={label} value={index} />
+                      ))}
+                    </Picker>
+                  )}
+                  {activeDobField === 'year' && (
+                    <Picker selectedValue={dobYear} onValueChange={handleDobYearChange} itemStyle={styles.dobPickerItem}>
+                      {DOB_YEARS.map((year) => (
+                        <Picker.Item key={year} label={String(year)} value={year} />
+                      ))}
+                    </Picker>
+                  )}
+                  <TouchableOpacity style={styles.dobDoneButton} onPress={() => setActiveDobField(null)}>
+                    <Text style={styles.dobDoneButtonText}>Done</Text>
+                  </TouchableOpacity>
+                </View>
+              </TouchableOpacity>
+            </Modal>
 
             <TouchableOpacity
               style={styles.input}
@@ -328,24 +363,66 @@ const styles = StyleSheet.create({
   },
   dobRow: {
     flexDirection: 'row',
+    alignItems: 'stretch',
     backgroundColor: '#ffffff',
     borderWidth: 2,
     borderColor: '#46a3a4',
     borderRadius: 25,
     overflow: 'hidden',
   },
-  dobPickerWrap: {
+  dobChip: {
     flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 6,
   },
-  dobPickerWrapWide: {
+  dobChipWide: {
     flex: 1.4,
   },
-  dobPicker: {
+  dobChipDivider: {
+    width: 1,
+    backgroundColor: '#d3e4e4',
+  },
+  dobChipLabel: {
+    fontSize: 11,
+    color: '#46a3a4',
+  },
+  dobChipValue: {
+    fontSize: 16,
+    fontWeight: '600',
     color: '#0a445c',
+    marginTop: 2,
+  },
+  dobModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+  dobModalContent: {
+    width: '100%',
+    maxWidth: 320,
+    backgroundColor: '#ffffff',
+    borderRadius: 20,
+    padding: 16,
   },
   dobPickerItem: {
-    fontSize: 16,
+    fontSize: 20,
     color: '#0a445c',
+  },
+  dobDoneButton: {
+    backgroundColor: '#46a3a4',
+    borderRadius: 20,
+    paddingVertical: 12,
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  dobDoneButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
   },
   button: {
     backgroundColor: '#c6a2ba',
