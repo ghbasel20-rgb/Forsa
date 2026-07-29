@@ -17,7 +17,7 @@ import {
 // left ~half of it; cropping the viewBox keeps the icon centered and square-ish.
 const BELL_VIEWBOX = '58 0 104 122';
 
-export default function NotificationBell() {
+export default function NotificationBell({ registerTarget }) {
   const router = useRouter();
   const { t, language } = useLanguage();
   const [visible, setVisible] = useState(false);
@@ -80,7 +80,11 @@ export default function NotificationBell() {
 
   return (
     <>
-      <TouchableOpacity style={styles.button} onPress={() => setVisible(true)}>
+      <TouchableOpacity
+        ref={registerTarget?.('notifications')}
+        style={styles.button}
+        onPress={() => setVisible(true)}
+      >
         <Icon width={22} height={26} viewBox={BELL_VIEWBOX} />
       </TouchableOpacity>
 

@@ -59,7 +59,7 @@ export const translations = {
         { id: '1', name: 'Yamen Abdulaziz', info: 'Placed in a 3-month internship' },
         { id: '2', name: 'Samir Ibrahim', info: 'Landed a volunteering role' },
         { id: '3', name: 'Razi Shiek Ahmad', info: 'Completed a mentorship program' },
-        { id: '4', name: 'Lour Dahlah', info: 'Got into Columbia University' },
+        { id: '4', name: 'Lour Dahleh', info: 'Got into Columbia University' },
       ],
     },
     filterPanel: {
@@ -264,6 +264,10 @@ export const translations = {
       eventsTab: {
         title: 'Browse All Events',
         body: 'Tap here anytime to see all upcoming events and your matches.',
+      },
+      notifications: {
+        title: 'Stay Updated',
+        body: 'Check here to see if you got accepted to the events you applied to.',
       },
       about: {
         title: 'Learn More About Forsa',
@@ -535,6 +539,10 @@ export const translations = {
       eventsTab: {
         title: 'تصفح جميع الفعاليات',
         body: 'اضغط هنا في أي وقت لعرض جميع الفعاليات القادمة وتطابقاتك.',
+      },
+      notifications: {
+        title: 'ابقَ على اطلاع',
+        body: 'تحقق هنا لمعرفة ما إذا تم قبولك في الفعاليات التي تقدمت لها.',
       },
       about: {
         title: 'تعرّف أكثر على فرصة',

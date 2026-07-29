@@ -10,9 +10,10 @@ import {
 import AboutIcon from '../assets/images/aboutus.svg';
 import CalendarIcon from '../assets/images/calender.svg';
 import QuestionIcon from '../assets/images/question.svg';
-import Logo from '../assets/images/logowname.svg';
 import AboutUsModal from './components/AboutUsModal';
 import BottomNav from './components/BottomNav';
+import BrandLogo from './components/BrandLogo';
+import LanguageMenu from './components/LanguageMenu';
 import NotificationBell from './components/NotificationBell';
 import SpotlightOverlay from './components/SpotlightOverlay';
 import Text from './components/AppText';
@@ -40,11 +41,20 @@ export default function Homepage() {
   const [profileId, setProfileId] = useState(null);
   const [recommendedOpportunities, setRecommendedOpportunities] = useState([]);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
+  const [headerWidth, setHeaderWidth] = useState(null);
   const targetRefs = useRef({});
 
   const registerTarget = (key) => (node) => {
     if (node) targetRefs.current[key] = node;
   };
+
+  const handleHeaderLayout = (event) => {
+    setHeaderWidth(event.nativeEvent.layout.width);
+  };
+
+  const HEADER_ICONS_RESERVED_WIDTH = 84; // globe + notification bell + gaps
+  const logoMaxWidth =
+    headerWidth != null ? Math.max(headerWidth - HEADER_ICONS_RESERVED_WIDTH, 0) : undefined;
 
   const spotlightSteps = ONBOARDING_STEPS.map((step) => ({
     id: step.id,
@@ -112,11 +122,16 @@ export default function Homepage() {
     <View style={styles.screen}>
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
-          <View style={styles.header}>
-            <View style={styles.notificationSlot}>
-              <NotificationBell />
+          <View style={styles.header} onLayout={handleHeaderLayout}>
+            <BrandLogo
+              maxWidthPercent={1}
+              maxWidth={logoMaxWidth}
+              preserveAspectRatio="xMinYMid meet"
+            />
+            <View style={styles.headerIcons}>
+              <LanguageMenu />
+              <NotificationBell registerTarget={registerTarget} />
             </View>
-            <Logo width={760} height={168} />
           </View>
           <View style={styles.headerUnderline} />
 
@@ -275,16 +290,13 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: 10,
-    marginBottom: -8,
-    position: 'relative',
+    justifyContent: 'space-between',
+    marginBottom: 8,
   },
-  notificationSlot: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    zIndex: 10,
+  headerIcons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
   },
   headerUnderline: {
     height: 2,
