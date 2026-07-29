@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
   headerUnderline: {
     height: 2,
     backgroundColor: '#46a3a4',
-    marginBottom: 36,
+    marginBottom: 44,
   },
   greeting: {
     fontSize: 20,
@@ -291,7 +291,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#0a445c',
-    marginBottom: 14,
+    marginBottom: 18,
   },
   emptyText: {
     fontSize: 14,
@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
   recommendedRow: {
     flexDirection: 'row',
     gap: 12,
-    marginBottom: 36,
+    marginBottom: 44,
   },
   recommendedCard: {
     flex: 1,
@@ -348,7 +348,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     gap: 20,
-    marginBottom: 32,
+    marginBottom: 40,
   },
   upcomingCard: {
     alignItems: 'center',
@@ -381,18 +381,18 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     backgroundColor: '#46a3a4',
-    marginTop: 8,
-    marginBottom: 32,
+    marginTop: 12,
+    marginBottom: 40,
   },
   sectionTitle: {
     fontSize: 22,
     fontWeight: 'bold',
     color: '#0a445c',
     letterSpacing: 1,
-    marginBottom: 20,
+    marginBottom: 24,
   },
   storiesContainer: {
-    gap: 8,
+    gap: 10,
   },
   storyRow: {
     flexDirection: 'row',
