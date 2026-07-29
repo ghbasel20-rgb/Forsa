@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Modal, Pressable, StyleSheet, TouchableOpacity, View, useWindowDimensions } from 'react-native';
+import { Animated, Easing, Modal, Pressable, StyleSheet, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import Svg, { Defs, Mask, Rect } from 'react-native-svg';
 import Text from './AppText';
 import TitleText from './TitleText';
@@ -86,12 +86,13 @@ export default function SpotlightOverlay({ visible, steps, onFinish }) {
       return;
     }
 
+    const easing = Easing.out(Easing.cubic);
     Animated.parallel([
-      Animated.timing(cutoutX, { toValue: cutout.x, duration: TRANSITION_DURATION, useNativeDriver: false }),
-      Animated.timing(cutoutY, { toValue: cutout.y, duration: TRANSITION_DURATION, useNativeDriver: false }),
-      Animated.timing(cutoutWidth, { toValue: cutout.width, duration: TRANSITION_DURATION, useNativeDriver: false }),
-      Animated.timing(cutoutHeight, { toValue: cutout.height, duration: TRANSITION_DURATION, useNativeDriver: false }),
-      Animated.timing(tooltipTop, { toValue: clampedTop, duration: TRANSITION_DURATION, useNativeDriver: false }),
+      Animated.timing(cutoutX, { toValue: cutout.x, duration: TRANSITION_DURATION, easing, useNativeDriver: false }),
+      Animated.timing(cutoutY, { toValue: cutout.y, duration: TRANSITION_DURATION, easing, useNativeDriver: false }),
+      Animated.timing(cutoutWidth, { toValue: cutout.width, duration: TRANSITION_DURATION, easing, useNativeDriver: false }),
+      Animated.timing(cutoutHeight, { toValue: cutout.height, duration: TRANSITION_DURATION, easing, useNativeDriver: false }),
+      Animated.timing(tooltipTop, { toValue: clampedTop, duration: TRANSITION_DURATION, easing, useNativeDriver: true }),
     ]).start();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, cutout?.x, cutout?.y, cutout?.width, cutout?.height, clampedTop]);
@@ -151,7 +152,10 @@ export default function SpotlightOverlay({ visible, steps, onFinish }) {
         )}
 
         <Animated.View
-          style={[styles.tooltip, { top: cutout ? tooltipTop : clampedTop }]}
+          style={[
+            styles.tooltip,
+            { transform: [{ translateY: cutout ? tooltipTop : clampedTop }] },
+          ]}
           onLayout={(event) => setTooltipHeight(event.nativeEvent.layout.height)}
         >
           <TitleText style={styles.tooltipTitle}>{step.title}</TitleText>
@@ -185,6 +189,7 @@ const styles = StyleSheet.create({
   },
   tooltip: {
     position: 'absolute',
+    top: 0,
     left: 24,
     right: 24,
     backgroundColor: '#ffffff',
