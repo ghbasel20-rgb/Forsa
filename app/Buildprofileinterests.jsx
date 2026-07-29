@@ -134,10 +134,11 @@ export default function Buildprofileinterests() {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <BackButton />
             <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
           </View>
           <View style={styles.headerUnderline} />
+
+          <BackButton style={styles.backButton} />
 
           <TitleText style={styles.title}>{t('buildProfile.interestsTitle')}</TitleText>
           <Text style={styles.hint}>{t('buildProfile.interestsHint')}</Text>
@@ -172,7 +173,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#e1e4e4',
     padding: 20,
-    paddingTop: 80,
+    paddingTop: 68,
   },
   header: {
     flexDirection: 'row',
@@ -185,9 +186,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#46a3a4',
     marginBottom: 40,
   },
+  backButton: {
+    alignSelf: 'flex-start',
+    marginBottom: 12,
+  },
   logoSlot: {
     flex: 1,
-    marginLeft: 12,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

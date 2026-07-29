@@ -15,7 +15,7 @@ const SCREEN_MARGIN = 40;
 const TRANSITION_DURATION = 350;
 const DEFAULT_TOOLTIP_HEIGHT = 180;
 
-export default function SpotlightOverlay({ visible, steps, onFinish }) {
+export default function SpotlightOverlay({ visible, steps, onFinish, scrollRef }) {
   const { t } = useLanguage();
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
   const [stepIndex, setStepIndex] = useState(0);
@@ -47,13 +47,53 @@ export default function SpotlightOverlay({ visible, steps, onFinish }) {
       return undefined;
     }
 
-    const raf = requestAnimationFrame(() => {
+    let cancelled = false;
+
+    const measure = () => {
       target.measureInWindow((x, y, width, height) => {
+        if (cancelled) return;
         setBounds({ x, y, width, height });
       });
-    });
-    return () => cancelAnimationFrame(raf);
-  }, [visible, stepIndex, step]);
+    };
+
+    const scrollIntoViewThenMeasure = () => {
+      target.measureInWindow((x, y, width, height) => {
+        if (cancelled) return;
+
+        const isVisible = y >= SCREEN_MARGIN && y + height <= screenHeight - SCREEN_MARGIN;
+        if (isVisible || !scrollRef?.current || !target.measureLayout) {
+          setBounds({ x, y, width, height });
+          return;
+        }
+
+        target.measureLayout(
+          scrollRef.current,
+          (relX, relY) => {
+            if (cancelled) return;
+            const desiredScrollY = Math.max(0, relY - SCREEN_MARGIN);
+            scrollRef.current.scrollTo({ y: desiredScrollY, animated: true });
+
+            scrollRef.current.measureInWindow((scrollWinX, scrollWinY) => {
+              if (cancelled) return;
+              const predictedY = scrollWinY + (relY - desiredScrollY);
+              setBounds({ x, y: predictedY, width, height });
+
+              setTimeout(() => {
+                if (!cancelled) measure();
+              }, TRANSITION_DURATION);
+            });
+          },
+          () => setBounds({ x, y, width, height })
+        );
+      });
+    };
+
+    const raf = requestAnimationFrame(scrollIntoViewThenMeasure);
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(raf);
+    };
+  }, [visible, stepIndex, step, scrollRef, screenHeight]);
 
   const cutout = bounds && {
     x: bounds.x - CUTOUT_PADDING,

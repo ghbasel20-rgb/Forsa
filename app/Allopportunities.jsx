@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import Badge from '../assets/images/badge.svg';
+import ApprovedIcon from '../assets/images/approved.svg';
 import HeaderBrand from './components/HeaderBrand';
 import BottomNav from './components/BottomNav';
 import FilterPanel from './components/FilterPanel';
@@ -20,7 +20,13 @@ import { useLanguage } from './contexts/LanguageContext';
 import { getCurrentUser } from './services/auth-service';
 import { getAllOpportunities, scoreOpportunityMatch } from './services/opportunities-service';
 import { getUserProfile } from './services/profile-service';
-import { getDistinctValues, getMatchThresholdOptions, getSortOptions, sortItems } from './utils/filterUtils';
+import {
+  getDistinctValues,
+  getForsaApprovedOptions,
+  getMatchThresholdOptions,
+  getSortOptions,
+  sortItems,
+} from './utils/filterUtils';
 import { getFuzzyMatchIds } from './utils/fuzzySearch';
 import { floatingCard } from './styles/shadows';
 
@@ -31,6 +37,7 @@ export default function AllOpportunities() {
   const { t, language } = useLanguage();
   const MATCH_THRESHOLD_OPTIONS = getMatchThresholdOptions(t);
   const SORT_OPTIONS = getSortOptions(t);
+  const FORSA_APPROVED_OPTIONS = getForsaApprovedOptions(t);
   const [searchQuery, setSearchQuery] = useState('');
   const [allOpportunities, setAllOpportunities] = useState([]);
   const [profile, setProfile] = useState(null);
@@ -41,7 +48,7 @@ export default function AllOpportunities() {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [matchThreshold, setMatchThreshold] = useState(0);
   const [sortBy, setSortBy] = useState('match');
-  const [badgeAssignments, setBadgeAssignments] = useState({});
+  const [forsaApprovedFilter, setForsaApprovedFilter] = useState('all');
 
   useEffect(() => {
     loadOpportunities();
@@ -56,12 +63,6 @@ export default function AllOpportunities() {
 
     if (opportunitiesResult.success) {
       setAllOpportunities(opportunitiesResult.data);
-
-      const badges = {};
-      opportunitiesResult.data.forEach((opp) => {
-        badges[opp.$id] = Math.random() < 0.5;
-      });
-      setBadgeAssignments(badges);
     }
 
     if (userResult.success) {
@@ -110,6 +111,7 @@ export default function AllOpportunities() {
       )
         return false;
       if (selectedCategories.length > 0 && !selectedCategories.includes(opp.category)) return false;
+      if (forsaApprovedFilter === 'approved' && !opp.forsaApproved) return false;
       return true;
     });
 
@@ -121,6 +123,7 @@ export default function AllOpportunities() {
     selectedSkills,
     selectedInterests,
     selectedCategories,
+    forsaApprovedFilter,
     sortBy,
   ]);
 
@@ -128,7 +131,8 @@ export default function AllOpportunities() {
     selectedSkills.length +
     selectedInterests.length +
     selectedCategories.length +
-    (matchThreshold > 0 ? 1 : 0);
+    (matchThreshold > 0 ? 1 : 0) +
+    (forsaApprovedFilter !== 'all' ? 1 : 0);
 
   const handleClearFilters = () => {
     setSelectedSkills([]);
@@ -136,6 +140,7 @@ export default function AllOpportunities() {
     setSelectedCategories([]);
     setMatchThreshold(0);
     setSortBy('match');
+    setForsaApprovedFilter('all');
   };
 
   return (
@@ -186,6 +191,12 @@ export default function AllOpportunities() {
               value={matchThreshold}
               onChange={setMatchThreshold}
             />
+            <SingleChoiceRow
+              label={t('filterLabels.forsaApproved')}
+              options={FORSA_APPROVED_OPTIONS}
+              value={forsaApprovedFilter}
+              onChange={setForsaApprovedFilter}
+            />
             <SingleChoiceRow label={t('filterLabels.sortBy')} options={SORT_OPTIONS} value={sortBy} onChange={setSortBy} />
           </FilterPanel>
 
@@ -209,12 +220,12 @@ export default function AllOpportunities() {
                     />
                   </View>
                   <Text style={styles.opportunityTitle} numberOfLines={1} ellipsizeMode="tail">{(language === 'ar' && opp.titleAr) || opp.title}</Text>
+                  {opp.forsaApproved && (
+                    <ApprovedIcon width={56} height={56} style={styles.approvedIcon} />
+                  )}
                   <View style={styles.scoreBadge}>
                     <Text style={styles.scoreText}>{opp.matchPercentage}%</Text>
                   </View>
-                  {badgeAssignments[opp.$id] && (
-                    <Badge width={28} height={28} style={styles.badgeIcon} />
-                  )}
                 </TouchableOpacity>
               ))
             )}
@@ -247,7 +258,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#e1e4e4',
     padding: 20,
-    paddingTop: 80,
+    paddingTop: 68,
   },
   header: {
     flexDirection: 'row',
@@ -262,7 +273,6 @@ const styles = StyleSheet.create({
   },
   logoSlot: {
     flex: 1,
-    marginLeft: 12,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -347,8 +357,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textDecorationLine: 'underline',
   },
-  badgeIcon: {
-  width: 28,
-  height: 28,
-},
+  approvedIcon: {
+    width: 56,
+    height: 56,
+  },
 });
