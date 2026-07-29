@@ -50,6 +50,7 @@ export default function Homepage() {
     id: step.id,
     title: t(`tutorial.${step.id}.title`),
     description: t(`tutorial.${step.id}.body`),
+    scrollable: Boolean(step.scrollable),
     getTarget: () => (step.target ? targetRefs.current[step.target] : null),
   }));
 

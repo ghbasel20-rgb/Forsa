@@ -48,6 +48,7 @@ export default function SpotlightOverlay({ visible, steps, onFinish, scrollRef }
     }
 
     let cancelled = false;
+    let settleRaf = null;
 
     const measure = () => {
       target.measureInWindow((x, y, width, height) => {
@@ -56,12 +57,46 @@ export default function SpotlightOverlay({ visible, steps, onFinish, scrollRef }
       });
     };
 
+    // Polls until the target's window position stops changing (rather than
+    // assuming a fixed duration), since the native scrollTo animation's
+    // length isn't guaranteed to match any constant we pick.
+    const waitForScrollToSettle = () => {
+      let lastY = null;
+      let stableFrames = 0;
+      let attempts = 0;
+      const MAX_ATTEMPTS = 90; // ~1.5s at 60fps safety cap
+
+      const check = () => {
+        if (cancelled) return;
+        attempts += 1;
+        target.measureInWindow((mx, my, mwidth, mheight) => {
+          if (cancelled) return;
+          if (lastY !== null && Math.abs(my - lastY) < 0.5) {
+            stableFrames += 1;
+          } else {
+            stableFrames = 0;
+          }
+          lastY = my;
+
+          if (stableFrames >= 3 || attempts >= MAX_ATTEMPTS) {
+            // One final correction once the native scroll has actually
+            // stopped moving (or the safety cap is hit), rather than
+            // reacting to every in-flight frame of the scroll animation.
+            setBounds({ x: mx, y: my, width: mwidth, height: mheight });
+            return;
+          }
+          settleRaf = requestAnimationFrame(check);
+        });
+      };
+      settleRaf = requestAnimationFrame(check);
+    };
+
     const scrollIntoViewThenMeasure = () => {
       target.measureInWindow((x, y, width, height) => {
         if (cancelled) return;
 
         const isVisible = y >= SCREEN_MARGIN && y + height <= screenHeight - SCREEN_MARGIN;
-        if (isVisible || !scrollRef?.current || !target.measureLayout) {
+        if (isVisible || !step.scrollable || !scrollRef?.current || !target.measureLayout) {
           setBounds({ x, y, width, height });
           return;
         }
@@ -77,10 +112,7 @@ export default function SpotlightOverlay({ visible, steps, onFinish, scrollRef }
               if (cancelled) return;
               const predictedY = scrollWinY + (relY - desiredScrollY);
               setBounds({ x, y: predictedY, width, height });
-
-              setTimeout(() => {
-                if (!cancelled) measure();
-              }, TRANSITION_DURATION);
+              waitForScrollToSettle();
             });
           },
           () => setBounds({ x, y, width, height })
@@ -92,6 +124,7 @@ export default function SpotlightOverlay({ visible, steps, onFinish, scrollRef }
     return () => {
       cancelled = true;
       cancelAnimationFrame(raf);
+      if (settleRaf) cancelAnimationFrame(settleRaf);
     };
   }, [visible, stepIndex, step, scrollRef, screenHeight]);
 
