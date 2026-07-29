@@ -11,9 +11,9 @@ import {
   View
 } from 'react-native';
 import GoogleIcon from '../assets/images/google.svg';
-import HeaderBrand from './components/HeaderBrand';
 import Text from './components/AppText';
 import TextInput from './components/AppTextInput';
+import HeaderBrand from './components/HeaderBrand';
 import PasswordInput from './components/PasswordInput';
 import StatusPickerModal from './components/StatusPickerModal';
 import TitleText from './components/TitleText';
@@ -68,7 +68,6 @@ export default function SignUp() {
     setDobYear(year);
     if (dobDay > maxDay) setDobDay(maxDay);
   };
-
   const isFormValid = Boolean(
     fullName && email && password && confirmPassword && password.length >= 8 && status
   );

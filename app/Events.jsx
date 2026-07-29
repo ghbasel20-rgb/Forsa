@@ -3,14 +3,15 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import ApprovedIcon from '../assets/images/approved.svg';
-import HeaderBrand from './components/HeaderBrand';
 import Text from './components/AppText';
 import TextInput from './components/AppTextInput';
 import BottomNav from './components/BottomNav';
 import FilterPanel from './components/FilterPanel';
 import FilterSection from './components/FilterSection';
+import HeaderBrand from './components/HeaderBrand';
 import SingleChoiceRow from './components/SingleChoiceRow';
 import TitleText from './components/TitleText';
+import { useLanguage } from './contexts/LanguageContext';
 import { getCurrentUser } from './services/auth-service';
 import {
   formatCompactEventDate,
@@ -19,9 +20,9 @@ import {
   isEventClosed,
   scoreEventMatch,
 } from './services/events-service';
-import { useLanguage } from './contexts/LanguageContext';
 import { getUserProfile } from './services/profile-service';
 import { getSavedEvents } from './services/saved-events-service';
+import { floatingCard } from './styles/shadows';
 import { buildMarkedDates, toDateKey } from './utils/calendarUtils';
 import {
   AGE_BUCKETS,
@@ -33,7 +34,6 @@ import {
   sortItems,
 } from './utils/filterUtils';
 import { getFuzzyMatchIds } from './utils/fuzzySearch';
-import { floatingCard } from './styles/shadows';
 
 const EVENT_SEARCH_KEYS = [
   'title',
@@ -285,12 +285,19 @@ const handleDayPress = (day) => {
       >
                   <View style={styles.eventCardTop}>
                     <View style={styles.iconContainer}>
-                      <Image
-                        source={require('../assets/images/icon.png')}
-                        style={styles.eventIcon}
-                        resizeMode="contain"
-                      />
-                    </View>
+  <Image
+    source={
+      event.imageUrl
+        ? { uri: event.imageUrl }
+        : require('../assets/images/icon.png')
+    }
+    style={[
+      styles.eventIcon,
+      !event.imageUrl && styles.defaultIconTint,
+    ]}
+    resizeMode={event.imageUrl ? 'cover' : 'contain'}
+  />
+</View>
                     <Text
                       style={[styles.eventTitle, event.isClosed && styles.eventTitleClosed]}
                       numberOfLines={1}
@@ -429,11 +436,16 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
+    overflow: 'hidden', // Ensures uploaded photos clip neatly to rounded corners
   },
   eventIcon: {
+    width: '100%',
+    height: '100%',
+  },
+  defaultIconTint: {
     width: 40,
     height: 40,
-    tintColor: '#ffffff',
+    tintColor: '#ffffff', // Applies tint ONLY to the default icon.png fallback
   },
   eventTitle: {
     flex: 1,

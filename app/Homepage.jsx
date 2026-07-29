@@ -11,10 +11,10 @@ import AboutIcon from '../assets/images/aboutus.svg';
 import CalendarIcon from '../assets/images/calender.svg';
 import QuestionIcon from '../assets/images/question.svg';
 import AboutUsModal from './components/AboutUsModal';
+import Text from './components/AppText';
 import BottomNav from './components/BottomNav';
 import HeaderBrand from './components/HeaderBrand';
 import SpotlightOverlay from './components/SpotlightOverlay';
-import Text from './components/AppText';
 import TitleText from './components/TitleText';
 import { ONBOARDING_STEPS } from './config/onboarding-config';
 import { useLanguage } from './contexts/LanguageContext';
@@ -23,6 +23,15 @@ import { getEvents, scoreEventMatch } from './services/events-service';
 import { getAllOpportunities, getMatchedOpportunities } from './services/opportunities-service';
 import { getUserProfile, updateUserProfile } from './services/profile-service';
 import { floatingCard } from './styles/shadows';
+
+
+const STORY_DESCRIPTIONS = {
+  story1: 'This person used Forsa to find opportunities and grow their profile.',
+  story2: 'A great example of how one application can lead to real progress.',
+  story3: 'They stayed consistent, applied, and got results.',
+  story4: 'Their journey shows how small steps can lead to big changes.',
+  story5: 'A reminder that the right opportunity can appear at the right time.',
+};
 
 const formatEventDay = (eventDate) => {
   const date = new Date(eventDate);
@@ -41,6 +50,8 @@ export default function Homepage() {
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const targetRefs = useRef({});
   const scrollRef = useRef(null);
+  const [storyModalVisible, setStoryModalVisible] = useState(false);
+  const [selectedStory, setSelectedStory] = useState(null);
 
   const registerTarget = (key) => (node) => {
     if (node) targetRefs.current[key] = node;
@@ -180,21 +191,29 @@ export default function Homepage() {
           <TitleText style={styles.sectionTitle}>{t('homepage.successStories')}</TitleText>
 
           <View style={styles.storiesContainer}>
-            {successStories.map((story, index) => (
-              <View
-                key={story.id}
-                style={[
-                  styles.storyRow,
-                  index === successStories.length - 1 && styles.storyRowLast,
-                ]}
-              >
-                <View style={styles.storyInfo}>
-                  <Text style={styles.storyName} numberOfLines={1} ellipsizeMode="tail">{story.name}</Text>
-                  <Text style={styles.storyDetail} numberOfLines={1} ellipsizeMode="tail">{`#${story.info}`}</Text>
-                </View>
-              </View>
-            ))}
-          </View>
+  {successStories.map((story, index) => (
+    <TouchableOpacity
+      key={story.id}
+      style={[
+        styles.storyRow,
+        index === successStories.length - 1 && styles.storyRowLast,
+      ]}
+      onPress={() => {
+        setSelectedStory(story);
+        setStoryModalVisible(true);
+      }}
+    >
+      <View style={styles.storyInfo}>
+        <Text style={styles.storyName} numberOfLines={1} ellipsizeMode="tail">
+          {story.name}
+        </Text>
+        <Text style={styles.storyDetail} numberOfLines={1} ellipsizeMode="tail">
+          {`#${story.info}`}
+        </Text>
+      </View>
+    </TouchableOpacity>
+  ))}
+</View>
         </View>
       </ScrollView>
 
@@ -214,6 +233,40 @@ export default function Homepage() {
       </TouchableOpacity>
 
       <BottomNav registerTarget={registerTarget} />
+
+{storyModalVisible && (
+  <View style={styles.modalBackdrop}>
+    <TouchableOpacity
+      style={styles.modalTouchOutside}
+      activeOpacity={1}
+      onPress={() => setStoryModalVisible(false)}
+    />
+    <View style={styles.storyModalCard}>
+      <TouchableOpacity
+        style={styles.closeButton}
+        onPress={() => setStoryModalVisible(false)}
+      >
+        <Text style={styles.closeButtonText}>✕</Text>
+      </TouchableOpacity>
+
+      {selectedStory && (
+        <>
+          <TitleText style={styles.modalTitle}>
+            {selectedStory.name}
+          </TitleText>
+          <Text style={styles.modalText}>
+            {`#${selectedStory.info}`}
+          </Text>
+          <Text style={styles.modalDescription}>
+            {STORY_DESCRIPTIONS[selectedStory.id] ||
+              'A success story from one of our users.'}
+          </Text>
+        </>
+      )}
+    </View>
+  </View>
+)}
+
 
       <AboutUsModal
         visible={aboutModalVisible}
@@ -438,4 +491,64 @@ const styles = StyleSheet.create({
     color: '#6b8788',
     marginTop: 2,
   },
+  modalBackdrop: {
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundColor: 'rgba(0, 0, 0, 0.45)',
+  justifyContent: 'center',
+  alignItems: 'center',
+  zIndex: 999,
+},
+modalTouchOutside: {
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+},
+storyModalCard: {
+  width: '90%',
+  maxWidth: 340,
+  backgroundColor: '#ffffff',
+  borderRadius: 18,
+  padding: 20,
+  position: 'relative',
+  zIndex: 1000,
+},
+closeButton: {
+  position: 'absolute',
+  top: 12,
+  right: 12,
+  width: 32,
+  height: 32,
+  borderRadius: 16,
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor: '#e1e4e4',
+  zIndex: 2,
+},
+closeButtonText: {
+  fontSize: 18,
+  color: '#0a445c',
+  fontWeight: 'bold',
+},
+modalTitle: {
+  fontSize: 22,
+  color: '#0a445c',
+  marginBottom: 10,
+  marginTop: 10,
+},
+modalText: {
+  fontSize: 16,
+  color: '#6b8788',
+},
+modalDescription: {
+  fontSize: 15,
+  color: '#254952',
+  marginTop: 12,
+  lineHeight: 22,
+},
 });

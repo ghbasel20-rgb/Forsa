@@ -26,7 +26,7 @@ export const signUp = async (email, password, name) => {
     return { success: true, data: mapUser(credential.user) };
   } catch (error) {
     console.error('Sign up error:', error);
-    return { success: false, error: error.message };
+    return { success: false, error: error.message, code: error.code };
   }
 };
 
