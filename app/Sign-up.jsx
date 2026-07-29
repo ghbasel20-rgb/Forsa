@@ -22,6 +22,7 @@ import { useGoogleAuth } from './hooks/useGoogleAuth';
 import { statusLabelsAr, translateOption } from './i18n/optionLabels';
 import { signUp } from './services/auth-service';
 import { createUserProfile } from './services/profile-service';
+import { floatingCard } from './styles/shadows';
 
 const CURRENT_YEAR = new Date().getFullYear();
 const DOB_YEARS = Array.from({ length: 100 }, (_, i) => CURRENT_YEAR - i);
@@ -67,6 +68,10 @@ export default function SignUp() {
     setDobYear(year);
     if (dobDay > maxDay) setDobDay(maxDay);
   };
+
+  const isFormValid = Boolean(
+    fullName && email && password && confirmPassword && password.length >= 8 && status
+  );
 
   const handleSignUp = async () => {
     if (isSubmitting.current) {
@@ -239,9 +244,10 @@ export default function SignUp() {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={styles.button}
+              style={[styles.button, isFormValid && styles.buttonReady]}
               onPress={handleSignUp}
-              disabled={loading}
+              disabled={loading || !isFormValid}
+              activeOpacity={0.75}
             >
               {loading ? (
                 <ActivityIndicator color="#fff" />
@@ -426,10 +432,15 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: '#c6a2ba',
+    opacity: 0.6,
     paddingVertical: 16,
     borderRadius: 25,
     alignItems: 'center',
     marginTop: 8,
+  },
+  buttonReady: {
+    opacity: 1,
+    ...floatingCard,
   },
   buttonText: {
     color: '#ffffff',
