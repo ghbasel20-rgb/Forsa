@@ -26,11 +26,9 @@ import { floatingCard } from './styles/shadows';
 
 
 const STORY_DESCRIPTIONS = {
-  story1: 'This person used Forsa to find opportunities and grow their profile.',
-  story2: 'A great example of how one application can lead to real progress.',
-  story3: 'They stayed consistent, applied, and got results.',
-  story4: 'Their journey shows how small steps can lead to big changes.',
-  story5: 'A reminder that the right opportunity can appear at the right time.',
+  1: 'Razi used the marketing skills he picked up from MEET, one of our opportunities, and was offered a job at AppsFlyer as a marketer.',
+  3: 'They stayed consistent, applied, and got results.',
+  4: 'Their journey shows how small steps can lead to big changes.',
 };
 
 const formatEventDay = (eventDate) => {
