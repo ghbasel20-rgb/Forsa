@@ -555,7 +555,7 @@ modalTitle: {
   fontSize: 22,
   color: '#0a445c',
   marginBottom: 10,
-  marginTop: 10,
+  marginTop: 34,
 },
 modalText: {
   fontSize: 16,
