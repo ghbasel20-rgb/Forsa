@@ -8,6 +8,7 @@ import Text from './AppText';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getCurrentUser } from '../services/auth-service';
 import { getEventWithTranslation } from '../services/events-service';
+import { getUserProfile, updateUserProfile } from '../services/profile-service';
 import {
   getApplicationNotifications,
   markApplicationNotificationsSeen,
@@ -35,20 +36,37 @@ export default function NotificationBell({ registerTarget }) {
     }
     setSignedIn(true);
 
-    const result = await getApplicationNotifications(userResult.data.$id);
-    if (!result.success) return;
+    const [applicationResult, profileResult] = await Promise.all([
+      getApplicationNotifications(userResult.data.$id),
+      getUserProfile(userResult.data.$id),
+    ]);
 
-    const withTitles = await Promise.all(
-      result.data.map(async (application) => {
-        const eventResult = await getEventWithTranslation(application.eventId, language);
-        const event = eventResult.success ? eventResult.data : null;
-        const eventTitle = (language === 'ar' && event?.titleAr) || event?.title || '';
-        return { ...application, eventTitle };
-      })
-    );
+    const applicationNotifications = applicationResult.success
+      ? await Promise.all(
+          applicationResult.data.map(async (application) => {
+            const eventResult = await getEventWithTranslation(application.eventId, language);
+            const event = eventResult.success ? eventResult.data : null;
+            const eventTitle = (language === 'ar' && event?.titleAr) || event?.title || '';
+            return { ...application, type: 'application', eventTitle };
+          })
+        )
+      : [];
 
-    setNotifications(withTitles);
-    setHasUnread(withTitles.some((item) => !item.notificationSeen));
+    const profile = profileResult.success ? profileResult.data : null;
+    const welcomeNotification = profile
+      ? [
+          {
+            $id: 'welcome',
+            type: 'welcome',
+            profileId: profile.$id,
+            notificationSeen: Boolean(profile.welcomeNotificationSeen),
+          },
+        ]
+      : [];
+
+    const allNotifications = [...welcomeNotification, ...applicationNotifications];
+    setNotifications(allNotifications);
+    setHasUnread(allNotifications.some((item) => !item.notificationSeen));
   }, [language]);
 
   useFocusEffect(
@@ -59,17 +77,25 @@ export default function NotificationBell({ registerTarget }) {
 
   const closePanel = async () => {
     setVisible(false);
-    const unseenIds = notifications.filter((item) => !item.notificationSeen).map((item) => item.$id);
-    if (unseenIds.length > 0) {
-      await markApplicationNotificationsSeen(unseenIds);
-      setNotifications((prev) => prev.map((item) => ({ ...item, notificationSeen: true })));
-      setHasUnread(false);
-    }
+    const unseen = notifications.filter((item) => !item.notificationSeen);
+    if (unseen.length === 0) return;
+
+    const applicationIds = unseen.filter((item) => item.type === 'application').map((item) => item.$id);
+    const welcomeItem = unseen.find((item) => item.type === 'welcome');
+
+    await Promise.all([
+      applicationIds.length > 0 ? markApplicationNotificationsSeen(applicationIds) : Promise.resolve(),
+      welcomeItem ? updateUserProfile(welcomeItem.profileId, { welcomeNotificationSeen: true }) : Promise.resolve(),
+    ]);
+    setNotifications((prev) => prev.map((item) => ({ ...item, notificationSeen: true })));
+    setHasUnread(false);
   };
 
-  const handleItemPress = (application) => {
+  const handleItemPress = (item) => {
     closePanel();
-    router.push(`/Status?id=${application.$id}`);
+    if (item.type === 'application') {
+      router.push(`/Status?id=${item.$id}`);
+    }
   };
 
   const Icon = hasUnread ? BellMsgIcon : BellIcon;
@@ -101,17 +127,19 @@ export default function NotificationBell({ registerTarget }) {
             {notifications.length === 0 ? (
               <Text style={styles.emptyText}>{t('notifications.empty')}</Text>
             ) : (
-              notifications.map((application) => (
+              notifications.map((item) => (
                 <TouchableOpacity
-                  key={application.$id}
+                  key={item.$id}
                   style={styles.item}
-                  onPress={() => handleItemPress(application)}
+                  onPress={() => handleItemPress(item)}
                 >
-                  <View style={[styles.dot, !application.notificationSeen && styles.dotUnread]} />
+                  <View style={[styles.dot, !item.notificationSeen && styles.dotUnread]} />
                   <Text style={styles.itemText} numberOfLines={2}>
-                    {t(`notifications.${application.status === 'Approved' ? 'approved' : 'denied'}`, {
-                      event: application.eventTitle,
-                    })}
+                    {item.type === 'welcome'
+                      ? t('notifications.welcome')
+                      : t(`notifications.${item.status === 'Approved' ? 'approved' : 'denied'}`, {
+                          event: item.eventTitle,
+                        })}
                   </Text>
                 </TouchableOpacity>
               ))

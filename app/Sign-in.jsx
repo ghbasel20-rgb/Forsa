@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
   headerUnderline: {
     height: 2,
     backgroundColor: '#46a3a4',
-    marginBottom: 12,
+    marginBottom: 40,
   },
   title: {
     fontSize: 36,

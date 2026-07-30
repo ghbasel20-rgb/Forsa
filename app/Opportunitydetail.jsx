@@ -248,7 +248,9 @@ const styles = StyleSheet.create({
   approvedRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     alignSelf: 'center',
+    width: '100%',
     gap: 6,
     marginBottom: 12,
   },
@@ -260,6 +262,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
     color: '#46a3a4',
+    textAlign: 'center',
   },
   infoSection: {
     marginBottom: 30,

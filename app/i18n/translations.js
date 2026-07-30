@@ -169,6 +169,7 @@ export const translations = {
     notifications: {
       title: 'Notifications',
       empty: 'No notifications yet',
+      welcome: 'Welcome to Forsa! Click the question mark to review the tutorial.',
       approved: 'Great news! You were accepted into {event}.',
       denied: 'Your application to {event} was not accepted this time.',
     },
@@ -450,6 +451,7 @@ export const translations = {
     notifications: {
       title: 'الإشعارات',
       empty: 'لا توجد إشعارات بعد',
+      welcome: 'مرحبًا بك في فرصة! اضغط على علامة الاستفهام لمراجعة الشرح التعريفي.',
       approved: 'أخبار رائعة! تم قبولك في {event}.',
       denied: 'لم يتم قبول طلبك في {event} هذه المرة.',
     },

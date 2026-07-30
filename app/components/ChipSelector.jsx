@@ -102,9 +102,9 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   chip: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 22,
+    borderRadius: 22,
     borderWidth: 2,
     borderColor: '#46a3a4',
     backgroundColor: 'transparent',
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   },
   chipText: {
     color: '#46a3a4',
-    fontSize: 14,
+    fontSize: 16,
   },
   chipTextSelected: {
     color: '#ffffff',

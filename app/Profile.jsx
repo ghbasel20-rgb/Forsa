@@ -307,13 +307,17 @@ const handleAppliedDayPress = (day) => {
                   <ProfilePlaceholder width={80} height={80} />
                 )}
               </TouchableOpacity>
-              <View style={styles.avatarEditBadge}>
+              <TouchableOpacity
+                style={styles.avatarEditBadge}
+                onPress={handleChangeAvatar}
+                disabled={changingImage}
+              >
                 {changingImage ? (
                   <ActivityIndicator size="small" color="#46a3a4" />
                 ) : (
                   <EditIcon width={18} height={18} />
                 )}
-              </View>
+              </TouchableOpacity>
             </View>
             <TitleText style={styles.profileTitle}>{t('profile.title')}</TitleText>
           </View>
@@ -615,14 +619,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   chip: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 18,
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    borderRadius: 20,
     backgroundColor: '#46a3a4',
   },
   chipText: {
     color: '#ffffff',
-    fontSize: 13,
+    fontSize: 16,
   },
   emptyText: {
     fontSize: 14,
