@@ -8,18 +8,19 @@ import {
   View,
 } from 'react-native';
 import ApprovedIcon from '../assets/images/approved.svg';
-import HeaderBrand from './components/HeaderBrand';
+import Text from './components/AppText';
+import TextInput from './components/AppTextInput';
 import BottomNav from './components/BottomNav';
 import FilterPanel from './components/FilterPanel';
 import FilterSection from './components/FilterSection';
+import HeaderBrand from './components/HeaderBrand';
 import SingleChoiceRow from './components/SingleChoiceRow';
-import Text from './components/AppText';
-import TextInput from './components/AppTextInput';
 import TitleText from './components/TitleText';
 import { useLanguage } from './contexts/LanguageContext';
 import { getCurrentUser } from './services/auth-service';
 import { getAllOpportunities, scoreOpportunityMatch } from './services/opportunities-service';
 import { getUserProfile } from './services/profile-service';
+import { floatingCard } from './styles/shadows';
 import {
   getDistinctValues,
   getForsaApprovedOptions,
@@ -28,7 +29,6 @@ import {
   sortItems,
 } from './utils/filterUtils';
 import { getFuzzyMatchIds } from './utils/fuzzySearch';
-import { floatingCard } from './styles/shadows';
 
 const OPPORTUNITY_SEARCH_KEYS = ['title', 'titleAr', 'description', 'descriptionAr', 'category', 'location'];
 
@@ -213,12 +213,19 @@ export default function AllOpportunities() {
                   onPress={() => router.push(`/Opportunitydetail?id=${opp.$id}`)}
                 >
                   <View style={styles.iconContainer}>
-                    <Image
-                      source={require('../assets/images/icon.png')}
-                      style={styles.opportunityIcon}
-                      resizeMode="contain"
-                    />
-                  </View>
+  <Image
+    source={
+      opp.imageUrl
+        ? { uri: opp.imageUrl }
+        : require('../assets/images/icon.png')
+    }
+    style={[
+      styles.opportunityIcon,
+      !opp.imageUrl && styles.defaultIconTint,
+    ]}
+    resizeMode={opp.imageUrl ? 'cover' : 'contain'}
+  />
+</View>
                   <Text style={styles.opportunityTitle} numberOfLines={1} ellipsizeMode="tail">{(language === 'ar' && opp.titleAr) || opp.title}</Text>
                   {opp.forsaApproved && (
                     <ApprovedIcon width={56} height={56} style={styles.approvedIcon} />
@@ -360,5 +367,23 @@ const styles = StyleSheet.create({
   approvedIcon: {
     width: 56,
     height: 56,
+  },
+  iconContainer: {
+    width: 60,
+    height: 60,
+    backgroundColor: '#46a3a4',
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden', // Clips custom images to rounded corners
+  },
+  opportunityIcon: {
+    width: '100%',
+    height: '100%',
+  },
+  defaultIconTint: {
+    width: 40,
+    height: 40,
+    tintColor: '#ffffff', // Applies white tint ONLY to the fallback icon
   },
 });
