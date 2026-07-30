@@ -28,8 +28,12 @@ import { floatingCard } from './styles/shadows';
 const STORY_DESCRIPTIONS = {
   1: 'Razi used the marketing skills he picked up from MEET, one of our opportunities, and was offered a job at AppsFlyer as a marketer.',
   3: 'They stayed consistent, applied, and got results.',
-  4: 'Their journey shows how small steps can lead to big changes.',
+  4: 'Lour Dahleh grew up in a small Palestinian town where opportunities to build a college-ready resume were few and far between. She found Forsa through a friend and started applying to every volunteering role and workshop that matched her interests — from a community youth-mentoring program to a local coding bootcamp. Each opportunity added a new line to her profile and a new skill to her toolkit: public speaking, project leadership, and eventually a research assistantship with a local nonprofit that let her co-author a report on youth education access in Palestine. When it came time to apply to universities, that string of experiences became the backbone of her application essays. She was accepted into Columbia University with a partial scholarship, becoming one of the first from her town to study abroad. Lour says Forsa did not just help her find opportunities — it helped her build a story worth telling.',
 };
+
+// TODO: once the photo is added to assets/images/, map it here, e.g.
+// const STORY_PHOTOS = { 4: require('../assets/images/lour-dahleh.jpg') };
+const STORY_PHOTOS = {};
 
 const formatEventDay = (eventDate) => {
   const date = new Date(eventDate);
@@ -254,7 +258,18 @@ export default function Homepage() {
       </TouchableOpacity>
 
       {selectedStory && (
-        <>
+        <ScrollView
+          style={styles.storyModalScroll}
+          contentContainerStyle={styles.storyModalScrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {STORY_PHOTOS[selectedStory.id] && (
+            <Image
+              source={STORY_PHOTOS[selectedStory.id]}
+              style={styles.storyPhoto}
+              resizeMode="cover"
+            />
+          )}
           <TitleText style={styles.modalTitle}>
             {selectedStory.name}
           </TitleText>
@@ -265,7 +280,7 @@ export default function Homepage() {
             {STORY_DESCRIPTIONS[selectedStory.id] ||
               'A success story from one of our users.'}
           </Text>
-        </>
+        </ScrollView>
       )}
     </View>
   </View>
@@ -528,11 +543,26 @@ modalTouchOutside: {
 storyModalCard: {
   width: '90%',
   maxWidth: 340,
+  maxHeight: '85%',
   backgroundColor: '#ffffff',
   borderRadius: 18,
   padding: 20,
   position: 'relative',
   zIndex: 1000,
+},
+storyModalScroll: {
+  maxHeight: '100%',
+},
+storyModalScrollContent: {
+  paddingTop: 20,
+  paddingBottom: 4,
+},
+storyPhoto: {
+  width: '100%',
+  height: 180,
+  borderRadius: 14,
+  backgroundColor: '#e1e4e4',
+  marginBottom: 16,
 },
 closeButton: {
   position: 'absolute',
