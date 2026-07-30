@@ -152,13 +152,13 @@ const styles = StyleSheet.create({
   headerUnderline: {
     height: 2,
     backgroundColor: '#46a3a4',
-    marginBottom: 40,
+    marginBottom: 100,
   },
   title: {
     fontSize: 36,
     fontWeight: 'bold',
     color: '#0a445c',
-    marginBottom: 60,
+    marginBottom: 12,
     textAlign: 'center',
   },
   formContainer: {
