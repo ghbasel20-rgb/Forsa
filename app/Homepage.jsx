@@ -31,9 +31,9 @@ const STORY_DESCRIPTIONS = {
   4: 'Lour Dahleh grew up in a small Palestinian town where opportunities to build a college-ready resume were few and far between. She found Forsa through a friend and started applying to every volunteering role and workshop that matched her interests — from a community youth-mentoring program to a local coding bootcamp. Each opportunity added a new line to her profile and a new skill to her toolkit: public speaking, project leadership, and eventually a research assistantship with a local nonprofit that let her co-author a report on youth education access in Palestine. When it came time to apply to universities, that string of experiences became the backbone of her application essays. She was accepted into Columbia University with a partial scholarship, becoming one of the first from her town to study abroad. Lour says Forsa did not just help her find opportunities — it helped her build a story worth telling.',
 };
 
-// TODO: once the photo is added to assets/images/, map it here, e.g.
-// const STORY_PHOTOS = { 4: require('../assets/images/lour-dahleh.jpg') };
-const STORY_PHOTOS = {};
+const STORY_PHOTOS = {
+  4: require('../assets/images/lour photo.jpeg'),
+};
 
 const formatEventDay = (eventDate) => {
   const date = new Date(eventDate);
