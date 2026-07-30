@@ -191,13 +191,11 @@ export default function Homepage() {
           <TitleText style={styles.sectionTitle}>{t('homepage.successStories')}</TitleText>
 
           <View style={styles.storiesContainer}>
-  {successStories.map((story, index) => (
+  {successStories.map((story) => (
     <TouchableOpacity
       key={story.id}
-      style={[
-        styles.storyRow,
-        index === successStories.length - 1 && styles.storyRowLast,
-      ]}
+      style={styles.storyRow}
+      activeOpacity={0.6}
       onPress={() => {
         setSelectedStory(story);
         setStoryModalVisible(true);
@@ -211,6 +209,7 @@ export default function Homepage() {
           {`#${story.info}`}
         </Text>
       </View>
+      <Text style={styles.storyChevron}>›</Text>
     </TouchableOpacity>
   ))}
 </View>
@@ -471,25 +470,29 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#d3dcdc',
-  },
-  storyRowLast: {
-    borderBottomWidth: 0,
+    backgroundColor: '#ffffff',
+    borderRadius: 14,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    ...floatingCard,
   },
   storyInfo: {
     flex: 1,
   },
   storyName: {
     fontSize: 15,
-    fontWeight: '500',
+    fontWeight: '600',
     color: '#254952',
   },
   storyDetail: {
     fontSize: 13,
     color: '#6b8788',
     marginTop: 2,
+  },
+  storyChevron: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#46a3a4',
   },
   modalBackdrop: {
   position: 'absolute',
