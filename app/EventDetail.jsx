@@ -1,6 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import ApprovedIcon from '../assets/images/approved.svg';
 import HeaderBrand from './components/HeaderBrand';
 import BottomNav from './components/BottomNav';
@@ -78,6 +78,21 @@ export default function EventDetail() {
           >
             <Text style={styles.backText}>{t('common.back')}</Text>
           </TouchableOpacity>
+
+          <View style={styles.iconContainer}>
+            <Image
+              source={
+                event?.imageUrl
+                  ? { uri: event.imageUrl }
+                  : require('../assets/images/icon.png')
+              }
+              style={[
+                styles.eventIcon,
+                !event?.imageUrl && styles.defaultIconTint,
+              ]}
+              resizeMode={event?.imageUrl ? 'cover' : 'contain'}
+            />
+          </View>
 
           {event?.forsaApproved && (
             <View style={styles.approvedRow}>
@@ -207,6 +222,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: 10,
+  },
+  iconContainer: {
+    width: '100%',
+    height: 200,
+    backgroundColor: '#46a3a4',
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+    marginBottom: 20,
+  },
+  eventIcon: {
+    width: '100%',
+    height: '100%',
+  },
+  defaultIconTint: {
+    width: 120,
+    height: 120,
+    tintColor: '#ffffff',
   },
   title: {
     fontSize: 28,

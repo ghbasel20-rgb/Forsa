@@ -26,11 +26,9 @@ import { floatingCard } from './styles/shadows';
 
 
 const STORY_DESCRIPTIONS = {
-  story1: 'This person used Forsa to find opportunities and grow their profile.',
-  story2: 'A great example of how one application can lead to real progress.',
-  story3: 'They stayed consistent, applied, and got results.',
-  story4: 'Their journey shows how small steps can lead to big changes.',
-  story5: 'A reminder that the right opportunity can appear at the right time.',
+  1: 'Razi used the marketing skills he picked up from MEET, one of our opportunities, and was offered a job at AppsFlyer as a marketer.',
+  3: 'They stayed consistent, applied, and got results.',
+  4: 'Their journey shows how small steps can lead to big changes.',
 };
 
 const formatEventDay = (eventDate) => {
@@ -145,9 +143,16 @@ export default function Homepage() {
                 >
                   <View style={styles.recommendedImage}>
                     <Image
-                      source={require('../assets/images/icon.png')}
-                      style={styles.recommendedIcon}
-                      resizeMode="contain"
+                      source={
+                        opp.imageUrl
+                          ? { uri: opp.imageUrl }
+                          : require('../assets/images/icon.png')
+                      }
+                      style={[
+                        styles.recommendedIcon,
+                        !opp.imageUrl && styles.defaultIconTint,
+                      ]}
+                      resizeMode={opp.imageUrl ? 'cover' : 'contain'}
                     />
                   </View>
                   <Text style={styles.recommendedTitle} numberOfLines={1} ellipsizeMode="tail">
@@ -391,9 +396,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
+    overflow: 'hidden',
     marginBottom: 10,
   },
   recommendedIcon: {
+    width: '100%',
+    height: '100%',
+  },
+  defaultIconTint: {
     width: 40,
     height: 40,
     tintColor: '#ffffff',
@@ -457,40 +467,43 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   sectionTitle: {
-    fontSize: 22,
+    fontSize: 26,
     fontWeight: 'bold',
     color: '#0a445c',
     letterSpacing: 1,
-    marginBottom: 24,
+    marginBottom: 28,
   },
   storiesContainer: {
-    gap: 10,
+    flexGrow: 1,
+    justifyContent: 'space-evenly',
+    gap: 20,
+    paddingBottom: 20,
   },
   storyRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 16,
     backgroundColor: '#ffffff',
-    borderRadius: 14,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
+    borderRadius: 18,
+    paddingVertical: 32,
+    paddingHorizontal: 22,
     ...floatingCard,
   },
   storyInfo: {
     flex: 1,
   },
   storyName: {
-    fontSize: 15,
+    fontSize: 20,
     fontWeight: '600',
     color: '#254952',
   },
   storyDetail: {
-    fontSize: 13,
+    fontSize: 16,
     color: '#6b8788',
-    marginTop: 2,
+    marginTop: 6,
   },
   storyChevron: {
-    fontSize: 22,
+    fontSize: 30,
     fontWeight: '700',
     color: '#46a3a4',
   },
@@ -542,7 +555,7 @@ modalTitle: {
   fontSize: 22,
   color: '#0a445c',
   marginBottom: 10,
-  marginTop: 10,
+  marginTop: 34,
 },
 modalText: {
   fontSize: 16,

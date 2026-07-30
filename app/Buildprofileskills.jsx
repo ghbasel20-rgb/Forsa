@@ -110,13 +110,13 @@ export default function BuildProfileSkills() {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
+            <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" showNotifications={false} />
           </View>
           <View style={styles.headerUnderline} />
 
           {flow !== 'signup' && <BackButton style={styles.backButton} />}
 
-          <TitleText style={styles.title}>{t('buildProfile.skillsTitle')}</TitleText>
+          <TitleText style={styles.title} numberOfLines={0} adjustsFontSizeToFit={false}>{t('buildProfile.skillsTitle')}</TitleText>
 
           <ChipSelector
             options={skills}

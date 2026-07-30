@@ -111,7 +111,6 @@ export const getEventWithTranslation = async (eventId, language) => {
       contentAr: finalContentAr,
       locationAr: finalLocationAr,
       costAr: finalCostAr,
-      imageUrl: finalImageUrl, 
     },
   };
 };

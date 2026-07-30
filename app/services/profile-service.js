@@ -35,6 +35,7 @@ export const createUserProfile = async (userId, profileData) => {
       interests: profileData.interests,
       hasCompletedSkillsInterests: profileData.hasCompletedSkillsInterests ?? false,
       hasSeenTutorial: false,
+      welcomeNotificationSeen: false,
       createdAt: serverTimestamp(),
     });
     const docSnap = await getDoc(docRef);

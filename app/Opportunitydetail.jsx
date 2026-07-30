@@ -119,9 +119,16 @@ export default function Opportunitydetail() {
 
           <View style={styles.iconContainer}>
             <Image
-              source={require('../assets/images/icon.png')}
-              style={styles.opportunityIcon}
-              resizeMode="contain"
+              source={
+                opportunity?.imageUrl
+                  ? { uri: opportunity.imageUrl }
+                  : require('../assets/images/icon.png')
+              }
+              style={[
+                styles.opportunityIcon,
+                !opportunity?.imageUrl && styles.defaultIconTint,
+              ]}
+              resizeMode={opportunity?.imageUrl ? 'cover' : 'contain'}
             />
           </View>
 
@@ -230,9 +237,14 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
+    overflow: 'hidden',
     marginBottom: 30,
   },
   opportunityIcon: {
+    width: '100%',
+    height: '100%',
+  },
+  defaultIconTint: {
     width: 120,
     height: 120,
     tintColor: '#ffffff',
@@ -248,7 +260,9 @@ const styles = StyleSheet.create({
   approvedRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     alignSelf: 'center',
+    width: '100%',
     gap: 6,
     marginBottom: 12,
   },
@@ -260,6 +274,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
     color: '#46a3a4',
+    textAlign: 'center',
+    marginLeft: -20,
   },
   infoSection: {
     marginBottom: 30,
