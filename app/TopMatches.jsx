@@ -1,7 +1,6 @@
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-  Image,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -61,21 +60,7 @@ export default function TopMatches() {
                 onPress={() => router.push(`/Opportunitydetail?id=${match.$id}`)}
               >
                 <View style={styles.numberBadge}>
-                  <Image
-                    source={
-                      match.imageUrl
-                        ? { uri: match.imageUrl }
-                        : require('../assets/images/icon.png')
-                    }
-                    style={[
-                      styles.numberBadgeImage,
-                      !match.imageUrl && styles.defaultIconTint,
-                    ]}
-                    resizeMode={match.imageUrl ? 'cover' : 'contain'}
-                  />
-                  <View style={styles.numberOverlay}>
-                    <Text style={styles.numberText}>#{index + 1}</Text>
-                  </View>
+                  <Text style={styles.numberText}>#{index + 1}</Text>
                 </View>
                 <Text style={styles.matchTitle} numberOfLines={1} ellipsizeMode="tail">{(language === 'ar' && match.titleAr) || match.title}</Text>
                 <View style={styles.scoreBadge}>
@@ -160,28 +145,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    overflow: 'hidden',
-  },
-  numberBadgeImage: {
-    width: '100%',
-    height: '100%',
-  },
-  defaultIconTint: {
-    width: 40,
-    height: 40,
-    tintColor: '#ffffff',
-  },
-  numberOverlay: {
-    position: 'absolute',
-    top: 2,
-    left: 2,
-    backgroundColor: 'rgba(10, 68, 92, 0.75)',
-    borderRadius: 8,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
   },
   numberText: {
-    fontSize: 12,
+    fontSize: 24,
     fontWeight: 'bold',
     color: '#ffffff',
   },

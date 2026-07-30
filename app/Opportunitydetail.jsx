@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#46a3a4',
     textAlign: 'center',
-    transform: [{ translateX: -18 }],
+    transform: [{ translateX: -20 }],
   },
   infoSection: {
     marginBottom: 30,
