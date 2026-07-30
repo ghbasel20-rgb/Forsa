@@ -134,13 +134,13 @@ export default function Buildprofileinterests() {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" />
+            <HeaderBrand style={styles.logoSlot} pointerEvents="box-none" showNotifications={false} />
           </View>
           <View style={styles.headerUnderline} />
 
           <BackButton style={styles.backButton} />
 
-          <TitleText style={styles.title}>{t('buildProfile.interestsTitle')}</TitleText>
+          <TitleText style={styles.title} numberOfLines={0} adjustsFontSizeToFit={false}>{t('buildProfile.interestsTitle')}</TitleText>
           <Text style={styles.hint}>{t('buildProfile.interestsHint')}</Text>
 
           <ChipSelector
@@ -199,6 +199,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 32,
+    fontWeight: 'bold',
     color: '#0a445c',
     marginBottom: 30,
     lineHeight: 52,

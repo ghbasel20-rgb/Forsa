@@ -70,9 +70,16 @@ export default function Status() {
 
           <View style={styles.iconContainer}>
             <Image
-              source={require('../assets/images/icon.png')}
-              style={styles.bannerIcon}
-              resizeMode="contain"
+              source={
+                event?.imageUrl
+                  ? { uri: event.imageUrl }
+                  : require('../assets/images/icon.png')
+              }
+              style={[
+                styles.bannerIcon,
+                !event?.imageUrl && styles.defaultIconTint,
+              ]}
+              resizeMode={event?.imageUrl ? 'cover' : 'contain'}
             />
           </View>
 
@@ -170,9 +177,14 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
+    overflow: 'hidden',
     marginBottom: 30,
   },
   bannerIcon: {
+    width: '100%',
+    height: '100%',
+  },
+  defaultIconTint: {
     width: 100,
     height: 100,
     tintColor: '#ffffff',

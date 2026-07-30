@@ -61,10 +61,6 @@ export default function AboutUsModal({ visible, onClose }) {
               </TouchableOpacity>
             </View>
 
-            <TouchableOpacity style={styles.backButton} onPress={onClose}>
-              <Text style={styles.backButtonText}>{t('common.back')}</Text>
-            </TouchableOpacity>
-
             <Text style={[styles.sectionTitle, styles.visionHeading]}>{t('aboutUs.visionHeading')}</Text>
             <Text style={styles.visionText}>{t('aboutUs.visionText')}</Text>
 
@@ -151,31 +147,23 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#0a445c',
   },
-  backButton: {
-    alignSelf: 'flex-start',
-    marginBottom: 6,
-  },
-  backButtonText: {
-    fontSize: 16,
-    color: '#0a445c',
-  },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#0a445c',
-    marginBottom: 12,
-    marginTop: 16,
+    marginBottom: 16,
+    marginTop: 26,
   },
   visionHeading: {
-    marginTop: 8,
+    marginTop: 60,
   },
   visionText: {
     fontSize: 14,
     color: '#0a445c',
-    lineHeight: 20,
+    lineHeight: 24,
   },
   faqContainer: {
-    marginBottom: 10,
+    marginBottom: 16,
   },
   faqItem: {
     borderBottomWidth: 1,
@@ -186,13 +174,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     gap: 12,
-    paddingVertical: 14,
+    paddingVertical: 18,
   },
   faqQuestion: {
     flex: 1,
     fontSize: 14,
     color: '#0a445c',
-    lineHeight: 19,
+    lineHeight: 22,
   },
   faqPlus: {
     fontSize: 18,
@@ -200,22 +188,22 @@ const styles = StyleSheet.create({
     color: '#0a445c',
   },
   faqAnswerContainer: {
-    paddingBottom: 14,
+    paddingBottom: 18,
     paddingRight: 20,
   },
   faqAnswer: {
     fontSize: 13,
     color: '#0a445c',
-    lineHeight: 19,
+    lineHeight: 22,
   },
   contactContainer: {
-    marginTop: 16,
+    marginTop: 24,
   },
   contactRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 14,
-    marginBottom: 20,
+    marginBottom: 24,
   },
   iconCircle: {
     width: 56,

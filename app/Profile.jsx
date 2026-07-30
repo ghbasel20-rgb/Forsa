@@ -77,6 +77,7 @@ export default function Profile() {
             return {
               ...saved,
               opportunityTitle: oppResult.success ? translatedTitle : saved.opportunityTitle,
+              opportunityImage: oppResult.success ? oppResult.data?.imageUrl : null,
             };
           })
         );
@@ -93,6 +94,7 @@ export default function Profile() {
               ...application,
               eventTitle: eventResult.success ? translatedTitle : t('eventDetail.defaultTitle'),
               eventDate: eventResult.success ? eventResult.data.eventDate : null,
+              eventImage: eventResult.success ? eventResult.data?.imageUrl : null,
             };
           })
         );
@@ -405,9 +407,16 @@ const handleAppliedDayPress = (day) => {
                   >
                     <View style={styles.opportunityIcon}>
                       <Image
-                        source={require('../assets/images/icon.png')}
-                        style={styles.iconImage}
-                        resizeMode="contain"
+                        source={
+                          opp.opportunityImage
+                            ? { uri: opp.opportunityImage }
+                            : require('../assets/images/icon.png')
+                        }
+                        style={[
+                          styles.iconImage,
+                          !opp.opportunityImage && styles.defaultIconTint,
+                        ]}
+                        resizeMode={opp.opportunityImage ? 'cover' : 'contain'}
                       />
                     </View>
                     <Text style={styles.opportunityTitle} numberOfLines={1} ellipsizeMode="tail">{opp.opportunityTitle}</Text>
@@ -445,9 +454,16 @@ const handleAppliedDayPress = (day) => {
                   >
                     <View style={styles.opportunityIcon}>
                       <Image
-                        source={require('../assets/images/icon.png')}
-                        style={styles.iconImage}
-                        resizeMode="contain"
+                        source={
+                          application.eventImage
+                            ? { uri: application.eventImage }
+                            : require('../assets/images/icon.png')
+                        }
+                        style={[
+                          styles.iconImage,
+                          !application.eventImage && styles.defaultIconTint,
+                        ]}
+                        resizeMode={application.eventImage ? 'cover' : 'contain'}
                       />
                     </View>
                     <Text style={styles.opportunityTitle} numberOfLines={1} ellipsizeMode="tail">{application.eventTitle}</Text>
@@ -653,8 +669,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
+    overflow: 'hidden',
   },
   iconImage: {
+    width: '100%',
+    height: '100%',
+  },
+  defaultIconTint: {
     width: 40,
     height: 40,
     tintColor: '#ffffff',

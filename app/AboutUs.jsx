@@ -137,16 +137,16 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: '#0a445c',
-    marginBottom: 12,
-    marginTop: 20,
+    marginBottom: 16,
+    marginTop: 32,
   },
   visionText: {
     fontSize: 15,
     color: '#0a445c',
-    lineHeight: 22,
+    lineHeight: 26,
   },
   faqContainer: {
-    marginBottom: 10,
+    marginBottom: 16,
   },
   faqItem: {
     borderBottomWidth: 1,
@@ -157,13 +157,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     gap: 12,
-    paddingVertical: 16,
+    paddingVertical: 20,
   },
   faqQuestion: {
     flex: 1,
     fontSize: 15,
     color: '#0a445c',
-    lineHeight: 20,
+    lineHeight: 24,
   },
   faqPlus: {
     fontSize: 20,
@@ -171,22 +171,22 @@ const styles = StyleSheet.create({
     color: '#0a445c',
   },
   faqAnswerContainer: {
-    paddingBottom: 16,
+    paddingBottom: 20,
     paddingRight: 28,
   },
   faqAnswer: {
     fontSize: 14,
     color: '#0a445c',
-    lineHeight: 20,
+    lineHeight: 24,
   },
   contactContainer: {
-    marginTop: 20,
+    marginTop: 28,
   },
   contactRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 16,
-    marginBottom: 24,
+    marginBottom: 28,
   },
   iconCircle: {
     width: 70,

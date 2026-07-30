@@ -145,9 +145,16 @@ export default function Homepage() {
                 >
                   <View style={styles.recommendedImage}>
                     <Image
-                      source={require('../assets/images/icon.png')}
-                      style={styles.recommendedIcon}
-                      resizeMode="contain"
+                      source={
+                        opp.imageUrl
+                          ? { uri: opp.imageUrl }
+                          : require('../assets/images/icon.png')
+                      }
+                      style={[
+                        styles.recommendedIcon,
+                        !opp.imageUrl && styles.defaultIconTint,
+                      ]}
+                      resizeMode={opp.imageUrl ? 'cover' : 'contain'}
                     />
                   </View>
                   <Text style={styles.recommendedTitle} numberOfLines={1} ellipsizeMode="tail">
@@ -391,9 +398,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
+    overflow: 'hidden',
     marginBottom: 10,
   },
   recommendedIcon: {
+    width: '100%',
+    height: '100%',
+  },
+  defaultIconTint: {
     width: 40,
     height: 40,
     tintColor: '#ffffff',
